@@ -1,3 +1,3 @@
 # SUSTechMaJiang
 
-##Editor: Bian zheng
+##Editor: Xiang Xinhao, Bian zheng, Lin Ao, Xu Tianyuan
