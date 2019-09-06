@@ -4,4 +4,10 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/02-Lobby.unity
+    guid: 08c79446e50ded74290dfe949f91e70e
+  - enabled: 1
+    path: Assets/Scenes/03-NetPlayScene-FourMode.unity
+    guid: 097774fd77877fa4483ed4b6af37e5b7
