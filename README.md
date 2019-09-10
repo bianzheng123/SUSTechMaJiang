@@ -4,4 +4,4 @@
 
 资源来源：
 
-https://github.com/balckban/majiang-cocos-creator
+https://github.com/xiyoufang/mahjong
