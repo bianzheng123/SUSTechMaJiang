@@ -44,7 +44,7 @@ public class MatchMaker : MonoBehaviour {
 
     public void OnCreateRoomNameBtn()
     {
-        manager.matchMaker.CreateMatch(roomName, 3, true, "", "", "", 0, 0, manager.OnMatchCreate);
+        manager.matchMaker.CreateMatch(roomName, 6, true, "", "", "", 0, 0, manager.OnMatchCreate);
     }
 
     public void OnRefreshBtn()

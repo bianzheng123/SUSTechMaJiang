@@ -19,9 +19,9 @@ public class NetworkPlayer : NetworkBehaviour {
     [Command]
     private void CmdSetPlayerOnCreate()
     {
-        if(NetworkData.Instance.PlayerNum < 4)
+        if(GameManager.Instance.PlayerNum < 4)
         {
-            NetworkData.Instance.PlayerNum++;
+            GameManager.Instance.PlayerNum++;
             playerType = PlayerType.READY_PLAYER;
         }
         else
@@ -40,7 +40,7 @@ public class NetworkPlayer : NetworkBehaviour {
     {
         if (playerType != PlayerType.WATCH)
         {
-            NetworkData.Instance.PlayerNum--;
+            GameManager.Instance.PlayerNum--;
         }
     }
 }
