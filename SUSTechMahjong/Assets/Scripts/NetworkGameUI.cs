@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 
 public class NetworkGameUI : NetworkBehaviour {
     private static NetworkGameUI _instance;
@@ -19,6 +20,10 @@ public class NetworkGameUI : NetworkBehaviour {
             _instance = this;
         }
     }
+    public void OnQuitBtn()
+    {
+        NetworkManager.singleton.matchMaker.DropConnection(NetworkManager.singleton.matchInfo.networkId, NetworkManager.singleton.matchInfo.nodeId, 0, NetworkManager.singleton.OnDropConnection);
+        NetworkManager.singleton.StopHost();
+    }
 
-  
 }
