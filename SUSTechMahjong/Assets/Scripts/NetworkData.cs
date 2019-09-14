@@ -53,3 +53,12 @@ public class NetworkData : NetworkBehaviour {
         }
     }
 }
+public enum PlayerType
+{
+    READY_PLAYER,
+    WATCH,
+    PLAYER1,
+    PLAYER2,
+    PLAYER3,
+    PLAYER4
+};
