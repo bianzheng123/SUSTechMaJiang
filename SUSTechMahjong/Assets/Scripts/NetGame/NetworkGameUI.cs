@@ -1,11 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 
-public class NetworkData : NetworkBehaviour {
-    private static NetworkData _instance;
-    public static NetworkData Instance
+public class NetworkGameUI : NetworkBehaviour {
+    private static NetworkGameUI _instance;
+    public static NetworkGameUI Instance
     {
         get { return _instance; }
 
@@ -19,21 +21,16 @@ public class NetworkData : NetworkBehaviour {
         }
     }
 
-    [SerializeField]//为了能在Inspector面板中看到数值变化
-    [SyncVar(hook = "ChangeProfile")]
-    private int playerNum = 0;//统计玩家的数量
-    public int PlayerNum
-    {
-        get { return playerNum; }
-        set { playerNum = value; }
-    }
-
-    private void ChangeProfile(int playerNumber)
+    /// <summary>
+    /// 用于准备阶段切换头像
+    /// </summary>
+    /// <param name="playerNumber"></param>
+    public void ChangeProfile(int playerNumber)
     {
         Transform[] childs = new Transform[4];
         for (int i = 1; i <= 4; i++)
         {
-            childs[i - 1] = NetworkGameUI.Instance.transform.Find(i.ToString() + "Players");
+            childs[i - 1] = transform.Find(i.ToString() + "Players");
             childs[i - 1].gameObject.SetActive(false);
         }
         switch (playerNumber)
@@ -52,4 +49,14 @@ public class NetworkData : NetworkBehaviour {
                 break;
         }
     }
+
+    /// <summary>
+    /// 用于在准备阶段或者活动进行的阶段退出
+    /// </summary>
+    public void OnQuitBtn()
+    {
+        NetworkManager.singleton.matchMaker.DropConnection(NetworkManager.singleton.matchInfo.networkId, NetworkManager.singleton.matchInfo.nodeId, 0, NetworkManager.singleton.OnDropConnection);
+        NetworkManager.singleton.StopHost();
+    }
+
 }
