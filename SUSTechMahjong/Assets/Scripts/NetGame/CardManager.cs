@@ -40,9 +40,13 @@ public class CardManager : MonoBehaviour {
         //render = GetComponent<SpriteRenderer>();
         InstantiateCard();
         CreateCards();
-        //WashCard();
+        WashCard();
+        for(int i = 0; i < 108; i++)
+        {
+            Debug.Log(cards[i].ToString());
+        }
     }
-    
+
 
     private void WashCard()
     {
@@ -62,11 +66,11 @@ public class CardManager : MonoBehaviour {
             cards[index] = cards[value];
             cards[value] = median;
 
-            cards[index].gameObject.transform.name = cards[index].Index + "-" + cards[index].Type;
-            cards[index].GetComponent<SpriteRenderer>().sprite = handSprite[cards[index].Index + (int)cards[index].Type];
+            cards[index].gameObject.transform.name = (cards[index].Index + 1) + "-" + cards[index].Type;
+            cards[index].GetComponent<SpriteRenderer>().sprite = handSprite[cards[index].Index + 9 * (int)cards[index].Type];
 
-            cards[value].gameObject.transform.name = cards[value].Index + "-" + cards[value].Type;
-            cards[value].GetComponent<SpriteRenderer>().sprite = handSprite[cards[value].Index + (int)cards[value].Type];
+            cards[value].gameObject.transform.name = (cards[value].Index + 1) + "-" + cards[value].Type;
+            cards[value].GetComponent<SpriteRenderer>().sprite = handSprite[cards[value].Index + 9 * (int)cards[value].Type];
         }
     }
 

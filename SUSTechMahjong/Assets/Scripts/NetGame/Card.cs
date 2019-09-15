@@ -31,4 +31,8 @@ public class Card : MonoBehaviour{
     {
         sprite = CardManager.Instance.HandSprite[(int)type * 9 + index];
     }
+    public override string ToString()
+    {
+        return string.Format((index + 1) + "-" + type);
+    }
 }
