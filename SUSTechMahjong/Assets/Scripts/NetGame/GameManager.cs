@@ -41,6 +41,11 @@ public class GameManager : NetworkBehaviour {
         get { return playerNum; }
         set { playerNum = value; }
     }
+    public GameObject[] Players
+    {
+        get { return players; }
+        set { players = value; }
+    }
 
     /// <summary>
     /// 用于准备阶段切换头像
@@ -74,12 +79,26 @@ public class GameManager : NetworkBehaviour {
     private void AllocatePlayer()
     {
         players = GameObject.FindGameObjectsWithTag("Player");
-        int ran = Random.Range(0, 4);
-        int index = ran;
-        for(int i = 0; i < 4; i++)
-        {
-            players[index].GetComponent<NetworkPlayer>().PlayType = (PlayerType)(i + 2);
-        }
+
+        NetworkPlayer tmp = players[0].GetComponent<NetworkPlayer>();
+        tmp.PlayType = PlayerType.PLAYER1;
+        Debug.Log(tmp.PlayType);
+        tmp.Index = 0;
+
+        tmp = players[1].GetComponent<NetworkPlayer>();
+        tmp.PlayType = PlayerType.PLAYER2;
+        Debug.Log(tmp.PlayType);
+        tmp.Index = 1;
+
+        tmp = players[2].GetComponent<NetworkPlayer>();
+        tmp.PlayType = PlayerType.PLAYER3;
+        Debug.Log(tmp.PlayType);
+        tmp.Index = 2;
+
+        tmp = players[3].GetComponent<NetworkPlayer>();
+        tmp.PlayType = PlayerType.PLAYER4;
+        Debug.Log(tmp.PlayType);
+        tmp.Index = 3;
     }
 
     /// <summary>
@@ -124,6 +143,7 @@ public class GameManager : NetworkBehaviour {
         switch (nowGameState)//READY阶段体现在别的类中，所以这里不显示
         {
             case GameState.DEAL_CARDS://发牌
+                CardManager.Instance.InitializeCard();
                 AllocatePlayer();
                 AllocateCard();
                 DisplayCard();

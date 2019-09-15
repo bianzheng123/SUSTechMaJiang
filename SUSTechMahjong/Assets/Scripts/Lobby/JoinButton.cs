@@ -29,7 +29,6 @@ public class JoinButton : MonoBehaviour {
         info = _info;
         nameTxt.text = info.name;
         playerNumTxt.text = info.currentSize + "/4";
-        Debug.Log(info.currentSize);
     }
 
     //放在加入房间进行初始化的

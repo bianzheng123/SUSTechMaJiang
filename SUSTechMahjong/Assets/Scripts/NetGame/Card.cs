@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class Card : MonoBehaviour{
+public class Card : NetworkBehaviour{
     /// <summary>
     /// 代表了这个牌在花色中的序号
     /// </summary>

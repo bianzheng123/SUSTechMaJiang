@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class CardManager : MonoBehaviour {
+public class CardManager : NetworkBehaviour {
     private static CardManager _instance;
-
     /// <summary>
     /// 获取棋牌的对象
     /// </summary>
@@ -14,6 +13,7 @@ public class CardManager : MonoBehaviour {
     /// <summary>
     /// cards用于生成棋牌
     /// </summary>
+    [SerializeField]
     private Card[] cards = new Card[108];
     /// <summary>
     /// 获取棋牌的实例
@@ -42,17 +42,14 @@ public class CardManager : MonoBehaviour {
             _instance = this;
         }
         //render = GetComponent<SpriteRenderer>();
-        InstantiateCard();
-        CreateCards();
-        WashCard(); 
+        
         //for(int i = 0; i < 108; i++)
         //{
         //    Debug.Log(cards[i].ToString());
         //}
     }
-
-
-    private void WashCard()
+    [Command]
+    private void CmdWashCard()
     {
         if (null == cards || 0 == cards.Length)
         {
@@ -93,27 +90,38 @@ public class CardManager : MonoBehaviour {
                     cards[i * 27 + j * 3 + k].Index = j;
                     cards[i * 27 + j * 3 + k].gameObject.transform.name = (cards[i * 27 + j * 3 + k].Index + 1) + "-" + cards[i * 27 + j * 3 + k].Type;
                     cards[i * 27 + j * 3 + k].GetComponent<SpriteRenderer>().sprite = handSprite[cards[i * 27 + j * 3 + k].Index + 9 * (int)cards[i * 27 + j * 3 + k].Type];
+
                 }
             }
         }
+    }
+    public void InitializeCard()
+    {
+        InstantiateCard();
+        CreateCards();
+        CmdWashCard();
     }
 
     private void InstantiateCard()
     {
         int len = cards.Length;
-        for(int i = 0; i < len; i++)
+        for (int i = 0; i < len; i++)
         {
-            GameObject go = Instantiate(prefab_card,Vector3.zero,Quaternion.identity);
-            go.transform.position = new Vector3(-10000, -10000, 0);
+            GameObject go = Instantiate(prefab_card, Vector3.zero, Quaternion.identity);
+            Debug.Log(NetworkServer.active);
+            
             cards[i] = go.GetComponent<Card>();
             go.transform.SetParent(transform);
-            NetworkServer.Spawn(go);
+            go.transform.position = new Vector3(100000, 100000, 0);
         }
+
+        
     }
 
     void Update()
     {
         //render.sprite = handSprite[frame];
+        
     }
 }
 
