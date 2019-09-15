@@ -9,7 +9,7 @@ public class HideAnim : MonoBehaviour {
 	private void Hide()
     {
         gameObject.SetActive(false);
-        GameManager.Instance.gameStart = true;
+        GameManager.Instance.NowGameState = GameState.DEAL_CARDS;
         waitingProfile.SetActive(false);
     }
 }
