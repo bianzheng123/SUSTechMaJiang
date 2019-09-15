@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
 public class Card : MonoBehaviour{
     /// <summary>
@@ -13,8 +14,6 @@ public class Card : MonoBehaviour{
     /// </summary>
     [SerializeField]
     private HuaSe type;
-    [SerializeField]
-    private Sprite sprite;
     public int Index
     {
         get { return index;}
@@ -25,11 +24,6 @@ public class Card : MonoBehaviour{
     {
         get { return type; }
         set { type = value; }
-    }
-
-    private void Start()
-    {
-        sprite = CardManager.Instance.HandSprite[(int)type * 9 + index];
     }
     public override string ToString()
     {

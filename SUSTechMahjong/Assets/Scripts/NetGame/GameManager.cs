@@ -23,10 +23,13 @@ public class GameManager : NetworkBehaviour {
     [SyncVar(hook = "ChangeProfile")]
     private int playerNum = 0;//统计玩家的数量
     [SerializeField]
-    [SyncVar]
+    [SyncVar(hook = "ControlGameUI")]
     private GameState nowGameState = GameState.READY;//判断游戏是否正在进行
     [SerializeField]
     private GameObject StartAnim;
+    private GameObject[] players;
+    [SerializeField]
+    private GameObject turnTable;
 
     public GameState NowGameState
     {
@@ -48,11 +51,70 @@ public class GameManager : NetworkBehaviour {
         NetworkGameUI.Instance.ChangeProfile(playerNumber);
         if(playerNumber == 4)
         {
-            StartAnim.SetActive(true);
+            StartAnim.SetActive(true);//开始游戏
         }
     }
 
+    /// <summary>
+    /// 一开始设置为不可见，当游戏开始时就设置为可见
+    /// </summary>
+    /// <param name="state">现在的状态</param>
+    private void ControlGameUI(GameState state)
+    {
+        if(state == GameState.DEAL_CARDS)
+        {
+            Instantiate(turnTable, Vector3.zero, Quaternion.identity);
+        }
+        
+    }
 
+    /// <summary>
+    /// 确定出牌顺序，以及谁是庄家
+    /// </summary>
+    private void AllocatePlayer()
+    {
+        players = GameObject.FindGameObjectsWithTag("Player");
+        int ran = Random.Range(0, 4);
+        int index = ran;
+        for(int i = 0; i < 4; i++)
+        {
+            players[index].GetComponent<NetworkPlayer>().PlayType = (PlayerType)(i + 2);
+        }
+    }
+
+    /// <summary>
+    /// 将棋牌显示到屏幕上
+    /// </summary>
+    private void DisplayCard()
+    {
+        for(int i = 0; i < players.Length; i++)
+        {
+            players[i].GetComponent<NetworkPlayer>().DisplayCard();
+        }
+    }
+
+    /// <summary>
+    /// 发牌
+    /// </summary>
+    private void AllocateCard()
+    {
+        int index = 0;//记录牌发放到第几个
+        for(int i = 0; i < players.Length; i++)
+        {
+            int len = 13;//记录对每一个人发放多少张牌
+            if(players[i].GetComponent<NetworkPlayer>().PlayType == PlayerType.PLAYER1)
+            {
+                len = 14;//对庄家发14张牌
+            }
+            for(int j = 0; j < len; j++)
+            {
+                CardManager.Instance.Cards[index + j].transform.SetParent(players[i].transform);
+                players[i].GetComponent<NetworkPlayer>().Cards.Add(CardManager.Instance.Cards[index + j]);
+            }
+            index += len;
+        }
+
+    }
 
     /// <summary>
     /// 在hide方法执行完成后，此时gameStart为true
@@ -62,7 +124,10 @@ public class GameManager : NetworkBehaviour {
         switch (nowGameState)//READY阶段体现在别的类中，所以这里不显示
         {
             case GameState.DEAL_CARDS://发牌
-
+                AllocatePlayer();
+                AllocateCard();
+                DisplayCard();
+                nowGameState = GameState.PLAY_CARDS;
                 break;
             case GameState.PLAY_CARDS://打牌
                 break;
@@ -97,10 +162,13 @@ public enum GameState
 
 public enum PlayerType
 {
-    READY_PLAYER,
-    WATCH,
-    PLAYER1,
-    PLAYER2,
-    PLAYER3,
-    PLAYER4
+    WATCH = 0,
+    READY_PLAYER =1,
+    /// <summary>
+    /// 默认Player1为庄家
+    /// </summary>
+    PLAYER1=2,
+    PLAYER2=3,
+    PLAYER3=4,
+    PLAYER4=5
 };

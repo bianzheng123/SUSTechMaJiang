@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
 public class CardManager : MonoBehaviour {
     private static CardManager _instance;
@@ -28,7 +29,10 @@ public class CardManager : MonoBehaviour {
     public static CardManager Instance
     {
         get { return _instance; }
-
+    }
+    public Card[] Cards
+    {
+        get { return cards; }
     }
 
     private void Awake()
@@ -40,11 +44,11 @@ public class CardManager : MonoBehaviour {
         //render = GetComponent<SpriteRenderer>();
         InstantiateCard();
         CreateCards();
-        WashCard();
-        for(int i = 0; i < 108; i++)
-        {
-            Debug.Log(cards[i].ToString());
-        }
+        WashCard(); 
+        //for(int i = 0; i < 108; i++)
+        //{
+        //    Debug.Log(cards[i].ToString());
+        //}
     }
 
 
@@ -100,8 +104,10 @@ public class CardManager : MonoBehaviour {
         for(int i = 0; i < len; i++)
         {
             GameObject go = Instantiate(prefab_card,Vector3.zero,Quaternion.identity);
+            go.transform.position = new Vector3(-10000, -10000, 0);
             cards[i] = go.GetComponent<Card>();
             go.transform.SetParent(transform);
+            NetworkServer.Spawn(go);
         }
     }
 
