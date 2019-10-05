@@ -4,13 +4,24 @@ using UnityEngine;
 
 public class Lobby : MonoBehaviour {
 
-	// Use this for initialization
 	void Start () {
-		
-	}
+        NetManager.AddListener("CreateRoom", OnCreateRoom);
+        SendOnCreateRoom();
+    }
 	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    private string SendOnCreateRoom()
+    {
+        string desc = "CreateRoom|" + NetManager.GetDesc();
+        return desc;
+    }
+
+    private void OnCreateRoom(string msg)
+    {
+
+    }
+
+    private void Update()
+    {
+        NetManager.Update();
+    }
 }

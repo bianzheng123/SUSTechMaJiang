@@ -79,7 +79,7 @@ public static class NetManager
         try
         {
             Socket socket = (Socket)ar.AsyncState;
-            //int count = socket.EndSend(ar);
+            int count = socket.EndSend(ar);
         }
         catch (SocketException ex)
         {
@@ -103,4 +103,5 @@ public static class NetManager
             listeners[msgName](msgArgs);
         }
     }
+
 }
