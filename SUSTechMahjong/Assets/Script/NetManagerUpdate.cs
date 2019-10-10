@@ -19,8 +19,6 @@ public class NetManagerUpdate : MonoBehaviour {
         }
         return _instance;
     }
-    
-    public bool isOnline = false;
 
     private void Start()
     {
