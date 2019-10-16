@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{9A2F7110-6510-406E-8716-4F0452A13EBE}</ProjectGuid>
+    <ProjectGuid>{EC40BB71-235C-4F06-B63E-6EE3B8C2D1FC}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>Server</RootNamespace>
     <AssemblyName>Server</AssemblyName>
@@ -47,26 +47,26 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Scripts\db\DbManager.cs" />
-    <Compile Include="Scripts\logic\BattleMsgHandler.cs" />
-    <Compile Include="Scripts\logic\EventHandler.cs" />
-    <Compile Include="Scripts\logic\LoginMsgHandle.cs" />
-    <Compile Include="Scripts\logic\Player.cs" />
-    <Compile Include="Scripts\logic\PlayerData.cs" />
-    <Compile Include="Scripts\logic\PlayerManager.cs" />
-    <Compile Include="Scripts\logic\SysMsgHandler.cs" />
-    <Compile Include="Scripts\net\ByteArray.cs" />
-    <Compile Include="Scripts\net\ClientState.cs" />
-    <Compile Include="Scripts\net\MsgBase.cs" />
-    <Compile Include="Scripts\net\NetManager.cs" />
-    <Compile Include="Scripts\proto\BattleMsg.cs" />
-    <Compile Include="Scripts\proto\LoginMsg.cs" />
-    <Compile Include="Scripts\proto\SysMsg.cs" />
+    <Compile Include="script\db\DbManager.cs" />
+    <Compile Include="script\logic\EventHandler.cs" />
+    <Compile Include="script\logic\LoginMsgHandle.cs" />
+    <Compile Include="script\logic\Player.cs" />
+    <Compile Include="script\logic\PlayerData.cs" />
+    <Compile Include="script\logic\PlayerManager.cs" />
+    <Compile Include="script\logic\Room.cs" />
+    <Compile Include="script\logic\RoomManager.cs" />
+    <Compile Include="script\logic\RoomMsgHandle.cs" />
+    <Compile Include="script\logic\SysMsgHandler.cs" />
+    <Compile Include="script\net\ByteArray.cs" />
+    <Compile Include="script\net\ClientState.cs" />
+    <Compile Include="script\net\MsgBase.cs" />
+    <Compile Include="script\net\NetManager.cs" />
+    <Compile Include="script\proto\LoginMsg.cs" />
+    <Compile Include="script\proto\RoomMsg.cs" />
+    <Compile Include="script\proto\SysMsg.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config">
-      <SubType>Designer</SubType>
-    </None>
+    <None Include="App.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
