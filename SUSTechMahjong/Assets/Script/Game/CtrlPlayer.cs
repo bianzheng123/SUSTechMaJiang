@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CtrlPlayer : MonoBehaviour {
+public class CtrlPlayer : BasePlayer {
 
 	// Use this for initialization
 	void Start () {

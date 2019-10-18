@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SyncPlayer : MonoBehaviour {
+public class SyncPlayer : BasePlayer {
 
 	// Use this for initialization
 	void Start () {

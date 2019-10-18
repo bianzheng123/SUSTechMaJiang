@@ -8,7 +8,9 @@ public class TestMain : MonoBehaviour {
 	void Start () {
         PanelManager.Init();
         PanelManager.Open<GamePanel>();
+
 	}
+
 	
 	// Update is called once per frame
 	void Update () {

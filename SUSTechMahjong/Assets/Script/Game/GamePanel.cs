@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class GamePanel : BasePanel {
-
     //退出按钮
     private Button exitButton;
     //设置UI按钮
@@ -39,11 +38,35 @@ public class GamePanel : BasePanel {
         //MsgGetRoomInfo msg = new MsgGetRoomInfo();
         //NetManager.Send(msg);
 
+        GameObject server = ResManager.LoadPrefab("Server");
+        GameObject gameManager = ResManager.LoadPrefab("GameManager");
+        GameObject init_server = Instantiate(server);
+        GameObject init_gameManager = Instantiate(gameManager);
+        init_server.GetComponent<Server>().gameManager = init_gameManager.GetComponent<GameManager>(); ;
+        init_gameManager.GetComponent<GameManager>().server = init_server.GetComponent<Server>();
+
         //组件的初始化
         for(int i = 0; i < light.Length; i++)
         {
             light[i].SetActive(false);
         }
+    }
+
+    public void OnMsgStartRecieveGameData(MsgBase msgBase)
+    {
+
+    }
+
+    //收到出牌顺序的提醒
+    public void OnTurn()
+    {
+
+    }
+
+    private void Update()
+    {
+
+        //出牌
     }
 
     //关闭
