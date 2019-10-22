@@ -4,19 +4,8 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    private static GameManager _instance = null;
-
-    private GameManager() { }
-
-
-    public static GameManager GetInstance()
-    {
-        if (_instance == null)
-        {
-            _instance = new GameManager();
-        }
-        return _instance;
-    }//单例
+    public static int turn;
+    public static PaiManager paiManager = new PaiManager();
 
     private GamePanel gamePanel;
     public int id;//该客户端的id
@@ -40,7 +29,7 @@ public class GameManager : MonoBehaviour
         MsgStartReceiveGameData msg = new MsgStartReceiveGameData();
         InitNumToDir();
         gamePanel = GameObject.Find("Root").GetComponent<GamePanel>();
-        Server.OnMsgStartRecieveGameData(msg);//向服务器发送协议
+        ServerOnMsgStartRecieveGameData(msg);//向服务器发送协议
     }
 
     private void InitNumToDir() {
@@ -76,8 +65,12 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    //指客户端接收到初始数据的消息
-    public void OnMsgStartRecieveGameData(MsgBase msgBase)
+    /// <summary>
+    /// 客户端接收到初始数据的消息
+    /// 只有房主才会发送这个协议
+    /// </summary>
+    /// <param name="msgBase"></param>
+    public void ClientOnMsgStartRecieveGameData(MsgBase msgBase)
     {
         MsgStartReceiveGameData msg = (MsgStartReceiveGameData)msgBase;
         Pai.Init();
@@ -101,15 +94,65 @@ public class GameManager : MonoBehaviour
 
         startGame = true;
         MsgFaPai msgFaPai = new MsgFaPai();
-        Server.OnMsgFaPai(msgFaPai);
+        ServerOnMsgFaPai(msgFaPai);
         Debug.Log(turnId - id);
         Debug.Log(gamePanel == null);
         gamePanel.TurnLight(numToDir[Math.Abs(turnId - id)]);
         
     }
 
+    //服务端收到开始接收游戏数据的协议
+    public void ServerOnMsgStartRecieveGameData(MsgBase msgBase)
+    {
+        paiManager.Init();
+        MsgStartReceiveGameData msg = (MsgStartReceiveGameData)msgBase;
+        //获取骰子的点数
+        System.Random rd = new System.Random();
+        int zhuangIdx = rd.Next() % 4;
+        turn = zhuangIdx;
+        //对协议名称进行初始化，这里表述不完全
+        msg.data = new StartGameData[4];
+        for (int i = 0; i < msg.data.Length; i++)
+        {
+            msg.data[i] = new StartGameData();
+        }//初始化协议的牌数组
+        for (int i = 0; i < 4; i++)
+        {
+            int num = 13;
+            if (i == zhuangIdx)
+            {
+                num = 14;
+            }
+            int[] res = paiManager.FaPai(num, i);
+            msg.data[i].paiIndex = res;
+        }
+        msg.id = 0;
+        ClientOnMsgStartRecieveGameData(msg);
+        Debug.Log("庄家：" + zhuangIdx);
+        //for(int i = 0; i < 3; i++)
+        //{
+        //    msg.id = (zhuangIdx + i) % 4;
+        //    gameManager.OnMsgStartRecieveGameData(msg);
+        //}
+
+
+        //
+        //发初始手牌，发送协议
+        //广播所有玩家，庄家出牌
+    }
+
+    //收到发牌的协议
+    public void ServerOnMsgFaPai(MsgBase msgBase)
+    {
+        MsgFaPai msg = (MsgFaPai)msgBase;
+        msg.id = turn;
+        int[] paiIdx = paiManager.FaPai(1, turn);
+        msg.paiIndex = paiIdx[0];
+        ClientOnMsgFaPai(msg);
+    }
+
     //处理MsgFaPai协议
-    public void OnMsgFaPai(MsgBase msgBase)
+    public void ClientOnMsgFaPai(MsgBase msgBase)
     {
         MsgFaPai msg = (MsgFaPai)msgBase;
         Vector3 pos = new Vector3(0,0,0);
@@ -148,10 +191,15 @@ public class GameManager : MonoBehaviour
         pai.paiId = paiId;
     }
 
-    // Update is called once per frame
-    void Update()
+    //在收到玩家出的牌的协议
+    public static void OnMsgShoudaoPai()
     {
-
+        //更新牌库
+        //调用PaiManager_Server判断吃碰杠胡
     }
+
+    //出牌的协议
+    //告知吃碰杠胡的协议，一个list,枚举类,id
+    //结束游戏的协议
 
 }

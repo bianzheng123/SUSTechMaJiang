@@ -2,22 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class PaiManager_Server {
-
-    private static PaiManager_Server _instance = null;  
-
-    private PaiManager_Server() { }
-
-
-    public static PaiManager_Server GetInstance() 
-    {
-        if (_instance == null)
-        {
-            _instance = new PaiManager_Server();
-        }
-        return _instance;
-    }//单例
-
+/// <summary>
+/// 这个在服务端中
+/// </summary>
+public class PaiManager {
 
     //剩下的牌
     List<int> restPai;

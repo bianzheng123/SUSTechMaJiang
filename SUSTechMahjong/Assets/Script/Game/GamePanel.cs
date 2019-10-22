@@ -9,7 +9,7 @@ public class GamePanel : BasePanel {
     //设置UI按钮
     private Button setButton;
     //灯的亮灭
-    private GameObject[] light;
+    private GameObject[] lights;
 
     //初始化
     public override void OnInit()
@@ -24,11 +24,11 @@ public class GamePanel : BasePanel {
         //寻找组件
         exitButton = skin.transform.Find("ExitButton").GetComponent<Button>();
         setButton = skin.transform.Find("SetButton").GetComponent<Button>();
-        light = new GameObject[4];
-        light[0] = skin.transform.Find("TimeImage/Down").gameObject;
-        light[1] = skin.transform.Find("TimeImage/Right").gameObject;
-        light[2] = skin.transform.Find("TimeImage/Up").gameObject;
-        light[3] = skin.transform.Find("TimeImage/Left").gameObject;
+        lights = new GameObject[4];
+        lights[0] = skin.transform.Find("TimeImage/Down").gameObject;
+        lights[1] = skin.transform.Find("TimeImage/Right").gameObject;
+        lights[2] = skin.transform.Find("TimeImage/Up").gameObject;
+        lights[3] = skin.transform.Find("TimeImage/Left").gameObject;
         //监听
         exitButton.onClick.AddListener(OnExitClick);
         setButton.onClick.AddListener(OnSetClick);
@@ -51,9 +51,9 @@ public class GamePanel : BasePanel {
         go.transform.localScale = new Vector3(2,2,2);
 
         //组件的初始化
-        for (int i = 0; i < light.Length; i++)
+        for (int i = 0; i < lights.Length; i++)
         {
-            light[i].SetActive(false);
+            lights[i].SetActive(false);
         }
     }
 
@@ -65,11 +65,11 @@ public class GamePanel : BasePanel {
     //改变灯光的顺序
     public void TurnLight(Direction dir)
     {
-        for (int i = 0; i < light.Length; i++)
+        for (int i = 0; i < lights.Length; i++)
         {
-            light[i].SetActive(false);
+            lights[i].SetActive(false);
         }
-        light[(int)dir].SetActive(true);
+        lights[(int)dir].SetActive(true);
     }
 
     //关闭
