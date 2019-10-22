@@ -25,10 +25,10 @@ public class GamePanel : BasePanel {
         exitButton = skin.transform.Find("ExitButton").GetComponent<Button>();
         setButton = skin.transform.Find("SetButton").GetComponent<Button>();
         light = new GameObject[4];
-        light[0] = skin.transform.Find("TimeImage/Up").gameObject;
-        light[1] = skin.transform.Find("TimeImage/Down").gameObject;
-        light[2] = skin.transform.Find("TimeImage/Left").gameObject;
-        light[3] = skin.transform.Find("TimeImage/Right").gameObject;
+        light[0] = skin.transform.Find("TimeImage/Down").gameObject;
+        light[1] = skin.transform.Find("TimeImage/Right").gameObject;
+        light[2] = skin.transform.Find("TimeImage/Up").gameObject;
+        light[3] = skin.transform.Find("TimeImage/Left").gameObject;
         //监听
         exitButton.onClick.AddListener(OnExitClick);
         setButton.onClick.AddListener(OnSetClick);
@@ -38,15 +38,20 @@ public class GamePanel : BasePanel {
         //MsgGetRoomInfo msg = new MsgGetRoomInfo();
         //NetManager.Send(msg);
 
-        GameObject server = ResManager.LoadPrefab("Server");
         GameObject gameManager = ResManager.LoadPrefab("GameManager");
-        GameObject init_server = Instantiate(server);
+        gameManager.GetComponent<GameManager>().GamePanel = this;
         GameObject init_gameManager = Instantiate(gameManager);
-        init_server.GetComponent<Server>().gameManager = init_gameManager.GetComponent<GameManager>(); ;
-        init_gameManager.GetComponent<GameManager>().server = init_server.GetComponent<Server>();
+        
+
+        Sprite s = ResManager.LoadSprite("bg_game");
+        GameObject go = new GameObject("bg");
+        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+        sr.sortingOrder = 0;
+        sr.sprite = s;
+        go.transform.localScale = new Vector3(2,2,2);
 
         //组件的初始化
-        for(int i = 0; i < light.Length; i++)
+        for (int i = 0; i < light.Length; i++)
         {
             light[i].SetActive(false);
         }
@@ -57,16 +62,14 @@ public class GamePanel : BasePanel {
 
     }
 
-    //收到出牌顺序的提醒
-    public void OnTurn()
+    //改变灯光的顺序
+    public void TurnLight(Direction dir)
     {
-
-    }
-
-    private void Update()
-    {
-
-        //出牌
+        for (int i = 0; i < light.Length; i++)
+        {
+            light[i].SetActive(false);
+        }
+        light[(int)dir].SetActive(true);
     }
 
     //关闭
@@ -92,10 +95,11 @@ public class GamePanel : BasePanel {
 }
 public enum Direction
 {
-    UP = 0,
-    DOWN = 1,
-    LEFT = 2,
-    RIGHT = 3
+    DOWN = 0,
+    RIGHT = 1,
+    UP = 2,
+    LEFT = 3,
+    
 }
 
 
