@@ -1,25 +1,20 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
-public class Server : MonoBehaviour {
-    public GameManager gameManager;
-    private PaiManager_Server paiManager;
-
-
-    private void Start()
-    {
-        paiManager = PaiManager_Server.GetInstance();
-        paiManager.Init();
-    }
-
-    
+public static class Server{
+    public static PaiManager_Server paiManager = PaiManager_Server.GetInstance();
+    public static GameManager gameManager = GameManager.GetInstance();
+    public static int turn;
 
     //服务端收到开始接收游戏数据的协议
-    public void OnMsgStartRecieveGameData(MsgStartReceiveGameData msg)
+    public static void OnMsgStartRecieveGameData(MsgBase msgBase)
     {
+        MsgStartReceiveGameData msg = (MsgStartReceiveGameData)msgBase;
         //获取骰子的点数
-        int zhuangIdx = Random.Range(0, 4);
+        Random rd = new Random();
+        int zhuangIdx = rd.Next() % 4;
+        turn = zhuangIdx;
         //对协议名称进行初始化，这里表述不完全
         msg.data = new StartGameData[4];
         for(int i = 0; i < msg.data.Length; i++)
@@ -33,12 +28,12 @@ public class Server : MonoBehaviour {
             {
                 num = 14;
             }
-            int[] res = paiManager.FaPai(num);
+            int[] res = paiManager.FaPai(num,i);
             msg.data[i].paiIndex = res;
         }
         msg.id = 0;
         gameManager.OnMsgStartRecieveGameData(msg);
-        Debug.Log("庄家：" + zhuangIdx); 
+        System.Console.WriteLine("庄家：" + zhuangIdx);
         //for(int i = 0; i < 3; i++)
         //{
         //    msg.id = (zhuangIdx + i) % 4;
@@ -51,8 +46,18 @@ public class Server : MonoBehaviour {
         //广播所有玩家，庄家出牌
     }
 
+    //收到发牌的协议
+    public static void OnMsgFaPai(MsgBase msgBase)
+    {
+        MsgFaPai msg = (MsgFaPai)msgBase;
+        msg.id = turn;
+        int[] paiIdx = paiManager.FaPai(1,turn);
+        msg.paiIndex = paiIdx[0];
+        gameManager.OnMsgFaPai(msg);
+    }
+
     //在收到玩家出的牌的协议
-    public void OnMsgShoudaoPai()
+    public static void OnMsgShoudaoPai()
     {
         //更新牌库
         //调用PaiManager_Server判断吃碰杠胡

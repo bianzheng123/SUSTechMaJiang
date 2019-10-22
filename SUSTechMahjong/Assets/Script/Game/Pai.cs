@@ -2,23 +2,34 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEngine;
 
-public class Pai
+public class Pai : MonoBehaviour
 {
-    public string path = "";
+    //存放牌的路径
+    public int paiId;
+    //牌索引及其对应字典
     public static Dictionary<int, string> name2path;
+    //判断是否被选中
+    public bool isSelected;
+    
+    public Pai(int paiId)
+    {
+        this.paiId = paiId;
+    }
+
     public static void Init()
     {
         name2path = new Dictionary<int, string>();
-        name2path.Add(1,"Mahjong/Middle/handmah_11");
-        name2path.Add(2,"Mahjong/Middle/handmah_12");
-        name2path.Add(3,"Mahjong/Middle/handmah_13");
-        name2path.Add(4,"Mahjong/Middle/handmah_14");
-        name2path.Add(5,"Mahjong/Middle/handmah_15");
-        name2path.Add(6,"Mahjong/Middle/handmah_16");
-        name2path.Add(7,"Mahjong/Middle/handmah_17");
-        name2path.Add(8,"Mahjong/Middle/handmah_18");
-        name2path.Add(9,"Mahjong/Middle/handmah_19");
+        name2path.Add(1, "Mahjong/Middle/handmah_11");
+        name2path.Add(2, "Mahjong/Middle/handmah_12");
+        name2path.Add(3, "Mahjong/Middle/handmah_13");
+        name2path.Add(4, "Mahjong/Middle/handmah_14");
+        name2path.Add(5, "Mahjong/Middle/handmah_15");
+        name2path.Add(6, "Mahjong/Middle/handmah_16");
+        name2path.Add(7, "Mahjong/Middle/handmah_17");
+        name2path.Add(8, "Mahjong/Middle/handmah_18");
+        name2path.Add(9, "Mahjong/Middle/handmah_19");
 
         name2path.Add(11, "Mahjong/Middle/handmah_21");
         name2path.Add(12, "Mahjong/Middle/handmah_22");
@@ -48,9 +59,5 @@ public class Pai
         name2path.Add(41, "Mahjong/Middle/handmah_46");
         name2path.Add(42, "Mahjong/Middle/handmah_45");
         name2path.Add(43, "Mahjong/Middle/handmah_47");
-    }
-    public Pai(string path = "")
-    {
-        this.path = path;
     }
 }

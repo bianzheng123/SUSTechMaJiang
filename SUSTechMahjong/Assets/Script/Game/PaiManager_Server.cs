@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class PaiManager_Server {
 
@@ -22,10 +21,16 @@ public class PaiManager_Server {
 
     //剩下的牌
     List<int> restPai;
+    List<int>[] playerPai;
 
     public void Init()
     {
         restPai = new List<int>();
+        playerPai = new List<int>[4];
+        for(int i = 0; i < 4; i++)
+        {
+            playerPai[i] = new List<int>();
+        }
         initPaiKu();
     }
 
@@ -52,14 +57,15 @@ public class PaiManager_Server {
         }
     }
 
-    public int[] FaPai(int num)
+    public int[] FaPai(int num,int id)
     {
         int[] res = new int[num];
         for(int i = 0; i < num; i++)
         {
-            
-            int ranIdx = UnityEngine.Random.Range(0,restPai.Count);
+            Random rd = new Random();
+            int ranIdx = rd.Next() % restPai.Count;
             res[i] = restPai[ranIdx];
+            playerPai[id].Add(res[i]);
             restPai.RemoveAt(ranIdx);
         }
         return res;
