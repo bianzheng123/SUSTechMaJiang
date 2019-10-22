@@ -85,11 +85,17 @@ public static class NetManager {
 	public static void RemoveMsgListener(string msgName, MsgListener listener){
 		if (msgListeners.ContainsKey(msgName)){
 			msgListeners[msgName] -= listener;
-		}
+            if (msgListeners[msgName] == null)
+            {
+                msgListeners.Remove(msgName);
+            }
+
+        }
+        
 	}
 	//分发消息
 	private static void FireMsg(string msgName, MsgBase msgBase){
-		if(msgListeners.ContainsKey(msgName)){
+		if(msgListeners.ContainsKey(msgName) && msgListeners[msgName] != null){
 			msgListeners[msgName](msgBase);
 		}
 	}
