@@ -18,4 +18,12 @@ public class ResManager : MonoBehaviour {
         return go;
         
     }
+
+
+    public static Sprite LoadUISprite(string path)
+    {
+        Sprite s = Resources.Load<Sprite>(path);
+        string[] name = path.Split('/');
+        return s;
+    }
 }

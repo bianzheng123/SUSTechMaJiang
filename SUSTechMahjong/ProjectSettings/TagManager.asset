@@ -3,7 +3,11 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Pai0
+  - Pai1
+  - Pai2
+  - Pai3
   layers:
   - Default
   - TransparentFX

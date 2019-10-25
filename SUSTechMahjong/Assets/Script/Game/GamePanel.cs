@@ -12,6 +12,8 @@ public class GamePanel : BasePanel {
     private GameObject[] lights;
     //设置计时时间
     private Text timeCount;
+    //显示时间的图片
+    private Image time;
 
     //初始化
     public override void OnInit()
@@ -32,6 +34,7 @@ public class GamePanel : BasePanel {
         lights[2] = skin.transform.Find("TimeImage/Up").gameObject;
         lights[3] = skin.transform.Find("TimeImage/Left").gameObject;
         timeCount = skin.transform.Find("TimeCount").GetComponent<Text>();
+        time = skin.transform.Find("Image").GetComponent<Image>();
         //监听
         exitButton.onClick.AddListener(OnExitClick);
         setButton.onClick.AddListener(OnSetClick);
@@ -73,6 +76,7 @@ public class GamePanel : BasePanel {
     public void SetTimeCount(float lastTime)
     {
         timeCount.text = "剩余时间: " + string.Format("{0:G}", lastTime) + " 秒";
+        time.sprite = ResManager.LoadUISprite("GameLayer/timer_1");
     }
 
     //关闭
