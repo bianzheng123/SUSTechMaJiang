@@ -6,16 +6,18 @@ public class GameManager : MonoBehaviour
 {
     public static int turn;
     public static PaiManager paiManager = new PaiManager();
+    
 
     private GamePanel gamePanel;
     public int id;//该客户端的id
     public BasePlayer[] players;
     private Dictionary<int, Direction> numToDir;
+    public const float timeCount = 10;//代表出牌计时的时间
     
-    public const float timeInterval = 6;//代表出牌的最大时间间隔
-    public float frame_timeInterval = 6;
     public bool startGame = false;
     public int turnId = 0;//代表现在到谁了
+    public float timeLast = timeCount;
+    public bool startTimeCount = false;
 
     public GamePanel GamePanel
     {
@@ -50,7 +52,7 @@ public class GameManager : MonoBehaviour
             if (i == id)
             {
                 bp = go.AddComponent<CtrlPlayer>();
-                bp.Init();
+                bp.Init(this);
                 players[i] = bp;
                 players[i].id = i;
                 Debug.Log("id: " + id);
@@ -58,47 +60,11 @@ public class GameManager : MonoBehaviour
             else
             {
                 bp = go.AddComponent<SyncPlayer>();
-                bp.Init();
+                bp.Init(this);
                 players[i] = bp;
                 players[i].id = i;
             }
         }
-    }
-
-    /// <summary>
-    /// 客户端接收到初始数据的消息
-    /// 只有房主才会发送这个协议
-    /// </summary>
-    /// <param name="msgBase"></param>
-    public void ClientOnMsgStartRecieveGameData(MsgBase msgBase)
-    {
-        MsgStartReceiveGameData msg = (MsgStartReceiveGameData)msgBase;
-        Pai.Init();
-        players = new BasePlayer[4];
-        id = msg.id;
-        InitPlayer(msg.id);
-
-        //生成牌
-        for(int i = 0; i < 4; i++)
-        {
-            for(int j = 0; j < msg.data[i].paiIndex.Length; j++)
-            {
-                CreatePai(msg.data[i].paiIndex[j],i,new Vector3(j-6,-1-i,0));
-            }
-
-            if(msg.data[i].paiIndex.Length == 14)
-            {
-                turnId = i;
-            }
-        }
-
-        startGame = true;
-        MsgFaPai msgFaPai = new MsgFaPai();
-        ServerOnMsgFaPai(msgFaPai);
-        Debug.Log(turnId - id);
-        Debug.Log(gamePanel == null);
-        gamePanel.TurnLight(numToDir[Math.Abs(turnId - id)]);
-        
     }
 
     //服务端收到开始接收游戏数据的协议
@@ -108,7 +74,8 @@ public class GameManager : MonoBehaviour
         MsgStartReceiveGameData msg = (MsgStartReceiveGameData)msgBase;
         //获取骰子的点数
         System.Random rd = new System.Random();
-        int zhuangIdx = rd.Next() % 4;
+        //int zhuangIdx = rd.Next() % 4;
+        int zhuangIdx = 0;
         turn = zhuangIdx;
         //对协议名称进行初始化，这里表述不完全
         msg.data = new StartGameData[4];
@@ -132,26 +99,59 @@ public class GameManager : MonoBehaviour
         //for(int i = 0; i < 3; i++)
         //{
         //    msg.id = (zhuangIdx + i) % 4;
-        //    gameManager.OnMsgStartRecieveGameData(msg);
+        //    ClientOnMsgStartRecieveGameData(msg);
         //}
 
-
-        //
         //发初始手牌，发送协议
         //广播所有玩家，庄家出牌
     }
 
-    //收到发牌的协议
+    /// <summary>
+    /// 客户端接收到初始数据的消息
+    /// 只有房主才会发送这个协议
+    /// </summary>
+    /// <param name="msgBase"></param>
+    public void ClientOnMsgStartRecieveGameData(MsgBase msgBase)
+    {
+        MsgStartReceiveGameData msg = (MsgStartReceiveGameData)msgBase;
+        Pai.Init();
+        players = new BasePlayer[4];
+        id = msg.id;
+        InitPlayer(msg.id);
+
+        //生成牌
+        for (int i = 0; i < 4; i++)
+        {
+            for (int j = 0; j < msg.data[i].paiIndex.Length; j++)
+            {
+                CreatePai(msg.data[i].paiIndex[j], i, new Vector3(j - 6, -1 - i, 0));
+            }
+
+            if (msg.data[i].paiIndex.Length == 14)
+            {
+                turnId = i;
+            }
+        }
+
+        startGame = true;
+        MsgFaPai msgFaPai = new MsgFaPai();
+        ServerOnMsgFaPai(msgFaPai);
+    }
+
+    //服务端收到发牌的协议
     public void ServerOnMsgFaPai(MsgBase msgBase)
     {
         MsgFaPai msg = (MsgFaPai)msgBase;
         msg.id = turn;
         int[] paiIdx = paiManager.FaPai(1, turn);
-        msg.paiIndex = paiIdx[0];
+        msg.paiId = paiIdx[0];
         ClientOnMsgFaPai(msg);
     }
 
-    //处理MsgFaPai协议
+    /// <summary>
+    /// 客户端处理MsgFaPai协议
+    /// </summary>
+    /// <param name="msgBase"></param>
     public void ClientOnMsgFaPai(MsgBase msgBase)
     {
         MsgFaPai msg = (MsgFaPai)msgBase;
@@ -171,22 +171,99 @@ public class GameManager : MonoBehaviour
                 pos = new Vector3(8, -4, 0);
                 break;
         }
-        CreatePai(msg.paiIndex,msg.id,pos);
+        gamePanel.TurnLight(numToDir[Math.Abs(turnId - id)]);
+        CreatePai(msg.paiId,msg.id,pos);
+        //开始计时，玩家出牌
+        StartTimeCount();
+        //如果不是自己控制的玩家，就收到协议显示
+        //如果是自己的玩家，就打出牌，同时发送协议
     }
 
-    //实例化牌，并分配给对应的玩家
+    /// <summary>
+    /// 服务端收到出牌的协议，并广播给所有玩家
+    /// </summary>
+    /// <param name="msgBase"></param>
+    public void ServerOnMsgChuPai(MsgBase msgBase)
+    {
+        MsgChuPai msg = (MsgChuPai)msgBase;
+        int paiIndex = msg.paiIndex;//牌在这个玩家的索引
+        int id = msg.id;//出牌的玩家id
+        paiManager.ChuPai(paiIndex, id);
+
+        string arrString = "";
+        for(int i = 0; i < paiManager.playerPai[id].Count; i++)
+        {
+            arrString += paiManager.playerPai[id][i] + " ";
+        }
+        Debug.Log(arrString);
+
+        ClientOnMsgChuPai(msg);
+        //for(int i = 0; i < 3; i++)
+        //{
+        //    msg.id = (zhuangIdx + i) % 4;
+        //    ClientOnMsgStartRecieveGameData(msg);
+        //}
+    }
+
+    /// <summary>
+    /// 客户端收到出牌的协议，进行对应的变化
+    /// </summary>
+    /// <param name="msgBase"></param>
+    public void ClientOnMsgChuPai(MsgBase msgBase)
+    {
+        MsgChuPai msg = (MsgChuPai)msgBase;
+        Debug.Log("PlayerId: " + msg.id);
+        players[msg.id].DiscardPai(msg.paiIndex);
+    }
+
+    public void StartTimeCount()
+    {
+        startTimeCount = true;
+        timeLast = timeCount;
+    }
+
+    public void TimeCount()
+    {
+        timeLast -= Time.deltaTime;
+        gamePanel.SetTimeCount(timeLast);
+        if(timeLast <= 0)
+        {
+            timeLast = 0;
+            startTimeCount = false;
+            if(turnId == id)//代表是自己的
+            {
+                CtrlPlayer self = (CtrlPlayer)players[id];
+                self.DaPaiCompolsory();
+            }
+            Debug.Log("时间到了");
+        }
+    }
+
+    private void Update()
+    {
+        if (startTimeCount)
+        {
+            TimeCount();
+            players[turnId].DaPai();
+        }
+        
+    }
+
+    /// <summary>
+    /// 客户端中实例化牌，并分配给对应的玩家
+    /// </summary>
+    /// <param name="paiId"></param>
+    /// <param name="playerId"></param>
+    /// <param name="pos"></param>
     public void CreatePai(int paiId, int playerId, Vector3 pos)
     {
         string path = Pai.name2path[paiId];
-        Sprite s = ResManager.LoadSprite(path);
-        string[] name = path.Split('/');
-        GameObject go = new GameObject(name[name.Length - 1]);
-        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
-        sr.sortingOrder = 1;
-        sr.sprite = s;
-        players[playerId].pai.Add(go);
+        GameObject go = ResManager.LoadSprite(path,1);
+        players[playerId].handPai.Add(go);
         go.transform.SetParent(players[playerId].transform);
+        go.AddComponent<BoxCollider>();
         go.transform.position = pos;
+        go.tag = "Pai" + playerId;
         Pai pai = go.AddComponent<Pai>();
         pai.paiId = paiId;
     }

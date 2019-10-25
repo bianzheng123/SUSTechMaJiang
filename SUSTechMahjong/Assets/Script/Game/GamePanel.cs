@@ -10,6 +10,8 @@ public class GamePanel : BasePanel {
     private Button setButton;
     //灯的亮灭
     private GameObject[] lights;
+    //设置计时时间
+    private Text timeCount;
 
     //初始化
     public override void OnInit()
@@ -29,6 +31,7 @@ public class GamePanel : BasePanel {
         lights[1] = skin.transform.Find("TimeImage/Right").gameObject;
         lights[2] = skin.transform.Find("TimeImage/Up").gameObject;
         lights[3] = skin.transform.Find("TimeImage/Left").gameObject;
+        timeCount = skin.transform.Find("TimeCount").GetComponent<Text>();
         //监听
         exitButton.onClick.AddListener(OnExitClick);
         setButton.onClick.AddListener(OnSetClick);
@@ -41,14 +44,9 @@ public class GamePanel : BasePanel {
         GameObject gameManager = ResManager.LoadPrefab("GameManager");
         gameManager.GetComponent<GameManager>().GamePanel = this;
         GameObject init_gameManager = Instantiate(gameManager);
-        
 
-        Sprite s = ResManager.LoadSprite("bg_game");
-        GameObject go = new GameObject("bg");
-        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
-        sr.sortingOrder = 0;
-        sr.sprite = s;
-        go.transform.localScale = new Vector3(2,2,2);
+        GameObject bg = ResManager.LoadSprite("bg_game",0);
+        bg.transform.localScale = new Vector3(2,2,2);
 
         //组件的初始化
         for (int i = 0; i < lights.Length; i++)
@@ -70,6 +68,11 @@ public class GamePanel : BasePanel {
             lights[i].SetActive(false);
         }
         lights[(int)dir].SetActive(true);
+    }
+
+    public void SetTimeCount(float lastTime)
+    {
+        timeCount.text = "剩余时间: " + string.Format("{0:G}", lastTime) + " 秒";
     }
 
     //关闭

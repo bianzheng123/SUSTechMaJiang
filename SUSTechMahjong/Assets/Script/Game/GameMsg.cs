@@ -23,7 +23,15 @@ public class MsgFaPai : MsgBase
 {
     public MsgFaPai() { protoName = "MsgFaPai"; }
     //服务端回
-    public int paiIndex;//牌的类型
+    public int paiId;//牌的类型
     public int id;//收到牌的玩家id
+}
+
+public class MsgChuPai : MsgBase
+{
+    public MsgChuPai() { protoName = "MsgChuPai"; }
+    //客户端发,服务端广播
+    public int paiIndex;//牌在这个玩家的索引
+    public int id;//出牌的玩家id
 }
 
