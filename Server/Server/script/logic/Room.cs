@@ -43,8 +43,8 @@ public class Room {
 		}
 		//加入列表
 		playerIds[id] = true;
-		//设置玩家数据
-		player.camp = SwitchCamp();
+        //设置玩家数据
+         
 		player.roomId = this.id;
 		//设置房主
 		if(ownerId == ""){
@@ -56,7 +56,7 @@ public class Room {
 	}
 
 	//分配阵营
-	public int SwitchCamp() {
+	/*public int SwitchCamp() {
 		//计数
 		int count1 = 0;
 		int count2 = 0;
@@ -72,7 +72,7 @@ public class Room {
 		else{
 			return 2;
 		}
-	}
+	}*/
 
 	//是不是房主
 	public bool isOwner(Player player){
@@ -141,7 +141,7 @@ public class Room {
 			PlayerInfo playerInfo = new PlayerInfo();
 			//赋值
 			playerInfo.id = player.id;
-			playerInfo.camp = player.camp;
+			playerInfo.camp = player.data.camp;
 			playerInfo.win = player.data.win;
 			playerInfo.lost = player.data.lost;
 			playerInfo.isOwner = 0;

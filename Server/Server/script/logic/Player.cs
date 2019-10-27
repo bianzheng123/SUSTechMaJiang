@@ -15,16 +15,11 @@ public class Player {
 	public int z;
 	//在哪个房间
 	public int roomId = -1;
-	//阵营
-	public int camp = 1;
-	//坦克生命值
-	public int hp = 100;
-
-	//数据库数据
+    //数据库数据
 	public PlayerData data;
-
-	//发送信息
-	public void Send(MsgBase msgBase){
+    public int camp = 0;
+    //发送信息
+    public void Send(MsgBase msgBase){
 		NetManager.Send(state, msgBase);
 	}
 

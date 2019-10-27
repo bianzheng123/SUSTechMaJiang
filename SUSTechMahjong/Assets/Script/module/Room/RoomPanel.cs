@@ -80,13 +80,29 @@ public class RoomPanel : BasePanel {
 		//填充信息
 		idText.text = playerInfo.id;
 		if(playerInfo.camp == 1){
-			campText.text = "红";
+			campText.text = "计算机";
 		}
-		else{
-			campText.text = "蓝";
+        else
+        if (playerInfo.camp == 2)
+        {
+            campText.text = "生物系";
+        }
+        else
+        if (playerInfo.camp == 3)
+        {
+            campText.text = "化学系";
+        }
+        else
+        if (playerInfo.camp == 4)
+        {
+            campText.text = "机械系";
+        }
+        else
+        {
+			campText.text = "数学系";
 		}
 		if(playerInfo.isOwner == 1){
-			campText.text = campText.text + " ！";
+			campText.text = campText.text+"*";
 		}
 		scoreText.text = playerInfo.win + "胜 " + playerInfo.lost + "负";
 	}

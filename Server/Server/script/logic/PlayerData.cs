@@ -7,4 +7,6 @@
 	public int win = 0;
 	//失败数
 	public int lost = 0;
+    //院系
+    public int camp = 0;
 }
