@@ -2,26 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class PaiManager_Server {
-
-    private static PaiManager_Server _instance = null;  
-
-    private PaiManager_Server() { }
-
-
-    public static PaiManager_Server GetInstance() 
-    {
-        if (_instance == null)
-        {
-            _instance = new PaiManager_Server();
-        }
-        return _instance;
-    }//单例
-
+/// <summary>
+/// 这个在服务端中
+/// </summary>
+public class PaiManager {
 
     //剩下的牌
-    List<int> restPai;
-    List<int>[] playerPai;
+    public List<int> restPai;
+    public List<int>[] playerPai;
 
     public void Init()
     {
@@ -71,6 +59,12 @@ public class PaiManager_Server {
         return res;
     }
 
+    public void ChuPai(int paiIndex,int id)
+    {
+        playerPai[id].RemoveAt(paiIndex);
+
+
+    }
     
     //四个玩家四个list,存在List中
     //List<>

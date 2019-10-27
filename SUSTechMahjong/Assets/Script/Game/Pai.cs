@@ -10,8 +10,6 @@ public class Pai : MonoBehaviour
     public int paiId;
     //牌索引及其对应字典
     public static Dictionary<int, string> name2path;
-    //判断是否被选中
-    public bool isSelected;
     
     public Pai(int paiId)
     {

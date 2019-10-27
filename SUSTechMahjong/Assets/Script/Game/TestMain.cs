@@ -8,7 +8,6 @@ public class TestMain : MonoBehaviour {
 	void Start () {
         PanelManager.Init();
         PanelManager.Open<GamePanel>();
-        PaiManager_Server.GetInstance().Init();
 	}
 
 	

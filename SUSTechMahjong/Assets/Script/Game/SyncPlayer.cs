@@ -4,13 +4,9 @@ using UnityEngine;
 
 public class SyncPlayer : BasePlayer {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    public override void DaPai()
+    {
+        Debug.Log("人机打牌");
+        ChuPai(0);
+    }
 }

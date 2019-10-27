@@ -9,7 +9,11 @@ public class GamePanel : BasePanel {
     //设置UI按钮
     private Button setButton;
     //灯的亮灭
-    private GameObject[] light;
+    private GameObject[] lights;
+    //设置计时时间
+    private Text timeCount;
+    //显示时间的图片
+    private Image time;
 
     //初始化
     public override void OnInit()
@@ -24,11 +28,13 @@ public class GamePanel : BasePanel {
         //寻找组件
         exitButton = skin.transform.Find("ExitButton").GetComponent<Button>();
         setButton = skin.transform.Find("SetButton").GetComponent<Button>();
-        light = new GameObject[4];
-        light[0] = skin.transform.Find("TimeImage/Down").gameObject;
-        light[1] = skin.transform.Find("TimeImage/Right").gameObject;
-        light[2] = skin.transform.Find("TimeImage/Up").gameObject;
-        light[3] = skin.transform.Find("TimeImage/Left").gameObject;
+        lights = new GameObject[4];
+        lights[0] = skin.transform.Find("TimeImage/Down").gameObject;
+        lights[1] = skin.transform.Find("TimeImage/Right").gameObject;
+        lights[2] = skin.transform.Find("TimeImage/Up").gameObject;
+        lights[3] = skin.transform.Find("TimeImage/Left").gameObject;
+        timeCount = skin.transform.Find("TimeCount").GetComponent<Text>();
+        time = skin.transform.Find("Image").GetComponent<Image>();
         //监听
         exitButton.onClick.AddListener(OnExitClick);
         setButton.onClick.AddListener(OnSetClick);
@@ -41,19 +47,14 @@ public class GamePanel : BasePanel {
         GameObject gameManager = ResManager.LoadPrefab("GameManager");
         gameManager.GetComponent<GameManager>().GamePanel = this;
         GameObject init_gameManager = Instantiate(gameManager);
-        
 
-        Sprite s = ResManager.LoadSprite("bg_game");
-        GameObject go = new GameObject("bg");
-        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
-        sr.sortingOrder = 0;
-        sr.sprite = s;
-        go.transform.localScale = new Vector3(2,2,2);
+        GameObject bg = ResManager.LoadSprite("bg_game",0);
+        bg.transform.localScale = new Vector3(2,2,2);
 
         //组件的初始化
-        for (int i = 0; i < light.Length; i++)
+        for (int i = 0; i < lights.Length; i++)
         {
-            light[i].SetActive(false);
+            lights[i].SetActive(false);
         }
     }
 
@@ -65,11 +66,17 @@ public class GamePanel : BasePanel {
     //改变灯光的顺序
     public void TurnLight(Direction dir)
     {
-        for (int i = 0; i < light.Length; i++)
+        for (int i = 0; i < lights.Length; i++)
         {
-            light[i].SetActive(false);
+            lights[i].SetActive(false);
         }
-        light[(int)dir].SetActive(true);
+        lights[(int)dir].SetActive(true);
+    }
+
+    public void SetTimeCount(float lastTime)
+    {
+        timeCount.text = "剩余时间: " + string.Format("{0:G}", lastTime) + " 秒";
+        time.sprite = ResManager.LoadUISprite("GameLayer/timer_1");
     }
 
     //关闭
