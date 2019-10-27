@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //得到初始化游戏的信息，即骰子结果，该客户端的id
-public class MsgStartReceiveGameData : MsgBase
+public class MsgInitData : MsgBase
 {
-    public MsgStartReceiveGameData() { protoName = "MsgStartReceiveGameData"; }
+    public MsgInitData() { protoName = "MsgInitData"; }
     //服务端回
     public int id = 0;//该客户端的id
     public StartGameData[] data = null;

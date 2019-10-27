@@ -12,7 +12,7 @@ public class GameManager : MonoBehaviour
     public int id;//该客户端的id
     public BasePlayer[] players;
     private Dictionary<int, Direction> numToDir;
-    public const float timeCount = 10;//代表出牌计时的时间
+    public const float timeCount = 3;//代表出牌计时的时间
     public bool isSelfChuPai = false;
     public int nowTurnid = 0;
     public bool startGame = false;
@@ -28,10 +28,10 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         //发送开始接收游戏数据的协议
-        MsgStartReceiveGameData msg = new MsgStartReceiveGameData();
+        MsgInitData msg = new MsgInitData();
         InitNumToDir();
         gamePanel = GameObject.Find("Root").GetComponent<GamePanel>();
-        ServerOnMsgStartRecieveGameData(msg);//向服务器发送协议
+        ServerOnInitData(msg);//向服务器发送协议
     }
 
     private void InitNumToDir() {
@@ -68,10 +68,10 @@ public class GameManager : MonoBehaviour
     }
 
     //服务端收到开始接收游戏数据的协议
-    public void ServerOnMsgStartRecieveGameData(MsgBase msgBase)
+    public void ServerOnInitData(MsgBase msgBase)
     {
         paiManager.Init();
-        MsgStartReceiveGameData msg = (MsgStartReceiveGameData)msgBase;
+        MsgInitData msg = (MsgInitData)msgBase;
         //获取骰子的点数
         System.Random rd = new System.Random();
         //int zhuangIdx = rd.Next() % 4;
@@ -94,7 +94,7 @@ public class GameManager : MonoBehaviour
             msg.data[i].paiIndex = res;
         }
         msg.id = 0;
-        ClientOnMsgStartRecieveGameData(msg);
+        ClientOnInitData(msg);
         Debug.Log("庄家：" + zhuangIdx);
         //for(int i = 0; i < 3; i++)
         //{
@@ -111,9 +111,9 @@ public class GameManager : MonoBehaviour
     /// 只有房主才会发送这个协议
     /// </summary>
     /// <param name="msgBase"></param>
-    public void ClientOnMsgStartRecieveGameData(MsgBase msgBase)
+    public void ClientOnInitData(MsgBase msgBase)
     {
-        MsgStartReceiveGameData msg = (MsgStartReceiveGameData)msgBase;
+        MsgInitData msg = (MsgInitData)msgBase;
         Pai.Init();
         players = new BasePlayer[4];
         id = msg.id;

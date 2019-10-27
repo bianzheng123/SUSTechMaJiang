@@ -30,6 +30,18 @@ public class BasePlayer : MonoBehaviour {
         this.gameManager = gameManager;
     }
 
+    public void PlacePai()
+    {
+        for(int i = 0; i < handPai.Count; i++)
+        {
+            handPai[i].transform.position = new Vector3(i - 6,-1-id,0);
+        }
+        for(int i = 0; i < discardPai.Count; i++)
+        {
+            discardPai[i].transform.position = new Vector3(i-6,4-id,0);
+        }
+    }
+
     //出牌
     public virtual void DaPai()
     {
@@ -63,6 +75,6 @@ public class BasePlayer : MonoBehaviour {
         GameObject go = handPai[paiIndex];
         handPai.RemoveAt(paiIndex);
         discardPai.Add(go);
-        go.transform.Translate(new Vector3(0, 5, 0));
+        PlacePai();
     }
 }
