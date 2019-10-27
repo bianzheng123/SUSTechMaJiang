@@ -55,6 +55,7 @@ public class CtrlPlayer : BasePlayer {
 
     public void DaPaiCompolsory()
     {
+        gameManager.isSelfChuPai = false;
         int index = 0;
         if(selectedIndex != -1)
         {//先将选中的牌降下来再打
@@ -62,6 +63,8 @@ public class CtrlPlayer : BasePlayer {
             index = selectedIndex;
         }
         ChuPai(index);
+        //对选择的牌进行初始化
+        selectedIndex = -1;
     }
 
     

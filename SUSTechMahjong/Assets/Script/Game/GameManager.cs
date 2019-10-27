@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public static int turn;
+    public static int turn;//存在服务器中的
     public static PaiManager paiManager = new PaiManager();
     
 
@@ -13,9 +13,9 @@ public class GameManager : MonoBehaviour
     public BasePlayer[] players;
     private Dictionary<int, Direction> numToDir;
     public const float timeCount = 10;//代表出牌计时的时间
-    
+    public bool isSelfChuPai = false;
+    public int nowTurnid = 0;
     public bool startGame = false;
-    public int turnId = 0;//代表现在到谁了
     public float timeLast = timeCount;
     public bool startTimeCount = false;
 
@@ -126,11 +126,6 @@ public class GameManager : MonoBehaviour
             {
                 CreatePai(msg.data[i].paiIndex[j], i, new Vector3(j - 6, -1 - i, 0));
             }
-
-            if (msg.data[i].paiIndex.Length == 14)
-            {
-                turnId = i;
-            }
         }
 
         startGame = true;
@@ -171,7 +166,12 @@ public class GameManager : MonoBehaviour
                 pos = new Vector3(8, -4, 0);
                 break;
         }
-        gamePanel.TurnLight(numToDir[Math.Abs(turnId - id)]);
+        gamePanel.TurnLight(numToDir[Math.Abs(msg.id - id)]);
+        if (msg.id == id)
+        {
+            isSelfChuPai = true;
+        }
+        nowTurnid = msg.id;
         CreatePai(msg.paiId,msg.id,pos);
         //开始计时，玩家出牌
         StartTimeCount();
@@ -197,7 +197,11 @@ public class GameManager : MonoBehaviour
         }
         Debug.Log(arrString);
 
+
         ClientOnMsgChuPai(msg);
+        MsgFaPai msgFaPai = new MsgFaPai();
+        turn = (turn + 1) % 4;
+        ServerOnMsgFaPai(msgFaPai);
         //for(int i = 0; i < 3; i++)
         //{
         //    msg.id = (zhuangIdx + i) % 4;
@@ -230,7 +234,7 @@ public class GameManager : MonoBehaviour
         {
             timeLast = 0;
             startTimeCount = false;
-            if(turnId == id)//代表是自己的
+            if(isSelfChuPai)//代表是自己出牌，到时间了
             {
                 CtrlPlayer self = (CtrlPlayer)players[id];
                 self.DaPaiCompolsory();
@@ -244,7 +248,7 @@ public class GameManager : MonoBehaviour
         if (startTimeCount)
         {
             TimeCount();
-            players[turnId].DaPai();
+            players[nowTurnid].DaPai();
         }
         
     }
