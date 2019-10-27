@@ -15,6 +15,23 @@ public class GamePanel : BasePanel {
     //显示时间的图片
     private Image time;
 
+    //储存GameManager的引用
+    private GameManager gameManager;
+
+    //表示出牌的按钮
+    public Button okButton;
+    //表示取消选中的按钮
+    public Button cancelButton;
+
+    public bool ChuPaiButton
+    {
+        set
+        {
+            okButton.enabled = value;
+            cancelButton.enabled = value;
+        }
+    }
+
     //初始化
     public override void OnInit()
     {
@@ -34,6 +51,8 @@ public class GamePanel : BasePanel {
         lights[2] = skin.transform.Find("TimeImage/Up").gameObject;
         lights[3] = skin.transform.Find("TimeImage/Left").gameObject;
         timeCount = skin.transform.Find("TimeCount").GetComponent<Text>();
+        okButton = skin.transform.Find("OkButton").GetComponent<Button>();
+        cancelButton = skin.transform.Find("CancelButton").GetComponent<Button>();
         time = skin.transform.Find("Image").GetComponent<Image>();
         //监听
         exitButton.onClick.AddListener(OnExitClick);
@@ -47,6 +66,7 @@ public class GamePanel : BasePanel {
         GameObject gameManager = ResManager.LoadPrefab("GameManager");
         gameManager.GetComponent<GameManager>().GamePanel = this;
         GameObject init_gameManager = Instantiate(gameManager);
+        this.gameManager = init_gameManager.GetComponent<GameManager>();
 
         GameObject bg = ResManager.LoadSprite("bg_game",0);
         bg.transform.localScale = new Vector3(2,2,2);
@@ -56,11 +76,7 @@ public class GamePanel : BasePanel {
         {
             lights[i].SetActive(false);
         }
-    }
-
-    public void OnMsgStartRecieveGameData(MsgBase msgBase)
-    {
-
+        ChuPaiButton = false;
     }
 
     //改变灯光的顺序
@@ -97,6 +113,26 @@ public class GamePanel : BasePanel {
     public void OnSetClick()
     {
         Debug.Log("Set");
+    }
+
+    public void OnOkClick()
+    {
+        if (gameManager.players == null) return;
+        CtrlPlayer player = (CtrlPlayer)gameManager.players[gameManager.id];
+        if (player == null) return;
+        if (player.selectedIndex == -1) return;
+
+        player.DaPaiCompolsory();
+    }
+
+    public void OnCancelClick()
+    {
+        if (gameManager.players == null) return;
+        CtrlPlayer player = (CtrlPlayer)gameManager.players[gameManager.id];
+        if (player == null) return;
+        if (player.selectedIndex == -1) return;
+
+        player.handPai[player.selectedIndex].transform.Translate(new Vector3(0, -0.5f, 0));
     }
 
 }

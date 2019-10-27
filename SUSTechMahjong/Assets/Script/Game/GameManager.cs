@@ -12,7 +12,7 @@ public class GameManager : MonoBehaviour
     public int id;//该客户端的id
     public BasePlayer[] players;
     private Dictionary<int, Direction> numToDir;
-    public const float timeCount = 3;//代表出牌计时的时间
+    public const float timeCount = 10;//代表出牌计时的时间
     public bool isSelfChuPai = false;
     public int nowTurnid = 0;
     public bool startGame = false;
@@ -52,7 +52,7 @@ public class GameManager : MonoBehaviour
             if (i == id)
             {
                 bp = go.AddComponent<CtrlPlayer>();
-                bp.Init(this);
+                bp.Init(this,gamePanel);
                 players[i] = bp;
                 players[i].id = i;
                 Debug.Log("id: " + id);
@@ -60,11 +60,16 @@ public class GameManager : MonoBehaviour
             else
             {
                 bp = go.AddComponent<SyncPlayer>();
-                bp.Init(this);
+                bp.Init(this,gamePanel);
                 players[i] = bp;
                 players[i].id = i;
             }
         }
+    }
+
+    private void InitUI() {
+        gamePanel.okButton.onClick.AddListener(gamePanel.OnOkClick);
+        gamePanel.cancelButton.onClick.AddListener(gamePanel.OnCancelClick);
     }
 
     //服务端收到开始接收游戏数据的协议
@@ -118,14 +123,16 @@ public class GameManager : MonoBehaviour
         players = new BasePlayer[4];
         id = msg.id;
         InitPlayer(msg.id);
+        InitUI();
 
         //生成牌
         for (int i = 0; i < 4; i++)
         {
             for (int j = 0; j < msg.data[i].paiIndex.Length; j++)
             {
-                CreatePai(msg.data[i].paiIndex[j], i, new Vector3(j - 6, -1 - i, 0));
+                CreatePai(msg.data[i].paiIndex[j], i);
             }
+            players[i].PlacePai();
         }
 
         startGame = true;
@@ -150,29 +157,16 @@ public class GameManager : MonoBehaviour
     public void ClientOnMsgFaPai(MsgBase msgBase)
     {
         MsgFaPai msg = (MsgFaPai)msgBase;
-        Vector3 pos = new Vector3(0,0,0);
-        switch (msg.id)
-        {
-            case 0:
-                pos = new Vector3(8,-1,0);
-                break;
-            case 1:
-                pos = new Vector3(8, -2, 0);
-                break;
-            case 2:
-                pos = new Vector3(8, -3, 0);
-                break;
-            case 3:
-                pos = new Vector3(8, -4, 0);
-                break;
-        }
         gamePanel.TurnLight(numToDir[Math.Abs(msg.id - id)]);
         if (msg.id == id)
         {
             isSelfChuPai = true;
+            gamePanel.ChuPaiButton = true;
         }
         nowTurnid = msg.id;
-        CreatePai(msg.paiId,msg.id,pos);
+        CreatePai(msg.paiId,msg.id);
+        players[msg.id].PlacePai();//调整牌的位置
+        
         //开始计时，玩家出牌
         StartTimeCount();
         //如果不是自己控制的玩家，就收到协议显示
@@ -259,14 +253,13 @@ public class GameManager : MonoBehaviour
     /// <param name="paiId"></param>
     /// <param name="playerId"></param>
     /// <param name="pos"></param>
-    public void CreatePai(int paiId, int playerId, Vector3 pos)
+    public void CreatePai(int paiId, int playerId)
     {
         string path = Pai.name2path[paiId];
         GameObject go = ResManager.LoadSprite(path,1);
         players[playerId].handPai.Add(go);
         go.transform.SetParent(players[playerId].transform);
         go.AddComponent<BoxCollider>();
-        go.transform.position = pos;
         go.tag = "Pai" + playerId;
         Pai pai = go.AddComponent<Pai>();
         pai.paiId = paiId;

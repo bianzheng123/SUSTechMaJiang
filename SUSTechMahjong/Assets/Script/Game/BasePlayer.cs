@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class BasePlayer : MonoBehaviour {
     protected GameManager gameManager;
+    protected GamePanel gamePanel;
 
 
     //玩家手中的牌
@@ -21,13 +22,14 @@ public class BasePlayer : MonoBehaviour {
     public bool isTurn;
 
 
-    public virtual void Init(GameManager gameManager) {
+    public virtual void Init(GameManager gameManager,GamePanel gamePanel) {
         handPai = new List<GameObject>();
         chi = new List<GameObject>();
         peng = new List<GameObject>();
         gang = new List<GameObject>();
         discardPai = new List<GameObject>();
         this.gameManager = gameManager;
+        this.gamePanel = gamePanel;
     }
 
     public void PlacePai()
@@ -60,7 +62,7 @@ public class BasePlayer : MonoBehaviour {
         MsgChuPai msg = new MsgChuPai();
         msg.id = id;
         msg.paiIndex = index;
-
+        gamePanel.ChuPaiButton = false;
         Debug.Log("出牌");
         gameManager.ServerOnMsgChuPai(msg);
         
