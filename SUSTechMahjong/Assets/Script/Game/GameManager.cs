@@ -158,6 +158,11 @@ public class GameManager : MonoBehaviour
     public void ClientOnMsgFaPai(MsgBase msgBase)
     {
         MsgFaPai msg = (MsgFaPai)msgBase;
+        if(msg.paiId == -1)
+        {
+            Debug.Log("没牌了，游戏结束");
+            return;
+        }
         gamePanel.TurnLight(numToDir[Math.Abs(msg.id - id)]);
         if (msg.id == id)
         {
@@ -192,10 +197,6 @@ public class GameManager : MonoBehaviour
         int paiIndex = msg.paiIndex;//牌在这个玩家的索引
         int id = msg.id;//出牌的玩家id
         paiManager.ChuPai(paiIndex, id);
-
-        
-
-
         ClientOnMsgChuPai(msg);
         MsgFaPai msgFaPai = new MsgFaPai();
         turn = (turn + 1) % 4;

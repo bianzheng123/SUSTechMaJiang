@@ -23,12 +23,57 @@ public class GamePanel : BasePanel {
     //表示取消选中的按钮
     public Button cancelButton;
 
+    //碰按钮
+    private Button pengButton;
+    //杠按钮
+    private Button gangButton;
+    //胡按钮
+    private Button huButton;
+    //不进行操作
+    private Button noActionButton;
+
     public bool ChuPaiButton
     {
         set
         {
             okButton.enabled = value;
             cancelButton.enabled = value;
+        }
+    }
+
+    public bool PengButton
+    {
+        set
+        {
+            pengButton.gameObject.SetActive(value);
+            noActionButton.gameObject.SetActive(value);
+            if (value) noActionButton.onClick.AddListener(OnPengCancelClick);
+            else
+                noActionButton.onClick.RemoveListener(OnPengCancelClick);
+        }
+    }
+
+    public bool GangButton
+    {
+        set
+        {
+            gangButton.gameObject.SetActive(value);
+            noActionButton.gameObject.SetActive(value);
+            if (value) noActionButton.onClick.AddListener(OnGangCancelClick);
+            else
+                noActionButton.onClick.RemoveListener(OnGangCancelClick);
+        }
+    }
+
+    public bool HuButton
+    {
+        set
+        {
+            huButton.gameObject.SetActive(value);
+            noActionButton.gameObject.SetActive(value);
+            if (value) noActionButton.onClick.AddListener(OnHuCancelClick);
+            else
+                noActionButton.onClick.RemoveListener(OnHuCancelClick);
         }
     }
 
@@ -54,6 +99,10 @@ public class GamePanel : BasePanel {
         okButton = skin.transform.Find("OkButton").GetComponent<Button>();
         cancelButton = skin.transform.Find("CancelButton").GetComponent<Button>();
         time = skin.transform.Find("Image").GetComponent<Image>();
+        pengButton = skin.transform.Find("PengButton").GetComponent<Button>();
+        gangButton = skin.transform.Find("GangButton").GetComponent<Button>();
+        huButton = skin.transform.Find("HuButton").GetComponent<Button>();
+        noActionButton = skin.transform.Find("NoActionButton").GetComponent<Button>();
         //监听
         exitButton.onClick.AddListener(OnExitClick);
         setButton.onClick.AddListener(OnSetClick);
@@ -63,20 +112,32 @@ public class GamePanel : BasePanel {
         //MsgGetRoomInfo msg = new MsgGetRoomInfo();
         //NetManager.Send(msg);
 
+        //生成gameManager类
         GameObject gameManager = ResManager.LoadPrefab("GameManager");
         gameManager.GetComponent<GameManager>().GamePanel = this;
         GameObject init_gameManager = Instantiate(gameManager);
         this.gameManager = init_gameManager.GetComponent<GameManager>();
 
+        //生成背景图片
         GameObject bg = ResManager.LoadSprite("bg_game",0);
         bg.transform.localScale = new Vector3(2,2,2);
 
-        //组件的初始化
+        //灯光的初始化
         for (int i = 0; i < lights.Length; i++)
         {
             lights[i].SetActive(false);
         }
         ChuPaiButton = false;
+
+        //特殊事件的初始化
+        pengButton.onClick.AddListener(OnPengClick);
+        gangButton.onClick.AddListener(OnGangClick);
+        huButton.onClick.AddListener(OnHuClick);//不做任何动作不需要进行复用
+        pengButton.gameObject.SetActive(false);
+        gangButton.gameObject.SetActive(false);
+        huButton.gameObject.SetActive(false);
+        noActionButton.gameObject.SetActive(false);
+
     }
 
     //改变灯光的顺序
@@ -103,6 +164,36 @@ public class GamePanel : BasePanel {
         //网络事件监听
         //NetManager.RemoveEventListener(NetManager.NetEvent.ConnectSucc, OnConnectSucc);
         //NetManager.RemoveEventListener(NetManager.NetEvent.ConnectFail, OnConnectFail);
+    }
+
+    public void OnPengClick()
+    {
+        Debug.Log("Peng");
+    }
+
+    public void OnGangClick()
+    {
+        Debug.Log("Gang");
+    }
+
+    public void OnHuClick()
+    {
+        Debug.Log("Hu");
+    }
+
+    public void OnPengCancelClick()
+    {
+        Debug.Log("PengCancel");
+    }
+
+    public void OnGangCancelClick()
+    {
+        Debug.Log("GangCancel");
+    }
+
+    public void OnHuCancelClick()
+    {
+        Debug.Log("HuCancel");
     }
 
     public void OnExitClick()

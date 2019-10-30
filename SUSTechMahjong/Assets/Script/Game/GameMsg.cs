@@ -24,7 +24,7 @@ public class MsgFaPai : MsgBase
     public MsgFaPai() { protoName = "MsgFaPai"; }
     //服务端回
     public int paiId;//牌的类型
-    public int id;//收到牌的玩家id
+    public int id;//收到牌的玩家id,如果是-1代表剩余牌没了，游戏结束
 }
 
 public class MsgChuPai : MsgBase

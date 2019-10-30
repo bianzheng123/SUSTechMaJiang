@@ -77,6 +77,10 @@ public class PaiManager {
     /// <returns></returns>
     public int FaPai(int id)
     {
+        if(restPai.Count == 0)
+        {
+            return -1;
+        }
         Random rd = new Random();
         int ranIdx = rd.Next() % restPai.Count;
         int paiId = restPai[ranIdx];
@@ -99,8 +103,6 @@ public class PaiManager {
     public void ChuPai(int paiIndex,int id)
     {
         playerPai[id].RemoveAt(paiIndex);
-
-
     }
     
     //四个玩家四个list,存在List中
