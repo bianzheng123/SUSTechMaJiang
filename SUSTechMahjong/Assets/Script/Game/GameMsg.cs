@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+//每一个协议都要一个Roomid
 //得到初始化游戏的信息，即骰子结果，该客户端的id
 public class MsgInitData : MsgBase
 {
@@ -33,5 +33,16 @@ public class MsgChuPai : MsgBase
     //客户端发,服务端广播
     public int paiIndex;//牌在这个玩家的索引
     public int id;//出牌的玩家id
+}
+
+public class MsgChiPengGang : MsgBase
+{
+    public MsgChiPengGang() { protoName = "MsgChiPengGang"; }
+    //服务端发送
+    public int paiId;//打出的牌的id
+    public int id;//执行吃碰杠胡玩家的id
+    public bool[] isChiPengGang;//分别代表能否进行吃碰杠胡
+    //客户端回
+    public int result;//0代表什么都不做，其余分别代表吃碰杠胡
 }
 

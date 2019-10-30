@@ -100,11 +100,226 @@ public class PaiManager {
         return paiId;
     }
 
-    public void ChuPai(int paiIndex,int id)
+    public int ChuPai(int paiIndex,int id)
     {
+        int paiId = playerPai[id][paiIndex];
         playerPai[id].RemoveAt(paiIndex);
+        return paiId;
     }
-    
+
+    /// <summary>
+    /// 判断是否触发碰杠胡的条件
+    /// </summary>
+    /// <param name="paiId">这个牌的索引</param>
+    /// <param name="id">打出这张牌的玩家的id</param>
+    /// <returns>null代表没有触发条件，</returns>
+    public Queue<MsgChiPengGang> HasEvent(int paiId,int id)
+    {
+        Queue<MsgChiPengGang> queue = new Queue<MsgChiPengGang>();
+        for(int i = id+1; i < id+4; i++)
+        {
+            int panId = i % 4;
+            bool[] res = new bool[3];
+            res[0] = HasChi(paiId,panId);//检测吃
+            res[1] = HasPeng(paiId,panId);//检测碰
+            res[2] = HasGang(paiId,panId);//检测杠
+            if(res[0] | res[1] | res[2])//至少有一个为true，就可以发送消息
+            {
+                MsgChiPengGang msg = new MsgChiPengGang();
+                msg.isChiPengGang = res;
+                msg.id = panId;
+                msg.paiId = paiId;
+                queue.Enqueue(msg);
+            }
+        }
+        return queue;
+    }
+
+    /// <summary>
+    /// 判断是否出现吃的情况
+    /// </summary>
+    /// <param name="paiId">打出的牌的id</param>
+    /// <param name="panId">要搜索的玩家id</param>
+    /// <returns>是否有吃</returns>
+    private bool HasChi(int paiId,int panId)
+    {
+        bool pan1 = playerPai[panId].Contains(paiId + 1) && playerPai[panId].Contains(paiId + 2);
+        bool pan2 = playerPai[panId].Contains(paiId - 1) && playerPai[panId].Contains(paiId + 1);
+        bool pan3 = playerPai[panId].Contains(paiId - 2) && playerPai[panId].Contains(paiId - 1);
+        return pan1 | pan2 | pan3;
+    }
+
+    private bool HasPeng(int paiId,int panId)
+    {
+        int count = 0;
+        for(int i = 0; i < playerPai[panId].Count; i++)
+        {
+            if(playerPai[panId][i] == paiId)
+            {
+                count++;
+            }
+        }
+        return count >= 2;
+    }
+
+    private bool HasGang(int paiId,int panId)
+    {
+        int count = 0;
+        for (int i = 0; i < playerPai[panId].Count; i++)
+        {
+            if (playerPai[panId][i] == paiId)
+            {
+                count++;
+            }
+        }
+        return count >= 3;
+    }
+
+    private bool HasHu(int paiId,int panId)
+    {
+        List<int> cards = playerPai[panId];
+        int len = playerPai[panId].Count;
+        if(len == 14)
+        {
+            int count = 0;
+            for(int i = 0; i < len; i += 2)
+            {
+                if(cards[i] == cards[i + 1])
+                {
+                    count++;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            if(count == 7) { return true; }
+        }
+        int[][] handcards = new int[4][] { new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } };
+        for(int i = 0; i < len; i++)
+        {
+            int type = cards[i] / 10;
+            int number = cards[i] % 10;
+            switch (type)
+            {
+                case 0:
+                    handcards[0][number]++;
+                    handcards[0][0]++;
+                    break;
+                case 1:
+                    handcards[1][number]++;
+                    handcards[1][0]++;
+                    break;
+                case 2:
+                    handcards[2][number]++;
+                    handcards[2][0]++;
+                    break;
+                case 3:
+                    handcards[3][number]++;
+                    handcards[3][0]++;
+                    break;
+            }
+        }
+
+        bool isJiang = false;//判断是否有对子
+        int jiangNumber = -1;
+        for(int i = 0; i < handcards.GetLength(0); i++)
+        {
+            if (handcards[i][0] % 3 == 2)
+            {
+                if (isJiang)
+                {
+                    return false;
+                }
+                isJiang = true;
+                jiangNumber = i;
+            }
+            //因为对应四种牌型只能有一种且仅包含一个对子
+        }
+        //先求没有将牌的情况判断其是不是都是由刻子或者砍组成
+        for (int i = 0; i < handcards.GetLength(0); i++)
+        {
+            if (i != jiangNumber)
+            {
+                if (!(IsKanOrShun(handcards[i], i == 3)))
+                {
+                    return false;
+                }
+            }
+        }
+        bool success = false;
+        //有将牌的情况下
+        for(int i = 1; i <= 9; i++)
+        {
+            if(handcards[jiangNumber][i] >= 2)
+            {
+                handcards[jiangNumber][i] -= 2;
+                handcards[jiangNumber][0] -= 2;
+                if(IsKanOrShun(handcards[jiangNumber], jiangNumber == 3))
+                {
+                    success = true;
+                    break;
+                }
+                else
+                {
+                    handcards[jiangNumber][i] += 2;
+                    handcards[jiangNumber][0] += 2;
+                }
+            }
+        }
+        return success;
+    }
+
+    //判断是否满足牌组为顺子或砍组成
+    private static bool IsKanOrShun(int[] arr, bool isZi)
+    {
+        if (arr[0] == 0)
+        {
+            return true;
+        }
+
+        int index = -1;
+        for (int i = 1; i < arr.Length; i++)
+        {
+            if (arr[i] > 0)
+            {
+                index = i;
+                break;
+            }
+        }
+        bool result;
+        //是否满足全是砍
+        if (arr[index] >= 3)
+        {
+            arr[index] -= 3;
+            arr[0] -= 3;
+            result = IsKanOrShun(arr, isZi);
+            arr[index] += 3;
+            arr[0] += 3;
+            return result;
+        }
+        //是否满足为顺子
+        if (!isZi)
+        {
+            if (index < 8 && arr[index + 1] >= 1 && arr[index + 2] >= 1)
+            {
+                arr[index] -= 1;
+                arr[index + 1] -= 1;
+                arr[index + 2] -= 1;
+                arr[0] -= 3;
+                result = IsKanOrShun(arr, isZi);
+                arr[index] += 1;
+                arr[index + 1] += 1;
+                arr[index + 2] += 1;
+                arr[0] += 3;
+                return result;
+            }
+        }
+
+        return false;
+    }
+
     //四个玩家四个list,存在List中
     //List<>
     //判断吃，碰，杠，胡（发送协议）
