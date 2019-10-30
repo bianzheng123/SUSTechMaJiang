@@ -6,6 +6,7 @@ public class GameManager : MonoBehaviour
 {
     public static int turn;//存在服务器中的
     public static PaiManager paiManager = new PaiManager();
+    public static Queue<MsgChiPengGang> queueChiPengGang;//每一个房间都存放用来判断是否吃碰杠的列表
     
 
     private GamePanel gamePanel;
@@ -13,7 +14,7 @@ public class GameManager : MonoBehaviour
     public BasePlayer[] players;
     private Dictionary<int, Direction> numToDir;
     public const float timeCount = 10;//代表出牌计时的时间
-    public bool isSelfChuPai = false;
+    public bool isChuPai = false;//是否为出牌，还是进行吃碰杠的判断
     public int nowTurnid = 0;
     public bool startGame = false;//目前可能没用，将来也可能没用
     public float timeLast = timeCount;
@@ -79,8 +80,8 @@ public class GameManager : MonoBehaviour
         MsgInitData msg = (MsgInitData)msgBase;
         //获取骰子的点数
         System.Random rd = new System.Random();
-        //int zhuangIdx = rd.Next() % 4;
-        int zhuangIdx = 0;
+        int zhuangIdx = rd.Next() % 4;
+        //int zhuangIdx = 0;
         turn = zhuangIdx;
         //对协议名称进行初始化，这里表述不完全
         msg.data = new StartGameData[4];
@@ -166,7 +167,6 @@ public class GameManager : MonoBehaviour
         gamePanel.TurnLight(numToDir[Math.Abs(msg.id - id)]);
         if (msg.id == id)
         {
-            isSelfChuPai = true;
             gamePanel.ChuPaiButton = true;
         }
         nowTurnid = msg.id;
@@ -181,6 +181,7 @@ public class GameManager : MonoBehaviour
         }
         Debug.Log("player" + msg.id + ": " + arrString);
 
+        isChuPai = true;
         //开始计时，玩家出牌
         StartTimeCount();
         //如果不是自己控制的玩家，就收到协议显示
@@ -199,22 +200,24 @@ public class GameManager : MonoBehaviour
         int paiId = paiManager.ChuPai(paiIndex, id);
         ClientOnMsgChuPai(msg);//广播
 
-        Queue<MsgChiPengGang> queue = paiManager.HasEvent(paiId, id);
+        queueChiPengGang = paiManager.HasEvent(paiId, id);
 
-        if(queue.Count != 0)
+        if(queueChiPengGang.Count != 0)//一直发送吃碰杠协议，直到发完或者有人同意吃碰杠为止
         {
             Debug.Log("存在吃碰杠!");
-            foreach (MsgChiPengGang item in queue)
+            foreach (MsgChiPengGang item in queueChiPengGang)
             {
-                Debug.Log("执行玩家id: " + item.id + ",打出的牌id: " + item.paiId + ",是否吃: " + item.isChiPengGang[0] + ",是否碰: " + item.isChiPengGang[1] + ",是否杠: " + item.isChiPengGang[2]);
+                Debug.Log("执行玩家id: " + item.id + ",打出的牌id: " + item.paiId + ",是否吃: " + item.isChiPengGang[1] + ",是否碰: " + item.isChiPengGang[2] + ",是否杠: " + item.isChiPengGang[3]);
             }
-            return;
+            MsgChiPengGang chiPengGang = queueChiPengGang.Dequeue();
+            ClientOnMsgChiPengGang(chiPengGang);
         }
-        
-
-        MsgFaPai msgFaPai = new MsgFaPai();
-        turn = (turn + 1) % 4;
-        ServerOnMsgFaPai(msgFaPai);
+        else
+        {
+            MsgFaPai msgFaPai = new MsgFaPai();
+            turn = (turn + 1) % 4;
+            ServerOnMsgFaPai(msgFaPai);
+        }
     }
 
     /// <summary>
@@ -226,6 +229,35 @@ public class GameManager : MonoBehaviour
         MsgChuPai msg = (MsgChuPai)msgBase;
         Debug.Log("PlayerId: " + msg.id);
         players[msg.id].DiscardPai(msg.paiIndex);
+    }
+
+    public void ClientOnMsgChiPengGang(MsgBase msgBase)
+    {
+        MsgChiPengGang msg = (MsgChiPengGang)msgBase;
+        nowTurnid = msg.id;
+        gamePanel.TurnLight(numToDir[Math.Abs(nowTurnid - id)]);
+        StartTimeCount();
+        players[nowTurnid].msg = msg;
+        if(nowTurnid != id) { return; }
+
+        bool[] isChiPengGang = msg.isChiPengGang;
+        if (isChiPengGang[1])
+        {
+            gamePanel.ChiButton = true;
+        }
+        if (isChiPengGang[2])
+        {
+            gamePanel.PengButton = true;
+        }
+        if (isChiPengGang[3])
+        {
+            gamePanel.GangButton = true;
+        }
+    }
+
+    public void ServerOnMsgChiPengGang(MsgBase msgBase)
+    {
+        Debug.Log("吃碰杠成功");
     }
 
     public void StartTimeCount()
@@ -242,11 +274,20 @@ public class GameManager : MonoBehaviour
         {
             timeLast = 0;
             startTimeCount = false;
-            if(isSelfChuPai)//代表是自己出牌，到时间了
+            if(nowTurnid == id)
             {
-                CtrlPlayer self = (CtrlPlayer)players[id];
-                self.DaPaiCompolsory();
+                if (isChuPai)//代表是自己出牌，到时间了
+                {
+                    CtrlPlayer self = (CtrlPlayer)players[id];
+                    self.DaPaiCompolsory();
+                }
+                else//该自己进行吃碰杠的判断，且到时间了
+                {
+                    CtrlPlayer self = (CtrlPlayer)players[id];
+                    self.ChiPengGang();
+                }
             }
+            
             Debug.Log("时间到了");
         }
     }
@@ -256,7 +297,14 @@ public class GameManager : MonoBehaviour
         if (startTimeCount)
         {
             TimeCount();
-            players[nowTurnid].DaPai();
+            if (isChuPai)
+            {
+                players[nowTurnid].DaPai();
+            }//否则进行吃碰杠的判断
+            else if(nowTurnid != id)
+            {//用于人机的操作
+                players[nowTurnid].ChiPengGang();
+            }
         }
         
     }
@@ -277,13 +325,6 @@ public class GameManager : MonoBehaviour
         go.tag = "Pai" + playerId;
         Pai pai = go.AddComponent<Pai>();
         pai.paiId = paiId;
-    }
-
-    //在收到玩家出的牌的协议
-    public static void OnMsgShoudaoPai()
-    {
-        //更新牌库
-        //调用PaiManager_Server判断吃碰杠胡
     }
 
     //出牌的协议

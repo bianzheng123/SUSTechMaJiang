@@ -55,7 +55,6 @@ public class CtrlPlayer : BasePlayer {
 
     public void DaPaiCompolsory()
     {
-        gameManager.isSelfChuPai = false;
         int index = 0;
         if(selectedIndex != -1)
         {//先将选中的牌降下来再打

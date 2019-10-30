@@ -27,6 +27,8 @@ public class GamePanel : BasePanel {
     private Button pengButton;
     //杠按钮
     private Button gangButton;
+    //吃按钮
+    private Button chiButton;
     //胡按钮
     private Button huButton;
     //不进行操作
@@ -47,9 +49,6 @@ public class GamePanel : BasePanel {
         {
             pengButton.gameObject.SetActive(value);
             noActionButton.gameObject.SetActive(value);
-            if (value) noActionButton.onClick.AddListener(OnPengCancelClick);
-            else
-                noActionButton.onClick.RemoveListener(OnPengCancelClick);
         }
     }
 
@@ -59,9 +58,6 @@ public class GamePanel : BasePanel {
         {
             gangButton.gameObject.SetActive(value);
             noActionButton.gameObject.SetActive(value);
-            if (value) noActionButton.onClick.AddListener(OnGangCancelClick);
-            else
-                noActionButton.onClick.RemoveListener(OnGangCancelClick);
         }
     }
 
@@ -71,9 +67,15 @@ public class GamePanel : BasePanel {
         {
             huButton.gameObject.SetActive(value);
             noActionButton.gameObject.SetActive(value);
-            if (value) noActionButton.onClick.AddListener(OnHuCancelClick);
-            else
-                noActionButton.onClick.RemoveListener(OnHuCancelClick);
+        }
+    }
+
+    public bool ChiButton
+    {
+        set
+        {
+            chiButton.gameObject.SetActive(value);
+            noActionButton.gameObject.SetActive(value);
         }
     }
 
@@ -102,6 +104,7 @@ public class GamePanel : BasePanel {
         pengButton = skin.transform.Find("PengButton").GetComponent<Button>();
         gangButton = skin.transform.Find("GangButton").GetComponent<Button>();
         huButton = skin.transform.Find("HuButton").GetComponent<Button>();
+        chiButton = skin.transform.Find("ChiButton").GetComponent<Button>();
         noActionButton = skin.transform.Find("NoActionButton").GetComponent<Button>();
         //监听
         exitButton.onClick.AddListener(OnExitClick);
@@ -132,7 +135,11 @@ public class GamePanel : BasePanel {
         //特殊事件的初始化
         pengButton.onClick.AddListener(OnPengClick);
         gangButton.onClick.AddListener(OnGangClick);
-        huButton.onClick.AddListener(OnHuClick);//不做任何动作不需要进行复用
+        huButton.onClick.AddListener(OnHuClick);
+        chiButton.onClick.AddListener(OnChiClick);
+        noActionButton.onClick.AddListener(OnNoActionClick);
+
+        chiButton.gameObject.SetActive(false);
         pengButton.gameObject.SetActive(false);
         gangButton.gameObject.SetActive(false);
         huButton.gameObject.SetActive(false);
@@ -165,15 +172,34 @@ public class GamePanel : BasePanel {
         //NetManager.RemoveEventListener(NetManager.NetEvent.ConnectSucc, OnConnectSucc);
         //NetManager.RemoveEventListener(NetManager.NetEvent.ConnectFail, OnConnectFail);
     }
+    public void OnChiClick()
+    {
+        Debug.Log("Chi");
+        if (gameManager.players == null) return;
+        CtrlPlayer player = (CtrlPlayer)gameManager.players[gameManager.id];
+        if (player == null) return;
+
+        player.ChiPengGang(1);
+    }
 
     public void OnPengClick()
     {
         Debug.Log("Peng");
+        if (gameManager.players == null) return;
+        CtrlPlayer player = (CtrlPlayer)gameManager.players[gameManager.id];
+        if (player == null) return;
+
+        player.ChiPengGang(2);
     }
 
     public void OnGangClick()
     {
         Debug.Log("Gang");
+        if (gameManager.players == null) return;
+        CtrlPlayer player = (CtrlPlayer)gameManager.players[gameManager.id];
+        if (player == null) return;
+
+        player.ChiPengGang(3);
     }
 
     public void OnHuClick()
@@ -181,19 +207,14 @@ public class GamePanel : BasePanel {
         Debug.Log("Hu");
     }
 
-    public void OnPengCancelClick()
+    public void OnNoActionClick()
     {
-        Debug.Log("PengCancel");
-    }
+        Debug.Log("NoAction");
+        if (gameManager.players == null) return;
+        CtrlPlayer player = (CtrlPlayer)gameManager.players[gameManager.id];
+        if (player == null) return;
 
-    public void OnGangCancelClick()
-    {
-        Debug.Log("GangCancel");
-    }
-
-    public void OnHuCancelClick()
-    {
-        Debug.Log("HuCancel");
+        player.ChiPengGang(0);
     }
 
     public void OnExitClick()

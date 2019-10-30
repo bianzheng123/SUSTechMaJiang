@@ -119,11 +119,12 @@ public class PaiManager {
         for(int i = id+1; i < id+4; i++)
         {
             int panId = i % 4;
-            bool[] res = new bool[3];
-            res[0] = HasChi(paiId,panId);//检测吃
-            res[1] = HasPeng(paiId,panId);//检测碰
-            res[2] = HasGang(paiId,panId);//检测杠
-            if(res[0] | res[1] | res[2])//至少有一个为true，就可以发送消息
+            bool[] res = new bool[4];
+            res[0] = true;//代表永远可以取消吃碰杠操作
+            res[1] = HasChi(paiId,panId);//检测吃
+            res[2] = HasPeng(paiId,panId);//检测碰
+            res[3] = HasGang(paiId,panId);//检测杠
+            if(res[1] | res[2] | res[3])//至少有一个为true，就可以发送消息
             {
                 MsgChiPengGang msg = new MsgChiPengGang();
                 msg.isChiPengGang = res;

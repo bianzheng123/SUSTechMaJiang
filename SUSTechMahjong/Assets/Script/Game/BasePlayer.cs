@@ -5,7 +5,7 @@ using UnityEngine;
 public class BasePlayer : MonoBehaviour {
     protected GameManager gameManager;
     protected GamePanel gamePanel;
-
+    public MsgChiPengGang msg;//存放上一个吃碰杠协议的引用
 
     //玩家手中的牌
     public List<GameObject> handPai;
@@ -63,7 +63,28 @@ public class BasePlayer : MonoBehaviour {
     }
 
     /// <summary>
-    /// 代表出牌，将player中pai的游戏物体删除，并发送ChuPai协议
+    /// 没有参数代表强制执行吃碰杠操作
+    /// </summary>
+    /// <param name="index">0代表什么都不做,1代表吃,2代表碰,3代表杠</param>
+    public void ChiPengGang(int index = 0)
+    {
+        if (msg.isChiPengGang[index])//代表相关操作允许
+        {
+            msg.result = index;
+            Debug.Log("成功进行相关操作");
+        }
+        else
+        {//异常情况
+            msg.result = 0;
+            Debug.Log("非法操作！！！！！");
+        }
+        gameManager.startTimeCount = false;
+        gameManager.ServerOnMsgChiPengGang(msg);
+
+    }
+
+    /// <summary>
+    /// 代表出牌，将出牌的按钮隐藏，并发送ChuPai协议
     /// </summary>
     /// <param name="index">pai的索引</param>
     protected void ChuPai(int index)
@@ -76,6 +97,7 @@ public class BasePlayer : MonoBehaviour {
         msg.paiIndex = index;
         gamePanel.ChuPaiButton = false;
         Debug.Log("出牌");
+        gameManager.isChuPai = false;
         gameManager.ServerOnMsgChuPai(msg);
         
     }

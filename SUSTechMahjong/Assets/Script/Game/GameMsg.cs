@@ -41,8 +41,8 @@ public class MsgChiPengGang : MsgBase
     //服务端发送
     public int paiId;//打出的牌的id
     public int id;//执行吃碰杠胡玩家的id
-    public bool[] isChiPengGang;//分别代表能否进行吃碰杠胡
+    public bool[] isChiPengGang;//分别代表能否进行吃碰杠
     //客户端回
-    public int result;//0代表什么都不做，其余分别代表吃碰杠胡
+    public int result;//0代表什么都不做，其余分别代表吃碰杠
 }
 
