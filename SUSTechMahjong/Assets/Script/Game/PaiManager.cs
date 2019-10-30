@@ -45,6 +45,12 @@ public class PaiManager {
         }
     }
 
+    /// <summary>
+    /// 进行初始化时的发牌方法
+    /// </summary>
+    /// <param name="num">发牌的数量</param>
+    /// <param name="id">玩家的id</param>
+    /// <returns></returns>
     public int[] FaPai(int num,int id)
     {
         int[] res = new int[num];
@@ -53,10 +59,41 @@ public class PaiManager {
             Random rd = new Random();
             int ranIdx = rd.Next() % restPai.Count;
             res[i] = restPai[ranIdx];
-            playerPai[id].Add(res[i]);
             restPai.RemoveAt(ranIdx);
         }
+        //对res按照升序进行排序
+        Array.Sort(res);
+        for(int i = 0; i < num; i++)
+        {
+            playerPai[id].Add(res[i]);
+        }
         return res;
+    }
+
+    /// <summary>
+    /// 发送单个牌调用的方法
+    /// </summary>
+    /// <param name="id">玩家的id</param>
+    /// <returns></returns>
+    public int FaPai(int id)
+    {
+        Random rd = new Random();
+        int ranIdx = rd.Next() % restPai.Count;
+        int paiId = restPai[ranIdx];
+        restPai.RemoveAt(ranIdx);
+
+        int arrIndex = playerPai[id].Count;
+        playerPai[id].Add(paiId);
+        while (arrIndex >= 1 && playerPai[id][arrIndex] < playerPai[id][arrIndex - 1])
+        {
+            //arrIndex和arrIndex-1交换元素
+            int tmp = playerPai[id][arrIndex];
+            playerPai[id][arrIndex] = playerPai[id][arrIndex - 1];
+            playerPai[id][arrIndex - 1] = tmp;
+            arrIndex--;
+        }
+
+        return paiId;
     }
 
     public void ChuPai(int paiIndex,int id)

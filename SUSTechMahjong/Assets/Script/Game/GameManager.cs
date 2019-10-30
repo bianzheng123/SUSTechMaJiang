@@ -145,8 +145,9 @@ public class GameManager : MonoBehaviour
     {
         MsgFaPai msg = (MsgFaPai)msgBase;
         msg.id = turn;
-        int[] paiIdx = paiManager.FaPai(1, turn);
-        msg.paiId = paiIdx[0];
+        int paiIdx = paiManager.FaPai(turn);
+        msg.paiId = paiIdx;
+        //发牌协议进行广播
         ClientOnMsgFaPai(msg);
     }
 
@@ -165,8 +166,16 @@ public class GameManager : MonoBehaviour
         }
         nowTurnid = msg.id;
         CreatePai(msg.paiId,msg.id);
-        players[msg.id].PlacePai();//调整牌的位置
-        
+
+        players[msg.id].PlacePai();//调整牌的位置，以及同步牌的顺序
+
+        string arrString = "";
+        for (int i = 0; i < paiManager.playerPai[msg.id].Count; i++)
+        {
+            arrString += paiManager.playerPai[msg.id][i] + " ";
+        }
+        Debug.Log("player" + msg.id + ": " + arrString);
+
         //开始计时，玩家出牌
         StartTimeCount();
         //如果不是自己控制的玩家，就收到协议显示
@@ -184,12 +193,7 @@ public class GameManager : MonoBehaviour
         int id = msg.id;//出牌的玩家id
         paiManager.ChuPai(paiIndex, id);
 
-        string arrString = "";
-        for(int i = 0; i < paiManager.playerPai[id].Count; i++)
-        {
-            arrString += paiManager.playerPai[id][i] + " ";
-        }
-        Debug.Log(arrString);
+        
 
 
         ClientOnMsgChuPai(msg);
