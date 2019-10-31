@@ -19,9 +19,9 @@ public class GamePanel : BasePanel {
     private GameManager gameManager;
 
     //表示出牌的按钮
-    public Button okButton;
+    private Button okButton;
     //表示取消选中的按钮
-    public Button cancelButton;
+    private Button cancelButton;
 
     //碰按钮
     private Button pengButton;
@@ -109,6 +109,8 @@ public class GamePanel : BasePanel {
         //监听
         exitButton.onClick.AddListener(OnExitClick);
         setButton.onClick.AddListener(OnSetClick);
+        okButton.onClick.AddListener(OnOkClick);
+        cancelButton.onClick.AddListener(OnCancelClick);
         //网络协议监听
         //NetManager.AddMsgListener("MsgLogin", OnMsgLogin);
         //发送查询

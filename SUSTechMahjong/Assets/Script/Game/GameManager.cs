@@ -8,7 +8,6 @@ public class GameManager : MonoBehaviour
     public static PaiManager paiManager = new PaiManager();
     public static Queue<MsgChiPengGang> queueChiPengGang;//每一个房间都存放用来判断是否吃碰杠的列表
     
-
     private GamePanel gamePanel;
     public int id;//该客户端的id
     public BasePlayer[] players;
@@ -28,49 +27,11 @@ public class GameManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        //发送开始接收游戏数据的协议
-        MsgInitData msg = new MsgInitData();
         InitNumToDir();
         gamePanel = GameObject.Find("Root").GetComponent<GamePanel>();
-        ServerOnInitData(msg);//向服务器发送协议
-    }
-
-    private void InitNumToDir() {
-        numToDir = new Dictionary<int, Direction>();
-        numToDir[0] = Direction.DOWN;
-        numToDir[1] = Direction.RIGHT;
-        numToDir[2] = Direction.UP;
-        numToDir[3] = Direction.LEFT;
-    }
-
-    //添加CtrlPlayer和SyncPlayer
-    private void InitPlayer(int id)
-    {
-        for(int i = 0; i < 4; i++)
-        {
-            GameObject go = new GameObject("Player" + (i + 1));
-            BasePlayer bp = null;
-            if (i == id)
-            {
-                bp = go.AddComponent<CtrlPlayer>();
-                bp.Init(this,gamePanel);
-                players[i] = bp;
-                players[i].id = i;
-                Debug.Log("id: " + id);
-            }
-            else
-            {
-                bp = go.AddComponent<SyncPlayer>();
-                bp.Init(this,gamePanel);
-                players[i] = bp;
-                players[i].id = i;
-            }
-        }
-    }
-
-    private void InitUI() {
-        gamePanel.okButton.onClick.AddListener(gamePanel.OnOkClick);
-        gamePanel.cancelButton.onClick.AddListener(gamePanel.OnCancelClick);
+        //发送开始接收游戏数据的协议
+        MsgInitData msg = new MsgInitData();
+        ServerOnInitData(msg);
     }
 
     //服务端收到开始接收游戏数据的协议
@@ -80,8 +41,7 @@ public class GameManager : MonoBehaviour
         MsgInitData msg = (MsgInitData)msgBase;
         //获取骰子的点数
         System.Random rd = new System.Random();
-        int zhuangIdx = rd.Next() % 4;
-        //int zhuangIdx = 0;
+        int zhuangIdx = rd.Next() % 4;//随机确定庄家
         turn = zhuangIdx;
         //对协议名称进行初始化，这里表述不完全
         msg.data = new StartGameData[4];
@@ -100,7 +60,7 @@ public class GameManager : MonoBehaviour
             msg.data[i].paiIndex = res;
         }
         msg.id = 0;
-        ClientOnInitData(msg);
+        ClientOnInitData(msg);//广播
         Debug.Log("庄家：" + zhuangIdx);
         //for(int i = 0; i < 3; i++)
         //{
@@ -108,8 +68,8 @@ public class GameManager : MonoBehaviour
         //    ClientOnMsgStartRecieveGameData(msg);
         //}
 
-        //发初始手牌，发送协议
-        //广播所有玩家，庄家出牌
+        //发初始手牌
+        //庄家出牌
     }
 
     /// <summary>
@@ -124,7 +84,6 @@ public class GameManager : MonoBehaviour
         players = new BasePlayer[4];
         id = msg.id;
         InitPlayer(msg.id);
-        InitUI();
 
         //生成牌
         for (int i = 0; i < 4; i++)
@@ -136,9 +95,11 @@ public class GameManager : MonoBehaviour
             players[i].PlacePai();
         }
 
+        //发送发牌协议
         startGame = true;
         MsgFaPai msgFaPai = new MsgFaPai();
         ServerOnMsgFaPai(msgFaPai);
+        //可以不发这个协议
     }
 
     //服务端收到发牌的协议
@@ -148,7 +109,7 @@ public class GameManager : MonoBehaviour
         msg.id = turn;
         int paiIdx = paiManager.FaPai(turn);
         msg.paiId = paiIdx;
-        //发牌协议进行广播
+        //广播
         ClientOnMsgFaPai(msg);
     }
 
@@ -172,7 +133,8 @@ public class GameManager : MonoBehaviour
         nowTurnid = msg.id;
         CreatePai(msg.paiId,msg.id,PlacePaiLocation.HandPai);
 
-        players[msg.id].PlacePai();//调整牌的位置，以及同步牌的顺序
+        players[msg.id].SynHandPai();//同步牌的顺序
+        players[msg.id].PlacePai();//调整牌的位置
 
         string arrString = "";
         for (int i = 0; i < paiManager.playerPai[msg.id].Count; i++)
@@ -207,7 +169,7 @@ public class GameManager : MonoBehaviour
             Debug.Log("存在吃碰杠!");
             foreach (MsgChiPengGang item in queueChiPengGang)
             {
-                Debug.Log("执行玩家id: " + item.id + ",打出的牌id: " + item.paiId + ",是否吃: " + item.isChiPengGang[1] + ",是否碰: " + item.isChiPengGang[2] + ",是否杠: " + item.isChiPengGang[3]);
+                Debug.Log(item.ToString());
             }
             MsgChiPengGang chiPengGang = queueChiPengGang.Dequeue();
             ClientOnMsgChiPengGang(chiPengGang);//广播
@@ -310,8 +272,6 @@ public class GameManager : MonoBehaviour
         MsgFaPai msgFaPai = new MsgFaPai();
         turn = (turn + 1) % 4;
         ServerOnMsgFaPai(msgFaPai);
-
-        Debug.Log("吃碰杠成功");
     }
 
     public void StartTimeCount()
@@ -418,9 +378,39 @@ public class GameManager : MonoBehaviour
         pai.paiId = paiId;
     }
 
-    //出牌的协议
-    //告知吃碰杠胡的协议，一个list,枚举类,id
-    //结束游戏的协议
+    private void InitNumToDir()
+    {
+        numToDir = new Dictionary<int, Direction>();
+        numToDir[0] = Direction.DOWN;
+        numToDir[1] = Direction.RIGHT;
+        numToDir[2] = Direction.UP;
+        numToDir[3] = Direction.LEFT;
+    }
+
+    //添加CtrlPlayer和SyncPlayer
+    private void InitPlayer(int id)
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            GameObject go = new GameObject("Player" + (i + 1));
+            BasePlayer bp = null;
+            if (i == id)
+            {
+                bp = go.AddComponent<CtrlPlayer>();
+                bp.Init(this, gamePanel);
+                players[i] = bp;
+                players[i].id = i;
+                Debug.Log("id: " + id);
+            }
+            else
+            {
+                bp = go.AddComponent<SyncPlayer>();
+                bp.Init(this, gamePanel);
+                players[i] = bp;
+                players[i].id = i;
+            }
+        }
+    }
 
 }
 

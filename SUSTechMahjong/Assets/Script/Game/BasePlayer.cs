@@ -32,20 +32,23 @@ public class BasePlayer : MonoBehaviour {
         this.gamePanel = gamePanel;
     }
 
-    public void PlacePai()
+    public void SynHandPai()
     {
         //调整顺序
         int paiId = handPai[handPai.Count - 1].GetComponent<Pai>().paiId;
         int paiIndex = handPai.Count - 1;
-        while(paiIndex >= 1 && handPai[paiIndex].GetComponent<Pai>().paiId < handPai[paiIndex - 1].GetComponent<Pai>().paiId)
+        while (paiIndex >= 1 && handPai[paiIndex].GetComponent<Pai>().paiId < handPai[paiIndex - 1].GetComponent<Pai>().paiId)
         {
             GameObject tmp = handPai[paiIndex];
             handPai[paiIndex] = handPai[paiIndex - 1];
             handPai[paiIndex - 1] = tmp;
             paiIndex--;
         }
+    }
 
-        //调整牌的位置
+    public void PlacePai()
+    {
+        //调整手牌的位置
         for (int i = 0; i < handPai.Count; i++)
         {
             handPai[i].transform.position = new Vector3(i - 6,-1-id,0);

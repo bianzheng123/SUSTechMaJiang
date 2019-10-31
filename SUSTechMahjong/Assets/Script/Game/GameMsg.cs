@@ -44,5 +44,10 @@ public class MsgChiPengGang : MsgBase
     public bool[] isChiPengGang;//分别代表能否进行吃碰杠
     //客户端回
     public int result = -1;//0代表什么都不做，其余分别代表吃碰杠
+
+    public override string ToString()
+    {
+        return "执行玩家id: " + id + ",打出的牌id: " + paiId + ",是否吃: " + isChiPengGang[1] + ",是否碰: " + isChiPengGang[2] + ",是否杠: " + isChiPengGang[3];
+    }
 }
 
