@@ -71,16 +71,18 @@ public class BasePlayer : MonoBehaviour {
         if (msg.isChiPengGang[index])//代表相关操作允许
         {
             msg.result = index;
-            Debug.Log("成功进行相关操作");
         }
         else
         {//异常情况
             msg.result = 0;
             Debug.Log("非法操作！！！！！");
         }
+        gamePanel.ChiButton = false;
+        gamePanel.PengButton = false;
+        gamePanel.GangButton = false;
         gameManager.startTimeCount = false;
         gameManager.ServerOnMsgChiPengGang(msg);
-
+        msg = null;
     }
 
     /// <summary>
@@ -112,5 +114,175 @@ public class BasePlayer : MonoBehaviour {
         handPai.RemoveAt(paiIndex);
         discardPai.Add(go);
         PlacePai();
+    }
+
+    /// <summary>
+    /// 接收服务端广播吃的协议
+    /// </summary>
+    public void OnChi(int paiId)
+    {
+        //分为三种可能
+        if(NumOfPai(paiId-1) >= 1 && NumOfPai(paiId - 2) >= 1)
+        {
+            int index1 = IndexOf(paiId - 1);
+            GameObject pai1 = handPai[index1];
+            handPai.RemoveAt(index1);
+            chi.Add(pai1);
+
+            int index2 = IndexOf(paiId - 2);
+            GameObject pai2 = handPai[index2];
+            handPai.RemoveAt(index2);
+            chi.Add(pai2);
+            gameManager.CreatePai(paiId,id,PlacePaiLocation.Chi);
+            PlaceChiPengGang();
+        }
+        else if(NumOfPai(paiId - 1) >= 1 && NumOfPai(paiId + 1) >= 1)
+        {
+            int index1 = IndexOf(paiId - 1);
+            GameObject pai1 = handPai[index1];
+            handPai.RemoveAt(index1);
+            chi.Add(pai1);
+
+            int index2 = IndexOf(paiId + 1);
+            GameObject pai2 = handPai[index2];
+            handPai.RemoveAt(index2);
+            chi.Add(pai2);
+            gameManager.CreatePai(paiId, id, PlacePaiLocation.Chi);
+            PlaceChiPengGang();
+        }
+        else if(NumOfPai(paiId + 1) >= 1 && NumOfPai(paiId + 2) >= 1)
+        {
+            int index1 = IndexOf(paiId + 1);
+            GameObject pai1 = handPai[index1];
+            handPai.RemoveAt(index1);
+            chi.Add(pai1);
+
+            int index2 = IndexOf(paiId + 2);
+            GameObject pai2 = handPai[index2];
+            handPai.RemoveAt(index2);
+            chi.Add(pai2);
+            gameManager.CreatePai(paiId, id, PlacePaiLocation.Chi);
+            PlaceChiPengGang();
+        }
+        else
+        {
+            Debug.Log("客户端处理吃出现bug");
+        }
+        
+    }
+
+    /// <summary>
+    /// 接收服务端广播碰的协议
+    /// </summary>
+    public void OnPeng(int paiId)
+    {
+        if (NumOfPai(paiId) >= 2)
+        {
+            int index1 = IndexOf(paiId);
+            GameObject pai1 = handPai[index1];
+            handPai.RemoveAt(index1);
+            chi.Add(pai1);
+
+            int index2 = IndexOf(paiId);
+            GameObject pai2 = handPai[index2];
+            handPai.RemoveAt(index2);
+            chi.Add(pai2);
+            gameManager.CreatePai(paiId, id, PlacePaiLocation.Peng);
+            PlaceChiPengGang();
+        }
+        else
+        {
+            Debug.Log("客户端处理碰出现bug");
+        }
+        
+    }
+
+    /// <summary>
+    /// 接收服务端广播杠的协议
+    /// </summary>
+    public void OnGang(int paiId)
+    {
+        if (NumOfPai(paiId) >= 3)
+        {
+            int index1 = IndexOf(paiId);
+            GameObject pai1 = handPai[index1];
+            handPai.RemoveAt(index1);
+            chi.Add(pai1);
+
+            int index2 = IndexOf(paiId);
+            GameObject pai2 = handPai[index2];
+            handPai.RemoveAt(index2);
+            chi.Add(pai2);
+
+            int index3 = IndexOf(paiId);
+            GameObject pai3 = handPai[index3];
+            handPai.RemoveAt(index3);
+            chi.Add(pai3);
+            gameManager.CreatePai(paiId, id, PlacePaiLocation.Gang);
+            PlaceChiPengGang();
+        }
+        else
+        {
+            Debug.Log("客户端处理杠出现bug");
+        }
+    }
+
+    /// <summary>
+    /// 调整吃碰杠的牌的顺序
+    /// 这个可以和PlacePai放在一起优化
+    /// </summary>
+    private void PlaceChiPengGang()
+    {
+        for (int i = 0; i < chi.Count; i++)
+        {
+            chi[i].transform.position = new Vector3(i - 6, 20, 0);
+        }
+
+        for (int i = 0; i < peng.Count; i++)
+        {
+            peng[i].transform.position = new Vector3(i - 6, 25, 0);
+        }
+
+        for (int i = 0; i < gang.Count; i++)
+        {
+            gang[i].transform.position = new Vector3(i - 6, 30, 0);
+        }
+    }
+
+    /// <summary>
+    /// 用于吃碰杠操作,判断查找的paiId有多少张
+    /// </summary>
+    /// <param name="paiId"></param>
+    private int NumOfPai(int paiId)
+    {
+        int count = 0;
+        for(int i = 0; i < handPai.Count; i++)
+        {
+            int id = handPai[i].GetComponent<Pai>().paiId;
+            if(paiId == id)
+            {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    /// <summary>
+    /// 查看对应paiId的索引值
+    /// </summary>
+    /// <param name="paiId"></param>
+    /// <returns></returns>
+    private int IndexOf(int paiId)
+    {
+        int index = -1;
+        for (int i = 0; i < handPai.Count; i++)
+        {
+            int id = handPai[i].GetComponent<Pai>().paiId;
+            if (paiId == id)
+            {
+                index = i;
+            }
+        }
+        return index;
     }
 }

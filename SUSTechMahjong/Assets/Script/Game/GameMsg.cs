@@ -43,6 +43,6 @@ public class MsgChiPengGang : MsgBase
     public int id;//执行吃碰杠胡玩家的id
     public bool[] isChiPengGang;//分别代表能否进行吃碰杠
     //客户端回
-    public int result;//0代表什么都不做，其余分别代表吃碰杠
+    public int result = -1;//0代表什么都不做，其余分别代表吃碰杠
 }
 

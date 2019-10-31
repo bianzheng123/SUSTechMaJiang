@@ -321,6 +321,90 @@ public class PaiManager {
         return false;
     }
 
+    /// <summary>
+    /// 更新牌库
+    /// 返回值是为了测试
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="paiId"></param>
+    public bool OnChi(int id,int paiId)
+    {
+        //分为三种可能
+        if (NumOfPai(id,paiId - 1) >= 1 && NumOfPai(id,paiId - 2) >= 1)
+        {
+            int index1 = playerPai[id].IndexOf(paiId - 1);
+            playerPai[id].RemoveAt(index1);
+
+            int index2 = playerPai[id].IndexOf(paiId - 2);
+            playerPai[id].RemoveAt(index2);
+        }
+        else if (NumOfPai(id,paiId - 1) >= 1 && NumOfPai(id,paiId + 1) >= 1)
+        {
+            int index1 = playerPai[id].IndexOf(paiId - 1);
+            playerPai[id].RemoveAt(index1);
+
+            int index2 = playerPai[id].IndexOf(paiId + 1);
+            playerPai[id].RemoveAt(index2);
+        }
+        else if (NumOfPai(id,paiId + 1) >= 1 && NumOfPai(id,paiId + 2) >= 1)
+        {
+            int index1 = playerPai[id].IndexOf(paiId + 1);
+            playerPai[id].RemoveAt(index1);
+
+            int index2 = playerPai[id].IndexOf(paiId + 2);
+            playerPai[id].RemoveAt(index2);
+        }
+        else
+        {
+            //程序出现bug
+            return false;
+        }
+        return true;
+    }
+
+    public bool OnPeng(int id, int paiId)
+    {
+        if (NumOfPai(id,paiId) >= 2)
+        {
+            int index1 = playerPai[id].IndexOf(paiId);
+            playerPai[id].RemoveAt(index1);
+
+            int index2 = playerPai[id].IndexOf(paiId);
+            playerPai[id].RemoveAt(index2);
+            return true;
+        }
+        return false;
+    }
+
+    public bool OnGang(int id, int paiId)
+    {
+        if (NumOfPai(id, paiId) >= 3)
+        {
+            int index1 = playerPai[id].IndexOf(paiId);
+            playerPai[id].RemoveAt(index1);
+
+            int index2 = playerPai[id].IndexOf(paiId);
+            playerPai[id].RemoveAt(index2);
+
+            int index3 = playerPai[id].IndexOf(paiId);
+            playerPai[id].RemoveAt(index3);
+            return true;
+        }
+        return false;
+    }
+
+    private int NumOfPai(int id,int paiId)
+    {
+        int count = 0;
+        for(int i = 0; i < playerPai[id].Count; i++)
+        {
+            if(paiId == playerPai[id][i])
+            {
+                count++;
+            }
+        }
+        return count;
+    }
     //四个玩家四个list,存在List中
     //List<>
     //判断吃，碰，杠，胡（发送协议）

@@ -131,7 +131,7 @@ public class GameManager : MonoBehaviour
         {
             for (int j = 0; j < msg.data[i].paiIndex.Length; j++)
             {
-                CreatePai(msg.data[i].paiIndex[j], i);
+                CreatePai(msg.data[i].paiIndex[j], i, PlacePaiLocation.HandPai);
             }
             players[i].PlacePai();
         }
@@ -170,7 +170,7 @@ public class GameManager : MonoBehaviour
             gamePanel.ChuPaiButton = true;
         }
         nowTurnid = msg.id;
-        CreatePai(msg.paiId,msg.id);
+        CreatePai(msg.paiId,msg.id,PlacePaiLocation.HandPai);
 
         players[msg.id].PlacePai();//调整牌的位置，以及同步牌的顺序
 
@@ -210,7 +210,7 @@ public class GameManager : MonoBehaviour
                 Debug.Log("执行玩家id: " + item.id + ",打出的牌id: " + item.paiId + ",是否吃: " + item.isChiPengGang[1] + ",是否碰: " + item.isChiPengGang[2] + ",是否杠: " + item.isChiPengGang[3]);
             }
             MsgChiPengGang chiPengGang = queueChiPengGang.Dequeue();
-            ClientOnMsgChiPengGang(chiPengGang);
+            ClientOnMsgChiPengGang(chiPengGang);//广播
         }
         else
         {
@@ -231,32 +231,86 @@ public class GameManager : MonoBehaviour
         players[msg.id].DiscardPai(msg.paiIndex);
     }
 
+    /// <summary>
+    /// 客户端接收到吃碰杠的协议
+    /// 第一次收到协议，就让玩家操作是否进行吃碰杠，并将结果传给服务端
+    /// 第二次收到协议，同步结果
+    /// 这两次协议都需要服务端广播
+    /// </summary>
+    /// <param name="msgBase"></param>
     public void ClientOnMsgChiPengGang(MsgBase msgBase)
     {
         MsgChiPengGang msg = (MsgChiPengGang)msgBase;
-        nowTurnid = msg.id;
-        gamePanel.TurnLight(numToDir[Math.Abs(nowTurnid - id)]);
-        StartTimeCount();
-        players[nowTurnid].msg = msg;
-        if(nowTurnid != id) { return; }
-
-        bool[] isChiPengGang = msg.isChiPengGang;
-        if (isChiPengGang[1])
+        if(msg.result == -1)
         {
-            gamePanel.ChiButton = true;
+            GetChiPengGangResult(msg);
         }
-        if (isChiPengGang[2])
+        else
         {
-            gamePanel.PengButton = true;
-        }
-        if (isChiPengGang[3])
-        {
-            gamePanel.GangButton = true;
+            switch (msg.result)
+            {
+                case 0://取消操作，不需要任何改变
+                    break;
+                case 1:
+                    players[msg.id].OnChi(msg.paiId);
+                    break;
+                case 2:
+                    players[msg.id].OnPeng(msg.paiId);
+                    break;
+                case 3:
+                    players[msg.id].OnGang(msg.paiId);
+                    break;
+            }
         }
     }
 
+    /// <summary>
+    /// 服务端接收到吃碰杠的协议，对服务端的牌进行同步，并将本轮吃碰杠的结果进行广播
+    /// 如果本轮没有进行吃碰杠，就轮到下一个玩家判断
+    /// 如果有人进行了吃碰杠，就轮到下一个人进行发牌
+    /// </summary>
+    /// <param name="msgBase"></param>
     public void ServerOnMsgChiPengGang(MsgBase msgBase)
     {
+        MsgChiPengGang msg = (MsgChiPengGang)msgBase;
+
+        ClientOnMsgChiPengGang(msg);//对得到的本轮结果进行广播
+
+        //取消操作，就发送下一个吃碰杠协议
+        if (msg.result == 0 && queueChiPengGang.Count > 0)
+        {
+            MsgChiPengGang msgChiPengGang = queueChiPengGang.Dequeue();
+            ClientOnMsgChiPengGang(msgChiPengGang);//广播
+            return;
+        }
+
+        switch (msg.result)
+        {
+            case 0://这里的queue一定为空，不需要进行任何的改变
+                break;
+            case 1://更新牌库
+                if(paiManager.OnChi(msg.id, msg.paiId) == false)
+                {
+                    Debug.Log("更新牌库吃出现了bug");
+                }
+                break;
+            case 2:
+                if (paiManager.OnPeng(msg.id, msg.paiId) == false)
+                {
+                    Debug.Log("更新牌库碰出现了bug");
+                }
+                break;
+            case 3:
+                if (paiManager.OnGang(msg.id, msg.paiId) == false)
+                {
+                    Debug.Log("更新牌库杠出现了bug");
+                }
+                break;
+        }
+        MsgFaPai msgFaPai = new MsgFaPai();
+        turn = (turn + 1) % 4;
+        ServerOnMsgFaPai(msgFaPai);
+
         Debug.Log("吃碰杠成功");
     }
 
@@ -292,6 +346,29 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void GetChiPengGangResult(MsgChiPengGang msg)
+    {
+        nowTurnid = msg.id;
+        gamePanel.TurnLight(numToDir[Math.Abs(nowTurnid - id)]);
+        StartTimeCount();
+        players[nowTurnid].msg = msg;
+        if (nowTurnid != id) { return; }
+
+        bool[] isChiPengGang = msg.isChiPengGang;
+        if (isChiPengGang[1])
+        {
+            gamePanel.ChiButton = true;
+        }
+        if (isChiPengGang[2])
+        {
+            gamePanel.PengButton = true;
+        }
+        if (isChiPengGang[3])
+        {
+            gamePanel.GangButton = true;
+        }
+    }
+
     private void Update()
     {
         if (startTimeCount)
@@ -312,14 +389,28 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// 客户端中实例化牌，并分配给对应的玩家
     /// </summary>
-    /// <param name="paiId"></param>
-    /// <param name="playerId"></param>
-    /// <param name="pos"></param>
-    public void CreatePai(int paiId, int playerId)
+    /// <param name="paiId">需要生成的牌的id</param>
+    /// <param name="playerId">玩家的id</param>
+    /// <param name="index">牌放在哪里的索引</param>
+    public void CreatePai(int paiId, int playerId, PlacePaiLocation location)
     {
         string path = Pai.name2path[paiId];
         GameObject go = ResManager.LoadSprite(path,1);
-        players[playerId].handPai.Add(go);
+        switch (location)
+        {
+            case PlacePaiLocation.HandPai:
+                players[playerId].handPai.Add(go);
+                break;
+            case PlacePaiLocation.Chi:
+                players[playerId].chi.Add(go);
+                break;
+            case PlacePaiLocation.Peng:
+                players[playerId].peng.Add(go);
+                break;
+            case PlacePaiLocation.Gang:
+                players[playerId].gang.Add(go);
+                break;
+        }
         go.transform.SetParent(players[playerId].transform);
         go.AddComponent<BoxCollider>();
         go.tag = "Pai" + playerId;
@@ -331,4 +422,12 @@ public class GameManager : MonoBehaviour
     //告知吃碰杠胡的协议，一个list,枚举类,id
     //结束游戏的协议
 
+}
+
+public enum PlacePaiLocation
+{
+    HandPai,
+    Chi,
+    Peng,
+    Gang
 }
