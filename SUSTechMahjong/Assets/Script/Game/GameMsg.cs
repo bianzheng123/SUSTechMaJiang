@@ -22,16 +22,20 @@ public class StartGameData
 public class MsgFaPai : MsgBase
 {
     public MsgFaPai() { protoName = "MsgFaPai"; }
-    //服务端回
+    //服务端发送
     public int paiId;//牌的类型
     public int id;//收到牌的玩家id,如果是-1代表剩余牌没了，游戏结束
+    public bool isHu;//代表是否牌是否胡
 }
 
+/// <summary>
+/// 用来代表出牌或者胡的协议
+/// </summary>
 public class MsgChuPai : MsgBase
 {
     public MsgChuPai() { protoName = "MsgChuPai"; }
     //客户端发,服务端广播
-    public int paiIndex;//牌在这个玩家的索引
+    public int paiIndex;//牌在这个玩家的索引,-1代表执行胡的操作
     public int id;//出牌的玩家id
 }
 
@@ -43,7 +47,7 @@ public class MsgChiPengGang : MsgBase
     public int id;//执行吃碰杠胡玩家的id
     public bool[] isChiPengGang;//分别代表能否进行吃碰杠
     //客户端回
-    public int result = -1;//0代表什么都不做，其余分别代表吃碰杠
+    public int result;//0代表什么都不做，其余分别代表吃碰杠,初始化为-1，代表什么都没做
 
     public override string ToString()
     {

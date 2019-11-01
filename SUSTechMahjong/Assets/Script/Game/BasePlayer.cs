@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BasePlayer : MonoBehaviour {
+public abstract class BasePlayer : MonoBehaviour {
     protected GameManager gameManager;
     protected GamePanel gamePanel;
-    public MsgChiPengGang msg;//存放上一个吃碰杠协议的引用
+    public MsgChiPengGang msgChiPengGang;//存放上一个吃碰杠协议的引用
 
     //玩家手中的牌
     public List<GameObject> handPai;
@@ -60,10 +60,7 @@ public class BasePlayer : MonoBehaviour {
     }
 
     //出牌
-    public virtual void DaPai()
-    {
-
-    }
+    public abstract void DaPai();
 
     /// <summary>
     /// 没有参数代表强制执行吃碰杠操作
@@ -71,36 +68,36 @@ public class BasePlayer : MonoBehaviour {
     /// <param name="index">0代表什么都不做,1代表吃,2代表碰,3代表杠</param>
     public void ChiPengGang(int index = 0)
     {
-        if (msg.isChiPengGang[index])//代表相关操作允许
+        if (msgChiPengGang.isChiPengGang[index])//代表相关操作允许
         {
-            msg.result = index;
+            msgChiPengGang.result = index;
         }
         else
         {//异常情况
-            msg.result = 0;
+            msgChiPengGang.result = 0;
             Debug.Log("非法操作！！！！！");
         }
         gamePanel.ChiButton = false;
         gamePanel.PengButton = false;
         gamePanel.GangButton = false;
         gameManager.startTimeCount = false;
-        gameManager.ServerOnMsgChiPengGang(msg);
-        msg = null;
+        gameManager.ServerOnMsgChiPengGang(msgChiPengGang);
+        msgChiPengGang = null;
     }
 
     /// <summary>
-    /// 代表出牌，将出牌的按钮隐藏，并发送ChuPai协议
+    /// 代表出牌或者胡，将出牌的按钮隐藏，并发送ChuPai协议
     /// </summary>
     /// <param name="index">pai的索引</param>
-    protected void ChuPai(int index)
+    protected void ChuPai_Hu(int index = -1)
     {
         gameManager.startTimeCount = false;
-        GameObject go = handPai[index];
         Debug.Log("index: " + index + ",id: " + id);
         MsgChuPai msg = new MsgChuPai();
         msg.id = id;
         msg.paiIndex = index;
         gamePanel.ChuPaiButton = false;
+        gamePanel.HuButton = false;
         Debug.Log("出牌");
         gameManager.isChuPai = false;
         gameManager.ServerOnMsgChuPai(msg);

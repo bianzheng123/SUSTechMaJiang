@@ -207,6 +207,11 @@ public class GamePanel : BasePanel {
     public void OnHuClick()
     {
         Debug.Log("Hu");
+        if (gameManager.players == null) return;
+        CtrlPlayer player = (CtrlPlayer)gameManager.players[gameManager.id];
+        if (player == null) return;
+
+        player.Hu();
     }
 
     public void OnNoActionClick()

@@ -109,6 +109,14 @@ public class GameManager : MonoBehaviour
         msg.id = turn;
         int paiIdx = paiManager.FaPai(turn);
         msg.paiId = paiIdx;
+        if (paiManager.HasHu(turn))
+        {
+            msg.isHu = true;
+        }
+        else
+        {
+            msg.isHu = false;
+        }
         //广播
         ClientOnMsgFaPai(msg);
     }
@@ -123,13 +131,19 @@ public class GameManager : MonoBehaviour
         if(msg.paiId == -1)
         {
             Debug.Log("没牌了，游戏结束");
+            PanelManager.Open<GameoverPanel>(0,-1,id);
             return;
         }
         gamePanel.TurnLight(numToDir[Math.Abs(msg.id - id)]);
         if (msg.id == id)
         {
             gamePanel.ChuPaiButton = true;
+            if (msg.isHu)
+            {
+                gamePanel.HuButton = true;
+            }
         }
+        
         nowTurnid = msg.id;
         CreatePai(msg.paiId,msg.id,PlacePaiLocation.HandPai);
 
@@ -159,8 +173,14 @@ public class GameManager : MonoBehaviour
         MsgChuPai msg = (MsgChuPai)msgBase;
         int paiIndex = msg.paiIndex;//牌在这个玩家的索引
         int id = msg.id;//出牌的玩家id
-        int paiId = paiManager.ChuPai(paiIndex, id);
         ClientOnMsgChuPai(msg);//广播
+        if (paiIndex == -1)
+        {
+            //服务端执行胡的操作，清空数据，写入数据库等
+            return;
+        }
+
+        int paiId = paiManager.ChuPai(paiIndex, id);
 
         queueChiPengGang = paiManager.HasEvent(paiId, id);
 
@@ -190,7 +210,24 @@ public class GameManager : MonoBehaviour
     {
         MsgChuPai msg = (MsgChuPai)msgBase;
         Debug.Log("PlayerId: " + msg.id);
-        players[msg.id].DiscardPai(msg.paiIndex);
+        if(msg.paiIndex == -1)
+        {
+            Debug.Log("胡牌成功！");
+            if(msg.id == turn)
+            {
+                //跳转到成功界面
+                PanelManager.Open<GameoverPanel>(1,msg.id,id);
+            }
+            else
+            {
+                //跳转到失败的界面
+                PanelManager.Open<GameoverPanel>(2,msg.id,id);
+            }
+        }
+        else
+        { 
+            players[msg.id].DiscardPai(msg.paiIndex);
+        }
     }
 
     /// <summary>
@@ -311,7 +348,7 @@ public class GameManager : MonoBehaviour
         nowTurnid = msg.id;
         gamePanel.TurnLight(numToDir[Math.Abs(nowTurnid - id)]);
         StartTimeCount();
-        players[nowTurnid].msg = msg;
+        players[nowTurnid].msgChiPengGang = msg;
         if (nowTurnid != id) { return; }
 
         bool[] isChiPengGang = msg.isChiPengGang;

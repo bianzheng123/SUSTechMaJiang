@@ -61,10 +61,13 @@ public class CtrlPlayer : BasePlayer {
             handPai[selectedIndex].transform.Translate(new Vector3(0, -0.5f, 0));
             index = selectedIndex;
         }
-        ChuPai(index);
+        ChuPai_Hu(index);
         //对选择的牌进行初始化
         selectedIndex = -1;
     }
 
-    
+    public void Hu()
+    {
+        ChuPai_Hu();
+    }
 }

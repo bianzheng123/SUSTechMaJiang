@@ -73,9 +73,9 @@ public class PaiManager {
     /// <summary>
     /// 发送单个牌调用的方法
     /// </summary>
-    /// <param name="id">玩家的id</param>
+    /// <param name="playerId">玩家的id</param>
     /// <returns></returns>
-    public int FaPai(int id)
+    public int FaPai(int playerId)
     {
         if(restPai.Count == 0)
         {
@@ -86,17 +86,16 @@ public class PaiManager {
         int paiId = restPai[ranIdx];
         restPai.RemoveAt(ranIdx);
 
-        int arrIndex = playerPai[id].Count;
-        playerPai[id].Add(paiId);
-        while (arrIndex >= 1 && playerPai[id][arrIndex] < playerPai[id][arrIndex - 1])
+        int arrIndex = playerPai[playerId].Count;
+        playerPai[playerId].Add(paiId);
+        while (arrIndex >= 1 && playerPai[playerId][arrIndex] < playerPai[playerId][arrIndex - 1])
         {
             //arrIndex和arrIndex-1交换元素
-            int tmp = playerPai[id][arrIndex];
-            playerPai[id][arrIndex] = playerPai[id][arrIndex - 1];
-            playerPai[id][arrIndex - 1] = tmp;
+            int tmp = playerPai[playerId][arrIndex];
+            playerPai[playerId][arrIndex] = playerPai[playerId][arrIndex - 1];
+            playerPai[playerId][arrIndex - 1] = tmp;
             arrIndex--;
         }
-
         return paiId;
     }
 
@@ -130,6 +129,7 @@ public class PaiManager {
                 msg.isChiPengGang = res;
                 msg.id = panId;
                 msg.paiId = paiId;
+                msg.result = -1;
                 queue.Enqueue(msg);
             }
         }
@@ -140,22 +140,22 @@ public class PaiManager {
     /// 判断是否出现吃的情况
     /// </summary>
     /// <param name="paiId">打出的牌的id</param>
-    /// <param name="panId">要搜索的玩家id</param>
+    /// <param name="playerId">要搜索的玩家id</param>
     /// <returns>是否有吃</returns>
-    private bool HasChi(int paiId,int panId)
+    private bool HasChi(int paiId,int playerId)
     {
-        bool pan1 = playerPai[panId].Contains(paiId + 1) && playerPai[panId].Contains(paiId + 2);
-        bool pan2 = playerPai[panId].Contains(paiId - 1) && playerPai[panId].Contains(paiId + 1);
-        bool pan3 = playerPai[panId].Contains(paiId - 2) && playerPai[panId].Contains(paiId - 1);
+        bool pan1 = playerPai[playerId].Contains(paiId + 1) && playerPai[playerId].Contains(paiId + 2);
+        bool pan2 = playerPai[playerId].Contains(paiId - 1) && playerPai[playerId].Contains(paiId + 1);
+        bool pan3 = playerPai[playerId].Contains(paiId - 2) && playerPai[playerId].Contains(paiId - 1);
         return pan1 | pan2 | pan3;
     }
 
-    private bool HasPeng(int paiId,int panId)
+    private bool HasPeng(int paiId,int playerId)
     {
         int count = 0;
-        for(int i = 0; i < playerPai[panId].Count; i++)
+        for(int i = 0; i < playerPai[playerId].Count; i++)
         {
-            if(playerPai[panId][i] == paiId)
+            if(playerPai[playerId][i] == paiId)
             {
                 count++;
             }
@@ -163,12 +163,12 @@ public class PaiManager {
         return count >= 2;
     }
 
-    private bool HasGang(int paiId,int panId)
+    private bool HasGang(int paiId,int playerId)
     {
         int count = 0;
-        for (int i = 0; i < playerPai[panId].Count; i++)
+        for (int i = 0; i < playerPai[playerId].Count; i++)
         {
-            if (playerPai[panId][i] == paiId)
+            if (playerPai[playerId][i] == paiId)
             {
                 count++;
             }
@@ -176,10 +176,14 @@ public class PaiManager {
         return count >= 3;
     }
 
-    private bool HasHu(int paiId,int panId)
+    public bool HasHu(int playerId)
     {
-        List<int> cards = playerPai[panId];
-        int len = playerPai[panId].Count;
+        List<int> cards = playerPai[playerId];
+        int len = playerPai[playerId].Count;
+        //if(len == 14)//用于测试
+        //{
+        //    return true;
+        //}
         if(len == 14)
         {
             int count = 0;
