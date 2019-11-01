@@ -42,6 +42,7 @@ public class PaiManager {
             {
                 restPai.Add(i);
             }
+
         }
     }
 
