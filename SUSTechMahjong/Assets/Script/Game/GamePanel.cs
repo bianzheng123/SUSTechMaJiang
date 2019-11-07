@@ -10,10 +10,11 @@ public class GamePanel : BasePanel {
     private Button setButton;
     //灯的亮灭
     private GameObject[] lights;
-    //设置计时时间
-    private Text timeCount;
     //显示时间的图片
-    private Image time;
+    private Image timeCount;
+    //存储时间图片的路径
+    private string[] timePath = { "GameLayer/timer_0", "GameLayer/timer_1", "GameLayer/timer_2", "GameLayer/timer_3",
+        "GameLayer/timer_4", "GameLayer/timer_5","GameLayer/timer_6","GameLayer/timer_7","GameLayer/timer_8","GameLayer/timer_9"};
 
     //储存GameManager的引用
     private GameManager gameManager;
@@ -97,10 +98,9 @@ public class GamePanel : BasePanel {
         lights[1] = skin.transform.Find("TimeImage/Right").gameObject;
         lights[2] = skin.transform.Find("TimeImage/Up").gameObject;
         lights[3] = skin.transform.Find("TimeImage/Left").gameObject;
-        timeCount = skin.transform.Find("TimeCount").GetComponent<Text>();
         okButton = skin.transform.Find("OkButton").GetComponent<Button>();
         cancelButton = skin.transform.Find("CancelButton").GetComponent<Button>();
-        time = skin.transform.Find("Image").GetComponent<Image>();
+        timeCount = skin.transform.Find("TimeCount").GetComponent<Image>();
         pengButton = skin.transform.Find("PengButton").GetComponent<Button>();
         gangButton = skin.transform.Find("GangButton").GetComponent<Button>();
         huButton = skin.transform.Find("HuButton").GetComponent<Button>();
@@ -161,8 +161,7 @@ public class GamePanel : BasePanel {
 
     public void SetTimeCount(float lastTime)
     {
-        timeCount.text = "剩余时间: " + string.Format("{0:G}", lastTime) + " 秒";
-        time.sprite = ResManager.LoadUISprite("GameLayer/timer_1");
+        timeCount.sprite = ResManager.LoadUISprite(timePath[(int)lastTime]);
     }
 
     //关闭
