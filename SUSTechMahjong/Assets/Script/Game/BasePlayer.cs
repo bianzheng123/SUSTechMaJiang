@@ -22,16 +22,19 @@ public abstract class BasePlayer : MonoBehaviour {
     public bool isTurn;
 
 
-    public virtual void Init(GameManager gameManager,GamePanel gamePanel) {
+    public virtual void Init(GamePanel gamePanel) {
         handPai = new List<GameObject>();
         chi = new List<GameObject>();
         peng = new List<GameObject>();
         gang = new List<GameObject>();
         discardPai = new List<GameObject>();
-        this.gameManager = gameManager;
+        gameManager = GameManager.GetInstance();
         this.gamePanel = gamePanel;
     }
 
+    /// <summary>
+    /// 玩家发到牌，用于对牌进行排序
+    /// </summary>
     public void SynHandPai()
     {
         //调整顺序
@@ -46,9 +49,11 @@ public abstract class BasePlayer : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// 调整手牌的位置
+    /// </summary>
     public void PlacePai()
     {
-        //调整手牌的位置
         for (int i = 0; i < handPai.Count; i++)
         {
             handPai[i].transform.position = new Vector3(i - 6,-1-id,0);

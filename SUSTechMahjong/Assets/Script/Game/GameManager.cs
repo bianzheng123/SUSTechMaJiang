@@ -4,6 +4,18 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    private GameManager() { }
+    private static GameManager _instance;
+    public static GameManager GetInstance()
+    {
+        if (_instance == null)
+        {
+            GameObject obj = new GameObject("GameManager");
+            _instance = obj.AddComponent<GameManager>();
+        }
+        return _instance;
+    }
+
     public static int turn;//存在服务器中的
     public static PaiManager paiManager = new PaiManager();
     public static Queue<MsgChiPengGang> queueChiPengGang;//每一个房间都存放用来判断是否吃碰杠的列表
@@ -434,7 +446,7 @@ public class GameManager : MonoBehaviour
             if (i == id)
             {
                 bp = go.AddComponent<CtrlPlayer>();
-                bp.Init(this, gamePanel);
+                bp.Init(gamePanel);
                 players[i] = bp;
                 players[i].id = i;
                 Debug.Log("id: " + id);
@@ -442,7 +454,7 @@ public class GameManager : MonoBehaviour
             else
             {
                 bp = go.AddComponent<SyncPlayer>();
-                bp.Init(this, gamePanel);
+                bp.Init(gamePanel);
                 players[i] = bp;
                 players[i].id = i;
             }

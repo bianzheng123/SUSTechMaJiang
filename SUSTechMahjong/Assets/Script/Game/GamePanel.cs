@@ -118,10 +118,9 @@ public class GamePanel : BasePanel {
         //NetManager.Send(msg);
 
         //生成gameManager类
-        GameObject gameManager = ResManager.LoadPrefab("GameManager");
-        gameManager.GetComponent<GameManager>().GamePanel = this;
-        GameObject init_gameManager = Instantiate(gameManager);
-        this.gameManager = init_gameManager.GetComponent<GameManager>();
+        gameManager = GameManager.GetInstance();
+        gameManager.GamePanel = this;
+
 
         //生成背景图片
         GameObject bg = ResManager.LoadSprite("bg_game",0);
