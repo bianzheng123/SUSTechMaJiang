@@ -120,6 +120,7 @@ public class GamePanel : BasePanel {
         //生成gameManager类
         gameManager = GameManager.GetInstance();
         gameManager.GamePanel = this;
+        gameManager.PlayerFactory = new PlayerFactory();
 
 
         //生成背景图片

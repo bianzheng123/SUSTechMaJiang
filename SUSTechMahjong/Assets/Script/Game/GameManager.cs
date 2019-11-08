@@ -19,7 +19,8 @@ public class GameManager : MonoBehaviour
     public static int turn;//存在服务器中的
     public static PaiManager paiManager = new PaiManager();
     public static Queue<MsgChiPengGang> queueChiPengGang;//每一个房间都存放用来判断是否吃碰杠的列表
-    
+
+    private PlayerFactory playerFactory;//简单工厂模式
     private GamePanel gamePanel;
     public int id;//该客户端的id
     public BasePlayer[] players;
@@ -30,6 +31,11 @@ public class GameManager : MonoBehaviour
     public bool startGame = false;//目前可能没用，将来也可能没用
     public float timeLast = timeCount;
     public bool startTimeCount = false;
+
+    public PlayerFactory PlayerFactory
+    {
+        set { playerFactory = value; }
+    }
 
     public GamePanel GamePanel
     {
@@ -441,23 +447,22 @@ public class GameManager : MonoBehaviour
     {
         for (int i = 0; i < 4; i++)
         {
-            GameObject go = new GameObject("Player" + (i + 1));
-            BasePlayer bp = null;
-            if (i == id)
+            UnityEngine.Object[] obj = null;
+            if(i == id)
             {
-                bp = go.AddComponent<CtrlPlayer>();
-                bp.Init(gamePanel);
-                players[i] = bp;
-                players[i].id = i;
+                obj = playerFactory.createPlayer(PlayerName.CtrlPlayer);
                 Debug.Log("id: " + id);
             }
             else
             {
-                bp = go.AddComponent<SyncPlayer>();
-                bp.Init(gamePanel);
-                players[i] = bp;
-                players[i].id = i;
+                obj = playerFactory.createPlayer(PlayerName.SyncPlayer);
             }
+            GameObject go = (GameObject)obj[0];
+            BasePlayer bp = (BasePlayer)obj[1];
+            bp.Init(gamePanel);
+            players[i] = bp;
+            players[i].id = i;
+
         }
     }
 
