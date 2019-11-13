@@ -16,9 +16,12 @@ public class GameManager : MonoBehaviour
         return _instance;
     }
 
-    public static int turn;//存在服务器中的
+    //static关键字代表这些变量存在服务器中
+    public static int turn;//代表现在轮到谁了
     public static PaiManager paiManager = new PaiManager();
     public static Queue<MsgChiPengGang> queueChiPengGang;//每一个房间都存放用来判断是否吃碰杠的列表
+    public static int turnNum = 1;//代表现在是第几轮
+    public static int turnCount = 0;//每当服务端发送一次出牌协议就调用一次，用来判断是第几轮了
 
     private PlayerFactory playerFactory;//简单工厂模式
     private GamePanel gamePanel;
@@ -125,6 +128,13 @@ public class GameManager : MonoBehaviour
     {
         MsgFaPai msg = (MsgFaPai)msgBase;
         msg.id = turn;
+        msg.turnNum = turnNum;
+        turnCount++;
+        if (turnCount % 4 == 0)
+        {
+            turnCount = 0;
+            turnNum++;
+        }//判断下一次出牌是在第几轮
         int paiIdx = paiManager.FaPai(turn);
         msg.paiId = paiIdx;
         if (paiManager.HasHu(turn))
@@ -152,6 +162,7 @@ public class GameManager : MonoBehaviour
             PanelManager.Open<GameoverPanel>(0,-1,id);
             return;
         }
+        gamePanel.SetTurnText("第 " + msg.turnNum + " 轮");
         gamePanel.TurnLight(numToDir[Math.Abs(msg.id - id)]);
         if (msg.id == id)
         {

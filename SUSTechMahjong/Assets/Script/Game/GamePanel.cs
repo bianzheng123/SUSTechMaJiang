@@ -34,6 +34,10 @@ public class GamePanel : BasePanel {
     private Button huButton;
     //不进行操作
     private Button noActionButton;
+    //发动技能的按钮
+    private Button skillButton;
+    //用来显示轮数的列表
+    private Text turnText;
 
     public bool ChuPaiButton
     {
@@ -80,6 +84,14 @@ public class GamePanel : BasePanel {
         }
     }
 
+    public bool SkillButton
+    {
+        set
+        {
+            skillButton.gameObject.SetActive(value);
+        }
+    }
+
     //初始化
     public override void OnInit()
     {
@@ -106,6 +118,8 @@ public class GamePanel : BasePanel {
         huButton = skin.transform.Find("HuButton").GetComponent<Button>();
         chiButton = skin.transform.Find("ChiButton").GetComponent<Button>();
         noActionButton = skin.transform.Find("NoActionButton").GetComponent<Button>();
+        skillButton = skin.transform.Find("SkillButton").GetComponent<Button>();
+        turnText = skin.transform.Find("TurnText").GetComponent<Text>();
         //监听
         exitButton.onClick.AddListener(OnExitClick);
         setButton.onClick.AddListener(OnSetClick);
@@ -140,13 +154,20 @@ public class GamePanel : BasePanel {
         huButton.onClick.AddListener(OnHuClick);
         chiButton.onClick.AddListener(OnChiClick);
         noActionButton.onClick.AddListener(OnNoActionClick);
+        skillButton.onClick.AddListener(OnSkillClick);
 
         chiButton.gameObject.SetActive(false);
         pengButton.gameObject.SetActive(false);
         gangButton.gameObject.SetActive(false);
         huButton.gameObject.SetActive(false);
         noActionButton.gameObject.SetActive(false);
+        skillButton.gameObject.SetActive(false);
 
+    }
+
+    public void SetTurnText(string text)
+    {
+        turnText.text = text;
     }
 
     //改变灯光的顺序
@@ -173,6 +194,13 @@ public class GamePanel : BasePanel {
         //NetManager.RemoveEventListener(NetManager.NetEvent.ConnectSucc, OnConnectSucc);
         //NetManager.RemoveEventListener(NetManager.NetEvent.ConnectFail, OnConnectFail);
     }
+
+    public void OnSkillClick()
+    {
+        Debug.Log("发动技能");
+
+    }
+
     public void OnChiClick()
     {
         Debug.Log("Chi");
