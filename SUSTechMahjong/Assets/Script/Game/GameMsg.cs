@@ -17,6 +17,7 @@ public class StartGameData
 {
     public int[] paiIndex = null;
     public int skillIndex = 0;
+    public int skillCount = 0;
 }
 
 public enum Skill

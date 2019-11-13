@@ -36,6 +36,7 @@ public class GameManager : MonoBehaviour
     public float timeLast = timeCount;
     public int hostTurnNum = 0;
     public bool startTimeCount = false;
+    public int skillCount;//代表当前主机玩家还剩下几次技能可以使用
 
     public PlayerFactory PlayerFactory
     {
@@ -80,6 +81,7 @@ public class GameManager : MonoBehaviour
         {
             msg.data[i] = new StartGameData();
             msg.data[i].skillIndex = (int)Skill.Chemistry;//现在先全部设置成化学系
+            msg.data[i].skillCount = maxSkillTime[i];
         }//初始化协议的牌数组
         for (int i = 0; i < 4; i++)
         {
@@ -117,7 +119,9 @@ public class GameManager : MonoBehaviour
         id = msg.id;
         InitPlayer(msg);
         gamePanel.skill = (Skill)msg.data[msg.id].skillIndex;
-
+        gamePanel.SkillDispalyText = (Skill)msg.data[msg.id].skillIndex;
+        skillCount = msg.data[msg.id].skillCount;
+        gamePanel.RestSkillCount = skillCount;
         //生成牌
         for (int i = 0; i < 4; i++)
         {
@@ -383,6 +387,11 @@ public class GameManager : MonoBehaviour
     public void ClientOnMsgChemistry(MsgBase msgBase)
     {
         MsgChemistry msg = (MsgChemistry)msgBase;
+        if(msg.id == id)
+        {
+            skillCount--;
+            gamePanel.RestSkillCount = skillCount;
+        }
         players[msg.id].DiscardPai(msg.paiIndex);
 
         CreatePai(msg.paiId, msg.id, PlacePaiLocation.HandPai);

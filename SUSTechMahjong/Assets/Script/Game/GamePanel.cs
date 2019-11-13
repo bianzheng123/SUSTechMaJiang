@@ -38,6 +38,10 @@ public class GamePanel : BasePanel {
     private Button skillButton;
     //用来显示轮数的列表
     private Text turnText;
+    //用来显示你是哪个系的
+    private Text skillDisplayText;
+    //用来显示还剩下几次技能能发动
+    private Text restSkillCount;
     //用来显示是否发动了技能
     private GameObject skillingText;
 
@@ -45,6 +49,35 @@ public class GamePanel : BasePanel {
     public bool isDoSkilling = false;
     //表示现在id的技能类型
     public Skill skill = Skill.None;
+
+    public Skill SkillDispalyText
+    {
+        set
+        {
+            switch (value)
+            {
+                case Skill.None:
+                    skillDisplayText.text = "你目前没有加入系";
+                    Debug.Log("没加入系，出现了bug");
+                    break;
+                case Skill.Math:
+                    skillDisplayText.text = "你是数学系";
+                    break;
+                case Skill.Chemistry:
+                    skillDisplayText.text = "你是化学系";
+                    break;
+            }
+        }
+    }
+
+    public int RestSkillCount
+    {
+        set
+        {
+            string str = value == 0 ? "你不能使用技能了" : "你还剩下" + value + "次技能";
+            restSkillCount.text = str;
+        }
+    }
 
     public bool ChuPaiButton
     {
@@ -127,6 +160,8 @@ public class GamePanel : BasePanel {
         noActionButton = skin.transform.Find("NoActionButton").GetComponent<Button>();
         skillButton = skin.transform.Find("SkillButton").GetComponent<Button>();
         turnText = skin.transform.Find("TurnText").GetComponent<Text>();
+        skillDisplayText = skin.transform.Find("SkillDisplayText").GetComponent<Text>();
+        restSkillCount = skin.transform.Find("RestSkillCount").GetComponent<Text>();
         skillingText = skin.transform.Find("SkillingText").gameObject;
         //监听
         exitButton.onClick.AddListener(OnExitClick);
