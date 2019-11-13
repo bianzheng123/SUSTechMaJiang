@@ -38,6 +38,13 @@ public class GamePanel : BasePanel {
     private Button skillButton;
     //用来显示轮数的列表
     private Text turnText;
+    //用来显示是否发动了技能
+    private GameObject skillingText;
+
+    //表示是否选中了发动技能的按钮
+    public bool isDoSkilling = false;
+    //表示现在id的技能类型
+    public Skill skill = Skill.None;
 
     public bool ChuPaiButton
     {
@@ -120,10 +127,11 @@ public class GamePanel : BasePanel {
         noActionButton = skin.transform.Find("NoActionButton").GetComponent<Button>();
         skillButton = skin.transform.Find("SkillButton").GetComponent<Button>();
         turnText = skin.transform.Find("TurnText").GetComponent<Text>();
+        skillingText = skin.transform.Find("SkillingText").gameObject;
         //监听
         exitButton.onClick.AddListener(OnExitClick);
         setButton.onClick.AddListener(OnSetClick);
-        okButton.onClick.AddListener(OnOkClick);
+        okButton.onClick.AddListener(OnChuPaiClick);
         cancelButton.onClick.AddListener(OnCancelClick);
         //网络协议监听
         //NetManager.AddMsgListener("MsgLogin", OnMsgLogin);
@@ -163,6 +171,8 @@ public class GamePanel : BasePanel {
         noActionButton.gameObject.SetActive(false);
         skillButton.gameObject.SetActive(false);
 
+        skillingText.SetActive(false);
+
     }
 
     public void SetTurnText(string text)
@@ -195,8 +205,78 @@ public class GamePanel : BasePanel {
         //NetManager.RemoveEventListener(NetManager.NetEvent.ConnectFail, OnConnectFail);
     }
 
+    public void AddSkillClick()
+    {
+        switch (skill)
+        {
+            case Skill.None:
+                Debug.Log("技能不可能为空，出现bug");
+                break;
+            case Skill.Math:
+                okButton.onClick.AddListener(OnMathClick);
+                break;
+            case Skill.Chemistry:
+                okButton.onClick.AddListener(OnChemistryClick);
+                break;
+        }
+    }
+
+    public void DeleteSkillClick()
+    {
+        switch (skill)
+        {
+            case Skill.None:
+                Debug.Log("技能不可能为空，出现bug");
+                break;
+            case Skill.Math:
+                okButton.onClick.RemoveListener(OnMathClick);
+                //还要添加取消选牌的操作
+                break;
+            case Skill.Chemistry:
+                okButton.onClick.RemoveListener(OnChemistryClick);
+                break;
+        }
+    }
+
+    public void OnMathClick()
+    {
+        Debug.Log("发动数学系技能");
+    }
+
+    public void OnChemistryClick()
+    {
+        Debug.Log("发动化学系技能");
+        if (gameManager.players == null) return;
+        CtrlPlayer player = (CtrlPlayer)gameManager.players[gameManager.id];
+        if (player == null) return;
+        if (player.selectedIndex == -1) return;
+
+        DeleteSkillClick();
+        okButton.onClick.AddListener(OnChuPaiClick);
+        skillingText.SetActive(false);
+
+        gameManager.startTimeCount = false;
+        gameManager.isChuPai = false;
+        SkillButton = false;
+
+        player.LaunchChemistry();
+    }
+
     public void OnSkillClick()
     {
+        isDoSkilling = !isDoSkilling;
+        skillingText.SetActive(isDoSkilling);
+        if (isDoSkilling)//如果按下了发动技能的按钮
+        {
+            okButton.onClick.RemoveListener(OnChuPaiClick);
+            //根据不同的技能进行扩充，这里可以添加相当于工厂方法的一种设计模式
+            AddSkillClick();
+        }
+        else
+        {
+            DeleteSkillClick();
+            okButton.onClick.AddListener(OnChuPaiClick);
+        }
         Debug.Log("发动技能");
 
     }
@@ -261,7 +341,7 @@ public class GamePanel : BasePanel {
         Debug.Log("Set");
     }
 
-    public void OnOkClick()
+    public void OnChuPaiClick()
     {
         if (gameManager.players == null) return;
         CtrlPlayer player = (CtrlPlayer)gameManager.players[gameManager.id];
@@ -279,6 +359,7 @@ public class GamePanel : BasePanel {
         if (player.selectedIndex == -1) return;
 
         player.handPai[player.selectedIndex].transform.Translate(new Vector3(0, -0.5f, 0));
+        player.selectedIndex = -1;
     }
 
 }

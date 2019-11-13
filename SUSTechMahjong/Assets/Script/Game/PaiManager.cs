@@ -100,6 +100,12 @@ public class PaiManager {
         return paiId;
     }
 
+    /// <summary>
+    /// 用于出牌，返回的是这张牌的id
+    /// </summary>
+    /// <param name="paiIndex"></param>
+    /// <param name="id"></param>
+    /// <returns></returns>
     public int ChuPai(int paiIndex,int id)
     {
         int paiId = playerPai[id][paiIndex];

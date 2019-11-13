@@ -22,6 +22,8 @@ public class GameManager : MonoBehaviour
     public static Queue<MsgChiPengGang> queueChiPengGang;//每一个房间都存放用来判断是否吃碰杠的列表
     public static int turnNum = 1;//代表现在是第几轮
     public static int turnCount = 0;//每当服务端发送一次出牌协议就调用一次，用来判断是第几轮了
+    public static int[] doSkillTime;//代表每一个玩家已经用过技能的次数
+    public static int[] maxSkillTime;//代表每一个玩家在一局中最多使用技能的次数
 
     private PlayerFactory playerFactory;//简单工厂模式
     private GamePanel gamePanel;
@@ -31,8 +33,8 @@ public class GameManager : MonoBehaviour
     public const float timeCount = 10;//代表出牌计时的时间
     public bool isChuPai = false;//是否为出牌，还是进行吃碰杠的判断
     public int nowTurnid = 0;
-    public bool startGame = false;//目前可能没用，将来也可能没用
     public float timeLast = timeCount;
+    public int hostTurnNum = 0;
     public bool startTimeCount = false;
 
     public PlayerFactory PlayerFactory
@@ -55,10 +57,18 @@ public class GameManager : MonoBehaviour
         ServerOnInitData(msg);
     }
 
-    //服务端收到开始接收游戏数据的协议
+    //服务端收到开始接收游戏数据的协议，并对使用技能的次数进行初始化
     public void ServerOnInitData(MsgBase msgBase)
     {
+        //服务端的初始化
+        doSkillTime = new int[4];
+        maxSkillTime = new int[4];
+        for (int i = 0; i < 4; i++) {
+            doSkillTime[i] = 0;
+            maxSkillTime[i] = 3;
+        }
         paiManager.Init();
+
         MsgInitData msg = (MsgInitData)msgBase;
         //获取骰子的点数
         System.Random rd = new System.Random();
@@ -69,6 +79,7 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < msg.data.Length; i++)
         {
             msg.data[i] = new StartGameData();
+            msg.data[i].skillIndex = (int)Skill.Chemistry;//现在先全部设置成化学系
         }//初始化协议的牌数组
         for (int i = 0; i < 4; i++)
         {
@@ -104,7 +115,8 @@ public class GameManager : MonoBehaviour
         Pai.Init();
         players = new BasePlayer[4];
         id = msg.id;
-        InitPlayer(msg.id);
+        InitPlayer(msg);
+        gamePanel.skill = (Skill)msg.data[msg.id].skillIndex;
 
         //生成牌
         for (int i = 0; i < 4; i++)
@@ -117,7 +129,6 @@ public class GameManager : MonoBehaviour
         }
 
         //发送发牌协议
-        startGame = true;
         MsgFaPai msgFaPai = new MsgFaPai();
         ServerOnMsgFaPai(msgFaPai);
         //可以不发这个协议
@@ -129,6 +140,7 @@ public class GameManager : MonoBehaviour
         MsgFaPai msg = (MsgFaPai)msgBase;
         msg.id = turn;
         msg.turnNum = turnNum;
+        msg.canSkill = doSkillTime[turn] < maxSkillTime[turn] ? true : false;//表示对于当前玩家能否使用技能
         turnCount++;
         if (turnCount % 4 == 0)
         {
@@ -162,7 +174,8 @@ public class GameManager : MonoBehaviour
             PanelManager.Open<GameoverPanel>(0,-1,id);
             return;
         }
-        gamePanel.SetTurnText("第 " + msg.turnNum + " 轮");
+        hostTurnNum = msg.turnNum;
+        gamePanel.SetTurnText("第 " + hostTurnNum + " 轮");
         gamePanel.TurnLight(numToDir[Math.Abs(msg.id - id)]);
         if (msg.id == id)
         {
@@ -174,6 +187,10 @@ public class GameManager : MonoBehaviour
         }
         
         nowTurnid = msg.id;
+        if (msg.canSkill && msg.id == id)//如果可以发动技能，就显示发动技能的按钮
+        {
+            gamePanel.SkillButton = true;
+        }
         CreatePai(msg.paiId,msg.id,PlacePaiLocation.HandPai);
 
         players[msg.id].SynHandPai();//同步牌的顺序
@@ -340,6 +357,49 @@ public class GameManager : MonoBehaviour
         ServerOnMsgFaPai(msgFaPai);
     }
 
+    /// <summary>
+    /// 服务端接收化学系的协议
+    /// 删除指定的牌，添加一个额外的牌，并广播，使得每一个客户端开始
+    /// </summary>
+    /// <param name="msgBase"></param>
+    public void ServerOnMsgChemistry(MsgBase msgBase)
+    {
+        MsgChemistry msg = (MsgChemistry)msgBase;
+        int paiId = paiManager.ChuPai(msg.paiIndex,msg.id);//删除指定的牌
+        Debug.Log("删除牌的id为 " + paiId);
+        paiId = paiManager.FaPai(msg.id);
+        Debug.Log("重新得到的牌id为 " + paiId);
+        msg.paiId = paiId;
+        doSkillTime[msg.id]++;
+        msg.canSkill = doSkillTime[msg.id] < maxSkillTime[msg.id] ? true : false;
+        ClientOnMsgChemistry(msg);
+        //广播
+    }
+
+    /// <summary>
+    /// 客户端接收化学系的协议
+    /// 进行相关的同步，并重新计时，继续让同一个玩家出牌
+    /// </summary>
+    public void ClientOnMsgChemistry(MsgBase msgBase)
+    {
+        MsgChemistry msg = (MsgChemistry)msgBase;
+        players[msg.id].DiscardPai(msg.paiIndex);
+
+        CreatePai(msg.paiId, msg.id, PlacePaiLocation.HandPai);
+
+        players[msg.id].SynHandPai();//同步牌的顺序
+        players[msg.id].PlacePai();//调整牌的位置
+        Debug.Log(msg.canSkill && msg.id == id);
+
+        if (msg.canSkill && msg.id == id)//如果可以发动技能，就显示发动技能的按钮
+        {
+            gamePanel.SkillButton = true;
+        }
+        isChuPai = true;
+        Debug.Log("客户端接收msgchemistry信息");
+        StartTimeCount();
+    }
+
     public void StartTimeCount()
     {
         startTimeCount = true;
@@ -399,6 +459,7 @@ public class GameManager : MonoBehaviour
     {
         if (startTimeCount)
         {
+            Debug.Log("timecount");
             TimeCount();
             if (isChuPai)
             {
@@ -454,8 +515,9 @@ public class GameManager : MonoBehaviour
     }
 
     //添加CtrlPlayer和SyncPlayer
-    private void InitPlayer(int id)
+    private void InitPlayer(MsgInitData msg)
     {
+        int id = msg.id;
         for (int i = 0; i < 4; i++)
         {
             UnityEngine.Object[] obj = null;
@@ -469,10 +531,12 @@ public class GameManager : MonoBehaviour
                 obj = playerFactory.createPlayer(PlayerName.SyncPlayer);
             }
             GameObject go = (GameObject)obj[0];
+            go.name = "Player " + (i + 1);
             BasePlayer bp = (BasePlayer)obj[1];
             bp.Init(gamePanel);
             players[i] = bp;
             players[i].id = i;
+            players[i].skill = (Skill)msg.data[i].skillIndex;
 
         }
     }

@@ -16,6 +16,14 @@ public class MsgInitData : MsgBase
 public class StartGameData
 {
     public int[] paiIndex = null;
+    public int skillIndex = 0;
+}
+
+public enum Skill
+{
+    None = 0,
+    Math = 1,
+    Chemistry = 2
 }
 
 //用于发牌
@@ -27,6 +35,18 @@ public class MsgFaPai : MsgBase
     public int id;//收到牌的玩家id,如果是-1代表剩余牌没了，游戏结束
     public bool isHu;//代表该玩家的牌是否能胡
     public int turnNum;//代表现在到第几轮了
+    public bool canSkill;//代表能否使用技能
+}
+
+public class MsgChemistry : MsgBase
+{
+    public MsgChemistry() { protoName = "MsgChemistry"; }
+    //客户端发送
+    public int paiIndex;//牌的索引值
+    public int id;//发动技能的玩家id
+    //服务端发回
+    public int paiId;//新的牌的id
+    public bool canSkill;//接收到牌之后能否继续使用技能
 }
 
 /// <summary>

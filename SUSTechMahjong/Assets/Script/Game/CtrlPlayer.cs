@@ -61,6 +61,7 @@ public class CtrlPlayer : BasePlayer {
             handPai[selectedIndex].transform.Translate(new Vector3(0, -0.5f, 0));
             index = selectedIndex;
         }
+        gamePanel.SkillButton = false;
         ChuPai_Hu(index);
         //对选择的牌进行初始化
         selectedIndex = -1;
@@ -69,5 +70,17 @@ public class CtrlPlayer : BasePlayer {
     public void Hu()
     {
         ChuPai_Hu();
+    }
+
+    /// <summary>
+    /// 代表发动化学系的技能，发送MsgChemistry协议
+    /// </summary>
+    public void LaunchChemistry()
+    {
+        MsgChemistry msg = new MsgChemistry();
+        msg.id = id;
+        msg.paiIndex = selectedIndex;
+        selectedIndex = -1;
+        gameManager.ServerOnMsgChemistry(msg);
     }
 }
