@@ -15,7 +15,8 @@ public class GamePanel : BasePanel {
     //存储时间图片的路径
     private string[] timePath = { "GameLayer/timer_0", "GameLayer/timer_1", "GameLayer/timer_2", "GameLayer/timer_3",
         "GameLayer/timer_4", "GameLayer/timer_5","GameLayer/timer_6","GameLayer/timer_7","GameLayer/timer_8","GameLayer/timer_9"};
-
+    //存储选定玩家的单选框信息，用于发动数学系技能
+    private Toggle[] playerRadio;
     //储存GameManager的引用
     private GameManager gameManager;
 
@@ -50,6 +51,32 @@ public class GamePanel : BasePanel {
     //表示现在id的技能类型
     public Skill skill = Skill.None;
 
+    /// <summary>
+    /// -1，代表单选框全部不显示
+    /// 0-3，代表除了指定索引以外全部显示
+    /// </summary>
+    public int PlayerRadio
+    {
+        set
+        {
+            if(value == -1)
+            {
+                for(int i = 0; i < 4; i++)
+                {
+                    playerRadio[i].gameObject.SetActive(false);
+                }
+            }
+            else
+            {
+                for(int i = 0; i < 4; i++)
+                {
+                    if (i == value) continue;
+                    playerRadio[i].gameObject.SetActive(true);
+                }
+            }
+        }
+    }
+
     public Skill SkillDispalyText
     {
         set
@@ -57,7 +84,7 @@ public class GamePanel : BasePanel {
             switch (value)
             {
                 case Skill.None:
-                    skillDisplayText.text = "你目前没有加入系";
+                    skillDisplayText.text = "你是通识通修";
                     Debug.Log("没加入系，出现了bug");
                     break;
                 case Skill.Math:
@@ -67,6 +94,14 @@ public class GamePanel : BasePanel {
                     skillDisplayText.text = "你是化学系";
                     break;
             }
+        }
+    }
+
+    public int TurnText
+    {
+        set
+        {
+            turnText.text = "第" + value + "轮";
         }
     }
 
@@ -150,6 +185,12 @@ public class GamePanel : BasePanel {
         lights[1] = skin.transform.Find("TimeImage/Right").gameObject;
         lights[2] = skin.transform.Find("TimeImage/Up").gameObject;
         lights[3] = skin.transform.Find("TimeImage/Left").gameObject;
+        playerRadio = new Toggle[4];
+        for(int i = 0; i < 4; i++)
+        {
+            string str = "Toggle/Player" + (i + 1);
+            playerRadio[i] = skin.transform.Find(str).GetComponent<Toggle>();
+        }
         okButton = skin.transform.Find("OkButton").GetComponent<Button>();
         cancelButton = skin.transform.Find("CancelButton").GetComponent<Button>();
         timeCount = skin.transform.Find("TimeCount").GetComponent<Image>();
@@ -167,7 +208,7 @@ public class GamePanel : BasePanel {
         exitButton.onClick.AddListener(OnExitClick);
         setButton.onClick.AddListener(OnSetClick);
         okButton.onClick.AddListener(OnChuPaiClick);
-        cancelButton.onClick.AddListener(OnCancelClick);
+        cancelButton.onClick.AddListener(OnCancelPaiClick);
         //网络协议监听
         //NetManager.AddMsgListener("MsgLogin", OnMsgLogin);
         //发送查询
@@ -205,14 +246,22 @@ public class GamePanel : BasePanel {
         huButton.gameObject.SetActive(false);
         noActionButton.gameObject.SetActive(false);
         skillButton.gameObject.SetActive(false);
-
+        PlayerRadio = -1;//隐藏用于发动数学系技能的单选框
         skillingText.SetActive(false);
 
     }
 
-    public void SetTurnText(string text)
+    /// <summary>
+    /// 出牌结束或者打牌结束时用来隐藏发动技能的UI
+    /// </summary>
+    public void HideSkillUI()
     {
-        turnText.text = text;
+        SkillButton = false;
+        skillingText.SetActive(false);
+        if(gameManager.players[gameManager.id].skill == Skill.Math)
+        {
+            PlayerRadio = -1;
+        }
     }
 
     //改变灯光的顺序
@@ -249,6 +298,10 @@ public class GamePanel : BasePanel {
                 break;
             case Skill.Math:
                 okButton.onClick.AddListener(OnMathClick);
+                cancelButton.onClick.AddListener(OnCancelPlayerClick);
+                PlayerRadio = gameManager.id;//用来显示单选框
+
+                OnCancelPaiClick();//在发动技能之前已经选中了牌，就要将牌降落下来
                 break;
             case Skill.Chemistry:
                 okButton.onClick.AddListener(OnChemistryClick);
@@ -265,6 +318,8 @@ public class GamePanel : BasePanel {
                 break;
             case Skill.Math:
                 okButton.onClick.RemoveListener(OnMathClick);
+                cancelButton.onClick.RemoveListener(OnCancelPlayerClick);
+                PlayerRadio = -1;//隐藏发动数学系技能的单选框
                 //还要添加取消选牌的操作
                 break;
             case Skill.Chemistry:
@@ -273,30 +328,81 @@ public class GamePanel : BasePanel {
         }
     }
 
-    public void OnMathClick()
+    /// <summary>
+    /// 用于发送数学系技能时，显示别人的牌
+    /// </summary>
+    public void DisplayOtherPai(int[] pai)
     {
-        Debug.Log("发动数学系技能");
+        if(pai == null)
+        {
+            PanelManager.Open<TipPanel>("无法观察到牌");
+        }
+        else
+        {
+            string path = "";
+            for(int i = 0; i < pai.Length; i++)
+            {
+                path += Pai.name2path_handPai[pai[i]] + ",";
+            }
+            PanelManager.Open<MathTipPanel>(path);
+        }
     }
 
-    public void OnChemistryClick()
+    public void OnMathClick()//发动数学系技能时，点击确定按钮
+    {
+        Debug.Log("发动数学系技能");
+        if (gameManager.players == null) return;
+        CtrlPlayer player = (CtrlPlayer)gameManager.players[gameManager.id];
+        if (player == null) return;
+        if (player.skill != Skill.Math) return;
+        int selectedPlayerIndex = -1;
+        for(int i = 0; i < 4; i++)
+        {
+            if (playerRadio[i].isOn)
+            {
+                selectedPlayerIndex = i;
+                break;
+            }
+        }
+        if (selectedPlayerIndex == -1) return;
+        if (selectedPlayerIndex == player.id)
+        {
+            Debug.Log("发动数学系技能时选中了自己，出现bug");
+            return;
+        }
+
+        DeleteSkillClick();
+        okButton.onClick.AddListener(OnChuPaiClick);
+
+        gameManager.startTimeCount = false;
+        gameManager.isChuPai = false;
+        HideSkillUI();
+        isDoSkilling = false;
+        OnCancelPlayerClick();
+        //发送协议数学系技能的协议
+        player.LaunchMath(selectedPlayerIndex);
+    }
+
+    public void OnChemistryClick()//发动化学系技能时，点击确定按钮
     {
         Debug.Log("发动化学系技能");
         if (gameManager.players == null) return;
         CtrlPlayer player = (CtrlPlayer)gameManager.players[gameManager.id];
         if (player == null) return;
-        if (player.selectedIndex == -1) return;
+        if (player.skill != Skill.Chemistry) return;
+        if (player.selectedPaiIndex == -1) return;
 
         DeleteSkillClick();
         okButton.onClick.AddListener(OnChuPaiClick);
-        skillingText.SetActive(false);
 
         gameManager.startTimeCount = false;
         gameManager.isChuPai = false;
-        SkillButton = false;
+        HideSkillUI();
 
         player.LaunchChemistry();
     }
 
+    //点击发动技能按钮的变化
     public void OnSkillClick()
     {
         isDoSkilling = !isDoSkilling;
@@ -314,6 +420,17 @@ public class GamePanel : BasePanel {
         }
         Debug.Log("发动技能");
 
+    }
+
+    /// <summary>
+    /// 发动数学系技能时，点击取消按钮
+    /// </summary>
+    public void OnCancelPlayerClick()
+    {
+        for(int i = 0; i < playerRadio.Length; i++)
+        {
+            playerRadio[i].isOn = false;
+        }        
     }
 
     public void OnChiClick()
@@ -376,25 +493,27 @@ public class GamePanel : BasePanel {
         Debug.Log("Set");
     }
 
+    //不发动技能时点击确定按钮
     public void OnChuPaiClick()
     {
         if (gameManager.players == null) return;
         CtrlPlayer player = (CtrlPlayer)gameManager.players[gameManager.id];
         if (player == null) return;
-        if (player.selectedIndex == -1) return;
+        if (player.selectedPaiIndex == -1) return;
 
         player.DaPaiCompolsory();
     }
 
-    public void OnCancelClick()
+    //不发动技能时点击取消按钮
+    public void OnCancelPaiClick()
     {
         if (gameManager.players == null) return;
         CtrlPlayer player = (CtrlPlayer)gameManager.players[gameManager.id];
         if (player == null) return;
-        if (player.selectedIndex == -1) return;
+        if (player.selectedPaiIndex == -1) return;
 
-        player.handPai[player.selectedIndex].transform.Translate(new Vector3(0, -0.5f, 0));
-        player.selectedIndex = -1;
+        player.handPai[player.selectedPaiIndex].transform.Translate(new Vector3(0, -0.5f, 0));
+        player.selectedPaiIndex = -1;
     }
 
 }

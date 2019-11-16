@@ -404,6 +404,12 @@ public class PaiManager {
         return false;
     }
 
+    /// <summary>
+    /// 用于计算某张牌在某个玩家的出现次数
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="paiId"></param>
+    /// <returns></returns>
     private int NumOfPai(int id,int paiId)
     {
         int count = 0;
@@ -420,4 +426,37 @@ public class PaiManager {
     //List<>
     //判断吃，碰，杠，胡（发送协议）
 
+    /// <summary>
+    /// 用于发动数学系技能，查看某个玩家的随机几张牌
+    /// </summary>
+    /// <param name="id">被偷看的玩家id</param>
+    /// <param name="turn">现在是第几轮</param>
+    /// <returns>返回牌的id，如果是null代表没有牌可以看</returns>
+    public int[] GetPaiIdRandom(int id,int turn)
+    {
+        int paiLeng = playerPai[id].Count - turn / 3;
+        if(paiLeng <= 0)
+        {
+            return null;
+        }
+        if(paiLeng == playerPai[id].Count)
+        {
+            return playerPai[id].ToArray();
+        }
+        
+        int[] res = new int[paiLeng];
+        List<int> handPai = playerPai[id];
+        List<int> index = new List<int>();//用来存放已经加入牌库的东西
+        while(index.Count < paiLeng)
+        {
+            Random rd = new Random();
+            int ranIdx = rd.Next() % handPai.Count;
+            if (!index.Contains(ranIdx))
+            {
+                res[index.Count] = handPai[ranIdx];
+                index.Add(ranIdx);
+            }
+        }
+        return res;
+    }
 }

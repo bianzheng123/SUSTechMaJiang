@@ -34,7 +34,7 @@ public class GameManager : MonoBehaviour
     public bool isChuPai = false;//是否为出牌，还是进行吃碰杠的判断
     public int nowTurnid = 0;
     public float timeLast = timeCount;
-    public int hostTurnNum = 0;
+    public int hostTurnNum = 0;//现在该客户端控制的玩家能使用几次技能
     public bool startTimeCount = false;
     public int skillCount;//代表当前主机玩家还剩下几次技能可以使用
 
@@ -67,6 +67,7 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < 4; i++) {
             doSkillTime[i] = 0;
             maxSkillTime[i] = 3;
+            //不同系的技能不同
         }
         paiManager.Init();
 
@@ -80,7 +81,7 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < msg.data.Length; i++)
         {
             msg.data[i] = new StartGameData();
-            msg.data[i].skillIndex = (int)Skill.Chemistry;//现在先全部设置成化学系
+            msg.data[i].skillIndex = (int)Skill.Math;//全部设为数学系
             msg.data[i].skillCount = maxSkillTime[i];
         }//初始化协议的牌数组
         for (int i = 0; i < 4; i++)
@@ -179,22 +180,22 @@ public class GameManager : MonoBehaviour
             return;
         }
         hostTurnNum = msg.turnNum;
-        gamePanel.SetTurnText("第 " + hostTurnNum + " 轮");
+        gamePanel.TurnText = hostTurnNum;
         gamePanel.TurnLight(numToDir[Math.Abs(msg.id - id)]);
         if (msg.id == id)
         {
-            gamePanel.ChuPaiButton = true;
-            if (msg.isHu)
+            gamePanel.ChuPaiButton = true;//可以出牌了
+            if (msg.isHu)//如果发现了胡，就显示胡的按钮
             {
                 gamePanel.HuButton = true;
+            }
+            if (msg.canSkill)//如果可以发动技能，就显示发动技能的按钮
+            {
+                gamePanel.SkillButton = true;
             }
         }
         
         nowTurnid = msg.id;
-        if (msg.canSkill && msg.id == id)//如果可以发动技能，就显示发动技能的按钮
-        {
-            gamePanel.SkillButton = true;
-        }
         CreatePai(msg.paiId,msg.id,PlacePaiLocation.HandPai);
 
         players[msg.id].SynHandPai();//同步牌的顺序
@@ -232,7 +233,7 @@ public class GameManager : MonoBehaviour
 
         int paiId = paiManager.ChuPai(paiIndex, id);
 
-        queueChiPengGang = paiManager.HasEvent(paiId, id);
+        queueChiPengGang = paiManager.HasEvent(paiId, id);//检测是否有吃碰杠这件事
 
         if(queueChiPengGang.Count != 0)//一直发送吃碰杠协议，直到发完或者有人同意吃碰杠为止
         {
@@ -409,6 +410,62 @@ public class GameManager : MonoBehaviour
         StartTimeCount();
     }
 
+    /// <summary>
+    /// 服务端处理数学系技能的协议
+    /// 给客户端发送这些牌id的数组
+    /// </summary>
+    /// <param name="msgBase"></param>
+    public void ServerOnMsgMath(MsgBase msgBase)
+    {
+        MsgMath msg = (MsgMath)msgBase;
+        msg.paiId = paiManager.GetPaiIdRandom(msg.observedPlayerId,turnNum);
+        doSkillTime[msg.observerPlayerId]++;
+        msg.canSkill = doSkillTime[msg.observerPlayerId] < maxSkillTime[msg.observerPlayerId] ? true : false;
+        ClientOnMsgMath(msg);//广播
+    }
+
+    /// <summary>
+    /// 客户端处理数学系技能的协议
+    /// 根据服务端的消息生成对应的牌，并重新开始计时
+    /// </summary>
+    /// <param name="msgBase"></param>
+    public void ClientOnMsgMath(MsgBase msgBase)
+    {
+        Debug.Log("客户端接收msgMath信息");
+        MsgMath msg = (MsgMath)msgBase;
+        if (msg.observerPlayerId == id)
+        {
+            skillCount--;
+            gamePanel.RestSkillCount = skillCount;
+        }
+
+        //生成查看面板
+        if(msg.paiId == null)
+        {
+            Debug.Log("经过的回合太多，生成牌失败");
+        }
+        else
+        {
+            string str = "";
+            for (int i = 0; i < msg.paiId.Length; i++)
+            {
+                str += msg.paiId[i] + " ";
+            }
+            Debug.Log(str);
+        }
+
+        gamePanel.DisplayOtherPai(msg.paiId);
+
+        Debug.Log(msg.canSkill && msg.observerPlayerId == id);
+
+        if (msg.canSkill && msg.observerPlayerId == id)//如果可以发动技能，就显示发动技能的按钮
+        {
+            gamePanel.SkillButton = true;
+        }
+        isChuPai = true;
+        StartTimeCount();
+    }
+
     public void StartTimeCount()
     {
         startTimeCount = true;
@@ -425,6 +482,7 @@ public class GameManager : MonoBehaviour
             startTimeCount = false;
             if(nowTurnid == id)
             {
+                gamePanel.HideSkillUI();
                 if (isChuPai)//代表是自己出牌，到时间了
                 {
                     CtrlPlayer self = (CtrlPlayer)players[id];
@@ -470,9 +528,9 @@ public class GameManager : MonoBehaviour
         {
             Debug.Log("timecount");
             TimeCount();
-            if (isChuPai)
-            {
-                players[nowTurnid].DaPai();
+            if (isChuPai && !(id == nowTurnid && players[id].skill == Skill.Math && gamePanel.isDoSkilling == true))//是自己控制的玩家在出牌，而且是数学系的而且已经按下了发动技能的按钮
+            {        //发动数学系技能时不可选中自己的牌
+                players[nowTurnid].DaPai();//这里人机只是打牌，不发动任何技能
             }//否则进行吃碰杠的判断
             else if(nowTurnid != id)
             {//用于人机的操作
@@ -490,7 +548,7 @@ public class GameManager : MonoBehaviour
     /// <param name="index">牌放在哪里的索引</param>
     public void CreatePai(int paiId, int playerId, PlacePaiLocation location)
     {
-        string path = Pai.name2path[paiId];
+        string path = Pai.name2path_handPai[paiId];
         GameObject go = ResManager.LoadSprite(path,1);
         switch (location)
         {

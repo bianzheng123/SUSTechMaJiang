@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class CtrlPlayer : BasePlayer {
-    public int selectedIndex = -1;
+    public int selectedPaiIndex = -1;
 
     public void SelectPai()
     {
@@ -28,19 +28,19 @@ public class CtrlPlayer : BasePlayer {
                     {
                         Debug.Log("选牌错误,发生了bug");
                     }
-                    if (selectedIndex != -1)
+                    if (selectedPaiIndex != -1)
                     {//让取消选牌的降下来
-                        handPai[selectedIndex].transform.Translate(new Vector3(0, -0.5f, 0));
+                        handPai[selectedPaiIndex].transform.Translate(new Vector3(0, -0.5f, 0));
                     }
-                    if(nowSelectIndex == selectedIndex)
+                    if(nowSelectIndex == selectedPaiIndex)
                     {//两次点击选中了相同的牌，相当于没有选中
-                        selectedIndex = -1;
+                        selectedPaiIndex = -1;
                     }
                     else
                     {
                         //将新选中的牌上升
-                        selectedIndex = nowSelectIndex;
-                        handPai[selectedIndex].transform.Translate(new Vector3(0, 0.5f, 0));
+                        selectedPaiIndex = nowSelectIndex;
+                        handPai[selectedPaiIndex].transform.Translate(new Vector3(0, 0.5f, 0));
                     }
                 }
 
@@ -56,15 +56,15 @@ public class CtrlPlayer : BasePlayer {
     public void DaPaiCompolsory()
     {
         int index = 0;
-        if(selectedIndex != -1)
+        if(selectedPaiIndex != -1)
         {//先将选中的牌降下来再打
-            handPai[selectedIndex].transform.Translate(new Vector3(0, -0.5f, 0));
-            index = selectedIndex;
+            handPai[selectedPaiIndex].transform.Translate(new Vector3(0, -0.5f, 0));
+            index = selectedPaiIndex;
         }
         gamePanel.SkillButton = false;
         ChuPai_Hu(index);
         //对选择的牌进行初始化
-        selectedIndex = -1;
+        selectedPaiIndex = -1;
     }
 
     public void Hu()
@@ -79,8 +79,22 @@ public class CtrlPlayer : BasePlayer {
     {
         MsgChemistry msg = new MsgChemistry();
         msg.id = id;
-        msg.paiIndex = selectedIndex;
-        selectedIndex = -1;
+        msg.paiIndex = selectedPaiIndex;
+        selectedPaiIndex = -1;
         gameManager.ServerOnMsgChemistry(msg);
+    }
+
+    /// <summary>
+    /// 发动数学系的技能，发送MsgMath协议
+    /// </summary>
+    public void LaunchMath(int selectedPlayerIndex)
+    {
+        MsgMath msg = new MsgMath();
+        msg.observerPlayerId = id;
+        msg.observedPlayerId = selectedPlayerIndex;
+        msg.paiId = null;
+        Debug.Log("发动技能的玩家id为 " + id);
+        Debug.Log("被观察的id为 " + selectedPlayerIndex);
+        gameManager.ServerOnMsgMath(msg);
     }
 }

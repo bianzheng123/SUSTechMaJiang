@@ -50,6 +50,17 @@ public class MsgChemistry : MsgBase
     public bool canSkill;//接收到牌之后能否继续使用技能
 }
 
+public class MsgMath: MsgBase
+{
+    public MsgMath() { protoName = "MsgMath"; }
+    //客户端发送
+    public int observerPlayerId;//发动技能的玩家id
+    public int observedPlayerId;//被观察的玩家id
+    //服务端发回
+    public int[] paiId;
+    public bool canSkill;//代表能否继续使用技能
+}
+
 /// <summary>
 /// 用来代表出牌或者胡的协议
 /// </summary>
