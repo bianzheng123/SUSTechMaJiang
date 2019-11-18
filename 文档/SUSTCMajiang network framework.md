@@ -114,7 +114,7 @@ private static void InitState();
 private static void ConnectCallback(IAsyncResult ar);
 ```
 
-*Connect* function will check the connection state of socket at first. If the socket is in idle, it will call the *socket.BeginConnect()* function to build a connection. 
+*Connect()* function will check the connection state of socket at first. If the socket is in idle, it will call the *socket.BeginConnect()* function to build a connection. 
 
 Before build the connection, we should reset the readbuffer, writeQueue, msgList and other member variables. This is the function of  *InitState()* member method.
 
@@ -151,5 +151,93 @@ The *ReceiveCallback()* will receive the message and solve them. If the FIN==1, 
 
 *ReceiveCallback()* has two functions, the first is to estimate the completeness of data, if it is not complete, the function will finish. The second is to parse the protocol objection from the data and add it into the *msgList*. 
 
-Because the msgList is run on the asynchronous way, so *OnReceiveData()* will lock the *msgList* during its execution.
+Because the *msgList* is run on the asynchronous way, so *OnReceiveData()* will lock the *msgList* during its execution.
+
+```pseudocode
+private static void PingUpdate();
+private static void OnMsgPong( MsgBase msgBase);
+private static void InitState();
+```
+
+These functions realize the heartbeat mechanism. The heartbeat mechanism is used to detect the connection between client and server. If the connection is broken, server will release the socket source. 
+
+Client will continuously send the *MsgPing* to the server every 30 seconds. And the server will monitor the *MsgPing* from client and response a *MsgPong* back to client. If the client do not receive the *MsgPong* for a relevant long time, it will release the socket resource.
+
+
+
+
+
+## Sequence Graph
+
+```mermaid
+sequenceDiagram
+	participant server
+	participant client
+	client->> + server:Connect(ip,port)
+	client->>client:InitState()
+    server-x server:ConnectCallback()
+    alt connect succeed
+    	server->>client:FireEvent(ConnectSucc)
+    else connect fail
+    	server->>-client:FireEvent(ConnnectFail)
+    end
+    Note over client,server:Connection is built
+    
+    client->>+server:Send()
+    client-x client:SendCallback()
+    opt sent incompletely
+    	client->>server:resend
+    end
+    server-x server:ReceiveCallback()
+    alt FIN==1
+    	server->>client:finish connection
+    else FIN==0
+    	server->>-server:OnReceiveData()
+    end
+    server->>server:Update()
+    server->>client:FireMsg(MsgBase)
+    
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
