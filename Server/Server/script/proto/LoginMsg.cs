@@ -4,10 +4,19 @@ public class MsgRegister:MsgBase {
 	//客户端发
 	public string id = "";
 	public string pw = "";
+
 	//服务端回（0-成功，1-失败）
 	public int result = 0;
 }
-
+public class MsgChoose : MsgBase
+{
+    public MsgChoose() { protoName = "MsgChoose"; }
+    //客户端发
+    public int camp = 0;
+    public string id = "";
+    //服务端回（0-成功，1-失败）
+    public int result = 0;
+}
 
 //登陆
 public class MsgLogin:MsgBase {

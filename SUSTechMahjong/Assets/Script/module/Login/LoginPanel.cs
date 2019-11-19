@@ -88,10 +88,11 @@ public class LoginPanel : BasePanel {
 			Debug.Log("登陆成功");
 			//设置id
 			GameMain.id = msg.id;
-			//打开房间列表界面
-			PanelManager.Open<RoomListPanel>();
-			//关闭界面
-			Close();
+            //打开房间列表界面
+            PanelManager.Open<RoomListPanel>();
+            //PanelManager.Open<ChoosePanel>();
+            //关闭界面
+            Close();
 		}
 		else{
 			PanelManager.Open<TipPanel>("登陆失败");

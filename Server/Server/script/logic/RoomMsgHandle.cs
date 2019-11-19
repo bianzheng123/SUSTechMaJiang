@@ -11,6 +11,7 @@ public partial class MsgHandler {
 
 		msg.win = player.data.win;
 		msg.lost = player.data.lost;
+        msg.camp = player.data.camp;
 
 		player.Send(msg);
 	}

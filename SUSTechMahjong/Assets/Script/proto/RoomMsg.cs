@@ -4,6 +4,7 @@ public class MsgGetAchieve:MsgBase {
 	//服务端回
 	public int win = 0;
 	public int lost = 0;
+    public int camp = 0;
 }
 
 //房间信息

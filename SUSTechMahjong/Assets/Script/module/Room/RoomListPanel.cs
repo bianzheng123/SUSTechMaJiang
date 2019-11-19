@@ -9,12 +9,15 @@ public class RoomListPanel : BasePanel {
 	private Text idText;
 	//战绩文本
 	private Text scoreText;
+    //院系文本
+    private Text campText;
 	//创建房间按钮
 	private Button createButton;
 	//刷新列表按钮
 	private Button reflashButton;
-	//列表容器
-	private Transform content;
+    private Button chooseButton;
+    //列表容器
+    private Transform content;
 	//房间物体
 	private GameObject roomObj;
 
@@ -30,19 +33,22 @@ public class RoomListPanel : BasePanel {
 		//寻找组件
 		idText = skin.transform.Find("InfoPanel/IdText").GetComponent<Text>();
 		scoreText = skin.transform.Find("InfoPanel/ScoreText").GetComponent<Text>();
-		createButton = skin.transform.Find("CtrlPanel/CreateButton").GetComponent<Button>();
+        campText = skin.transform.Find("InfoPanel/CampText").GetComponent<Text>();
+        createButton = skin.transform.Find("CtrlPanel/CreateButton").GetComponent<Button>();
 		reflashButton = skin.transform.Find("CtrlPanel/RefreshButton").GetComponent<Button>();
-		content = skin.transform.Find("ListPanel/Scroll View/Viewport/Content");
+        chooseButton = skin.transform.Find("CtrlPanel/ChooseBtn").GetComponent<Button>();
+        content = skin.transform.Find("ListPanel/Scroll View/Viewport/Content");
 		roomObj = skin.transform.Find("Room").gameObject;
 		//不激活房间
 		roomObj.SetActive(false);
 		//显示id
 		idText.text = GameMain.id;
-		//按钮事件
+		//按钮事件(chooseButton实际上是reflashButton)
 		createButton.onClick.AddListener(OnCreateClick);
 		reflashButton.onClick.AddListener(OnReflashClick);
-		//协议监听
-		NetManager.AddMsgListener("MsgGetAchieve", OnMsgGetAchieve);
+        chooseButton.onClick.AddListener(OnChooseClick);
+        //协议监听
+        NetManager.AddMsgListener("MsgGetAchieve", OnMsgGetAchieve);
 		NetManager.AddMsgListener("MsgGetRoomList", OnMsgGetRoomList);
 		NetManager.AddMsgListener("MsgCreateRoom", OnMsgCreateRoom);
 		NetManager.AddMsgListener("MsgEnterRoom", OnMsgEnterRoom);
@@ -67,7 +73,30 @@ public class RoomListPanel : BasePanel {
 	public void OnMsgGetAchieve (MsgBase msgBase) {
 		MsgGetAchieve msg = (MsgGetAchieve)msgBase;
 		scoreText.text = msg.win + "胜 " + msg.lost + "负";
-	}
+        if (msg.camp == 1)
+        {
+            campText.text = "计算机";
+        }
+        else
+        if (msg.camp == 2)
+        {
+            campText.text = "生物系";
+        }
+        else
+        if (msg.camp == 3)
+        {
+            campText.text = "化学系";
+        }
+        else
+        if (msg.camp == 4)
+        {
+            campText.text = "机械系";
+        }
+        else
+        {
+            campText.text = "数学系";
+        }
+    }
 
 	//收到房间列表协议
 	public void OnMsgGetRoomList (MsgBase msgBase) {
@@ -85,7 +114,7 @@ public class RoomListPanel : BasePanel {
 			GenerateRoom(msg.rooms[i]);
 		}
 	}
-
+   
 	//创建一个房间单元
 	public void GenerateRoom(RoomInfo roomInfo){
 		//创建物体
@@ -147,9 +176,12 @@ public class RoomListPanel : BasePanel {
 		MsgCreateRoom msg = new MsgCreateRoom();
 		NetManager.Send(msg);
 	}
-
-	//收到新建房间协议
-	public void OnMsgCreateRoom (MsgBase msgBase) {
+    public void OnChooseClick(){
+        
+        PanelManager.Open<ChoosePanel>();
+    }
+    //收到新建房间协议
+    public void OnMsgCreateRoom (MsgBase msgBase) {
 		MsgCreateRoom msg = (MsgCreateRoom)msgBase;
 		//成功创建房间
 		if(msg.result == 0){

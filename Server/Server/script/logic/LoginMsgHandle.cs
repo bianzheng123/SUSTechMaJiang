@@ -1,6 +1,7 @@
 ﻿using System;
 
 
+
 public partial class MsgHandler {
 
 
@@ -17,10 +18,19 @@ public partial class MsgHandler {
 		}
 		NetManager.Send(c, msg);
 	}
+    //阵营选择协议处理
+    public static void MsgChoose(ClientState c, MsgBase msgBase)
+    {
+        MsgChoose msg = (MsgChoose)msgBase;
+        PlayerData playerData = DbManager.GetPlayerData(msg.id);
+        playerData.camp = msg.camp;
+        DbManager.UpdatePlayerData(msg.id, playerData);
+        msg.result = 0;
+        NetManager.Send(c, msg);
+    }
 
-
-	//登陆协议处理
-	public static void MsgLogin(ClientState c, MsgBase msgBase){
+    //登陆协议处理
+    public static void MsgLogin(ClientState c, MsgBase msgBase){
 		MsgLogin msg = (MsgLogin)msgBase;
 		//密码校验
 		if(!DbManager.CheckPassword(msg.id, msg.pw)){
