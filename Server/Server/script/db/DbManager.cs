@@ -194,12 +194,19 @@ public class DbManager {
 
 
 	//保存角色
-	public static bool UpdatePlayerData(string id, PlayerData playerData)
+	public static bool UpdatePlayerData(string str, PlayerData playerData)
 	{
-		//序列化
-		string data = Js.Serialize(playerData); 
+        //防sql注入
+        if (!DbManager.IsSafeString(str))
+        {
+            Console.WriteLine("[数据库] GetPlayerData fail, id not safe");
+            return false;
+        }
+
+        //序列化
+        string data = Js.Serialize(playerData); 
 		//sql
-		string sql = string.Format("update player set data='{0}' where id ='{1}';", data, id);
+		string sql = string.Format("update player set data='{0}' where id ='{1}';", data, str);
 		//更新
 		try 
 		{

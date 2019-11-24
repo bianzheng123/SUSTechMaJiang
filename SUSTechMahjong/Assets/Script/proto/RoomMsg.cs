@@ -43,7 +43,7 @@ public class MsgEnterRoom:MsgBase {
 [System.Serializable]
 public class PlayerInfo{
 	public string id = "lpy";	//账号
-	public int camp = 1;		//阵营
+	public int camp = 1;		//院系
 	public int win = 0;			//胜利数
 	public int lost = 0;		//失败数
 	public int isOwner = 0;		//是否是房主

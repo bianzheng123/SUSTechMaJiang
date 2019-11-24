@@ -21,6 +21,10 @@ public class RoomListPanel : BasePanel {
 	//房间物体
 	private GameObject roomObj;
 
+    public string Camp
+    {
+        set { campText.text = value; }
+    }
 
 	//初始化
 	public override void OnInit() {
@@ -39,8 +43,8 @@ public class RoomListPanel : BasePanel {
         chooseButton = skin.transform.Find("CtrlPanel/ChooseBtn").GetComponent<Button>();
         content = skin.transform.Find("ListPanel/Scroll View/Viewport/Content");
 		roomObj = skin.transform.Find("Room").gameObject;
-		//不激活房间
-		roomObj.SetActive(false);
+        //不激活房间
+        roomObj.SetActive(false);
 		//显示id
 		idText.text = GameMain.id;
 		//按钮事件(chooseButton实际上是reflashButton)
@@ -73,29 +77,7 @@ public class RoomListPanel : BasePanel {
 	public void OnMsgGetAchieve (MsgBase msgBase) {
 		MsgGetAchieve msg = (MsgGetAchieve)msgBase;
 		scoreText.text = msg.win + "胜 " + msg.lost + "负";
-        if (msg.camp == 1)
-        {
-            campText.text = "计算机";
-        }
-        else
-        if (msg.camp == 2)
-        {
-            campText.text = "生物系";
-        }
-        else
-        if (msg.camp == 3)
-        {
-            campText.text = "化学系";
-        }
-        else
-        if (msg.camp == 4)
-        {
-            campText.text = "机械系";
-        }
-        else
-        {
-            campText.text = "数学系";
-        }
+        campText.text = Gamedata.majors[msg.camp];
     }
 
 	//收到房间列表协议

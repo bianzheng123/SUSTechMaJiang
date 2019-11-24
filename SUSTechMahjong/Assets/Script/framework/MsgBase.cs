@@ -13,7 +13,6 @@ public class MsgBase{
 	//解码
 	public static MsgBase Decode(string protoName, byte[] bytes, int offset, int count){
 		string s = System.Text.Encoding.UTF8.GetString(bytes, offset, count);
-		Debug.Log("Debug decode:" + s);
 		MsgBase msgBase = (MsgBase)JsonUtility.FromJson(s, Type.GetType(protoName));
 		return msgBase;
 	}

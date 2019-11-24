@@ -1,7 +1,5 @@
 ﻿using System;
 
-
-
 public partial class MsgHandler {
 
 
@@ -18,14 +16,20 @@ public partial class MsgHandler {
 		}
 		NetManager.Send(c, msg);
 	}
-    //阵营选择协议处理
+    //专业选择协议处理
     public static void MsgChoose(ClientState c, MsgBase msgBase)
     {
         MsgChoose msg = (MsgChoose)msgBase;
         PlayerData playerData = DbManager.GetPlayerData(msg.id);
         playerData.camp = msg.camp;
-        DbManager.UpdatePlayerData(msg.id, playerData);
-        msg.result = 0;
+        if(DbManager.UpdatePlayerData(msg.id, playerData))
+        {
+            msg.result = 0;
+        }
+        else
+        {
+            msg.result = 1;
+        }
         NetManager.Send(c, msg);
     }
 

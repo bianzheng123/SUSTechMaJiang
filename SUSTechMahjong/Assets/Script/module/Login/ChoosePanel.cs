@@ -47,16 +47,31 @@ public class ChoosePanel : BasePanel
     //当按下确定按钮
     public void OnChooseClick()
     {
-        //用户名密码为空
+        //输入的数字为空
         if (idInput.text == "")
         {
             PanelManager.Open<TipPanel>("请正确选择院系");
             return;
         }
+        int major = 0;
+        try
+        {
+            major = int.Parse(idInput.text);
+        }
+        catch
+        {
+            PanelManager.Open<TipPanel>("请正确输入数字");
+            return;
+        }
+        if(!(1<=major && major <= 3))
+        {
+            PanelManager.Open<TipPanel>("请正确输入数字");
+            return;
+        }
         //发送
         MsgChoose MsgChoose = new MsgChoose();
 
-        MsgChoose.camp = int.Parse(idInput.text);
+        MsgChoose.camp = major;
         MsgChoose.id = GameMain.id;
         NetManager.Send(MsgChoose);
     }
@@ -67,9 +82,14 @@ public class ChoosePanel : BasePanel
         MsgChoose msg = (MsgChoose)msgBase;
         if (msg.result == 0)
         {
-            Debug.Log("选择成功");
             //提示
             PanelManager.Open<TipPanel>("选择成功");
+            
+            if(PanelManager.panels.ContainsKey("RoomListPanel") && PanelManager.panels["RoomListPanel"] != null)
+            {
+                RoomListPanel panel = (RoomListPanel)PanelManager.panels["RoomListPanel"];
+                panel.Camp = Gamedata.majors[msg.camp];
+            }
             //关闭界面
             Close();
         }
@@ -83,4 +103,5 @@ public class ChoosePanel : BasePanel
     {
         Close();
     }
+
 }
