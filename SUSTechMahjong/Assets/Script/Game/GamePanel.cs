@@ -107,8 +107,8 @@ public class GamePanel : BasePanel {
     {
         set
         {
-            okButton.enabled = value;
-            cancelButton.enabled = value;
+            okButton.gameObject.SetActive(value);
+            cancelButton.gameObject.SetActive(value);
         }
     }
 
@@ -135,7 +135,6 @@ public class GamePanel : BasePanel {
         set
         {
             huButton.gameObject.SetActive(value);
-            noActionButton.gameObject.SetActive(value);
         }
     }
 

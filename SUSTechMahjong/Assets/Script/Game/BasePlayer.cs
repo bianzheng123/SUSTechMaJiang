@@ -55,27 +55,28 @@ public abstract class BasePlayer : MonoBehaviour {
     /// </summary>
     public void PlacePai()
     {
-        switch (id)
+        Direction dir = gameManager.numToDir[id];
+        switch (dir)
         {
-            case 0:
+            case Direction.DOWN:
                 for (int i = 0; i < handPai.Count; i++)
                 {
-                    handPai[i].transform.position = new Vector3(i * 0.76f - 5, -4, 0);
+                    handPai[i].transform.position = new Vector3(i * 0.76f - 5.3f, -4, 0);
                 }
                 break;
-            case 1:
+            case Direction.RIGHT:
                 for (int i = 0; i < handPai.Count; i++)
                 {
                     handPai[i].transform.position = new Vector3(7, -4 + i * 0.6f, 0);
                 }
                 break;
-            case 2:
+            case Direction.UP:
                 for (int i = 0; i < handPai.Count; i++)
                 {
                     handPai[i].transform.position = new Vector3(i * 0.76f - 5, 4, 0);
                 }
                 break;
-            case 3:
+            case Direction.LEFT:
                 for (int i = 0; i < handPai.Count; i++)
                 {
                     handPai[i].transform.position = new Vector3(-7, -4 + i * 0.6f, 0);
@@ -112,7 +113,7 @@ public abstract class BasePlayer : MonoBehaviour {
     }
 
     /// <summary>
-    /// 代表出牌或者胡，将出牌的按钮隐藏，并发送ChuPai协议
+    /// 已经选择了出牌或者胡，将出牌的按钮隐藏，并发送ChuPai协议
     /// </summary>
     /// <param name="index">pai的索引</param>
     protected void ChuPai_Hu(int index = -1)

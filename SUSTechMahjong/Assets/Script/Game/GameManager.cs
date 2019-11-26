@@ -29,7 +29,7 @@ public class GameManager : MonoBehaviour
     private GamePanel gamePanel;
     public int id;//该客户端的id
     public BasePlayer[] players;
-    private Dictionary<int, Direction> numToDir;
+    public Dictionary<int, Direction> numToDir;
     public const float timeCount = 20;//代表出牌计时的时间
     public bool isChuPai = false;//是否为出牌，还是进行吃碰杠的判断
     public int nowTurnid = 0;
@@ -51,7 +51,6 @@ public class GameManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        InitNumToDir();
         gamePanel = GameObject.Find("Root").GetComponent<GamePanel>();
         //发送开始接收游戏数据的协议
         MsgInitData msg = new MsgInitData();
@@ -94,7 +93,7 @@ public class GameManager : MonoBehaviour
             int[] res = paiManager.FaPai(num, i);
             msg.data[i].paiIndex = res;
         }
-        msg.id = 0;
+        msg.id = 3;
         ClientOnInitData(msg);//广播
         Debug.Log("庄家：" + zhuangIdx);
         //for(int i = 0; i < 3; i++)
@@ -118,6 +117,8 @@ public class GameManager : MonoBehaviour
         Pai.Init();
         players = new BasePlayer[4];
         id = msg.id;
+        //NumtoDir的初始化一定要放在接收该客户端id之后
+        InitNumToDir();
         InitPlayer(msg);
         gamePanel.skill = (Skill)msg.data[msg.id].skillIndex;
         gamePanel.SkillDispalyText = (Skill)msg.data[msg.id].skillIndex;
@@ -181,7 +182,8 @@ public class GameManager : MonoBehaviour
         }
         hostTurnNum = msg.turnNum;
         gamePanel.TurnText = hostTurnNum;
-        gamePanel.TurnLight(numToDir[Math.Abs(msg.id - id)]);
+
+        gamePanel.TurnLight(numToDir[msg.id]);
         if (msg.id == id)
         {
             gamePanel.ChuPaiButton = true;//可以出牌了
@@ -503,7 +505,7 @@ public class GameManager : MonoBehaviour
     private void GetChiPengGangResult(MsgChiPengGang msg)
     {
         nowTurnid = msg.id;
-        gamePanel.TurnLight(numToDir[Math.Abs(nowTurnid - id)]);
+        gamePanel.TurnLight(numToDir[nowTurnid]);
         StartTimeCount();
         players[nowTurnid].msgChiPengGang = msg;
         if (nowTurnid != id) { return; }
@@ -550,20 +552,21 @@ public class GameManager : MonoBehaviour
     {
         string path = "";
         Vector3 scale = Vector3.one;
-        switch (playerId)
+        Direction dir = numToDir[playerId];
+        switch (dir)
         {
-            case 0:
+            case Direction.DOWN:
                 path = Pai.pai_player1[paiId];
                 break;
-            case 1:
+            case Direction.RIGHT:
                 path = Pai.pai_player2;
                 scale = new Vector3(0.6f,0.6f,0);
                 break;
-            case 2:
+            case Direction.UP:
                 path = Pai.pai_player3;
 
                 break;
-            case 3:
+            case Direction.LEFT:
                 path = Pai.pai_player4;
                 scale = new Vector3(0.7f, 0.7f, 0);
                 break;
@@ -579,13 +582,41 @@ public class GameManager : MonoBehaviour
         pai.paiId = paiId;
     }
 
+    /// <summary>
+    /// 输入该回合玩家的id，输出他在这个客户端的相对位置
+    /// </summary>
     private void InitNumToDir()
     {
         numToDir = new Dictionary<int, Direction>();
-        numToDir[0] = Direction.DOWN;
-        numToDir[1] = Direction.RIGHT;
-        numToDir[2] = Direction.UP;
-        numToDir[3] = Direction.LEFT;
+        //这个id指的是这个客户端的玩家id
+        switch (id)
+        {
+            case 0:
+                numToDir[0] = Direction.DOWN;
+                numToDir[1] = Direction.RIGHT;
+                numToDir[2] = Direction.UP;
+                numToDir[3] = Direction.LEFT;
+                break;
+            case 1:
+                numToDir[0] = Direction.LEFT;
+                numToDir[1] = Direction.DOWN;
+                numToDir[2] = Direction.RIGHT;
+                numToDir[3] = Direction.UP;
+                break;
+            case 2:
+                numToDir[0] = Direction.UP;
+                numToDir[1] = Direction.LEFT;
+                numToDir[2] = Direction.DOWN;
+                numToDir[3] = Direction.RIGHT;
+                break;
+            case 3:
+                numToDir[0] = Direction.RIGHT;
+                numToDir[1] = Direction.UP;
+                numToDir[2] = Direction.LEFT;
+                numToDir[3] = Direction.DOWN;
+                break;
+        }
+        
     }
 
     //添加CtrlPlayer和SyncPlayer
