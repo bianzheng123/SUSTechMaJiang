@@ -128,7 +128,7 @@ public class GameManager : MonoBehaviour
         {
             for (int j = 0; j < msg.data[i].paiIndex.Length; j++)
             {
-                CreatePai(msg.data[i].paiIndex[j], i, PlacePaiLocation.HandPai);
+                CreatePai(msg.data[i].paiIndex[j], i);
             }
             players[i].PlacePai();
         }
@@ -196,7 +196,7 @@ public class GameManager : MonoBehaviour
         }
         
         nowTurnid = msg.id;
-        CreatePai(msg.paiId,msg.id,PlacePaiLocation.HandPai);
+        CreatePai(msg.paiId,msg.id);
 
         players[msg.id].SynHandPai();//同步牌的顺序
         players[msg.id].PlacePai();//调整牌的位置
@@ -396,7 +396,7 @@ public class GameManager : MonoBehaviour
         }
         players[msg.id].DiscardPai(msg.paiIndex);
 
-        CreatePai(msg.paiId, msg.id, PlacePaiLocation.HandPai);
+        CreatePai(msg.paiId, msg.id);
 
         players[msg.id].SynHandPai();//同步牌的顺序
         players[msg.id].PlacePai();//调整牌的位置
@@ -527,7 +527,6 @@ public class GameManager : MonoBehaviour
     {
         if (startTimeCount)
         {
-            Debug.Log("timecount");
             TimeCount();
             if (isChuPai && !(id == nowTurnid && players[id].skill == Skill.Math && gamePanel.isDoSkilling == true))//是自己控制的玩家在出牌，而且是数学系的而且已经按下了发动技能的按钮
             {        //发动数学系技能时不可选中自己的牌
@@ -547,28 +546,35 @@ public class GameManager : MonoBehaviour
     /// <param name="paiId">需要生成的牌的id</param>
     /// <param name="playerId">玩家的id</param>
     /// <param name="index">牌放在哪里的索引</param>
-    public void CreatePai(int paiId, int playerId, PlacePaiLocation location)
+    public void CreatePai(int paiId, int playerId)
     {
-        string path = Pai.pai_player1[paiId];
-        GameObject go = ResManager.LoadSprite(path,1);
-        switch (location)
+        string path = "";
+        Vector3 scale = Vector3.one;
+        switch (playerId)
         {
-            case PlacePaiLocation.HandPai:
-                players[playerId].handPai.Add(go);
+            case 0:
+                path = Pai.pai_player1[paiId];
                 break;
-            case PlacePaiLocation.Chi:
-                players[playerId].chi.Add(go);
+            case 1:
+                path = Pai.pai_player2;
+                scale = new Vector3(0.6f,0.6f,0);
                 break;
-            case PlacePaiLocation.Peng:
-                players[playerId].peng.Add(go);
+            case 2:
+                path = Pai.pai_player3;
+
                 break;
-            case PlacePaiLocation.Gang:
-                players[playerId].gang.Add(go);
+            case 3:
+                path = Pai.pai_player4;
+                scale = new Vector3(0.7f, 0.7f, 0);
                 break;
         }
+        GameObject go = ResManager.LoadSprite(path,1);
+        players[playerId].handPai.Add(go);
         go.transform.SetParent(players[playerId].transform);
         go.AddComponent<BoxCollider>();
-        go.tag = "Pai" + playerId;
+        go.transform.localScale = scale;
+        go.tag = "Pai" + playerId;//通过标签选中对应的牌
+        go.name = Pai.int2name[paiId];
         Pai pai = go.AddComponent<Pai>();
         pai.paiId = paiId;
     }

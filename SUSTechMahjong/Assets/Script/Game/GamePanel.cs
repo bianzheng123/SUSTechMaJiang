@@ -11,7 +11,7 @@ public class GamePanel : BasePanel {
     //灯的亮灭
     private GameObject[] lights;
     //显示时间的图片
-    private Image timeCount;
+    private Image[] timeCount;
     //存储时间图片的路径
     private string[] timePath = { "GameLayer/timer_0", "GameLayer/timer_1", "GameLayer/timer_2", "GameLayer/timer_3",
         "GameLayer/timer_4", "GameLayer/timer_5","GameLayer/timer_6","GameLayer/timer_7","GameLayer/timer_8","GameLayer/timer_9"};
@@ -55,24 +55,13 @@ public class GamePanel : BasePanel {
     /// -1，代表单选框全部不显示
     /// 0-3，代表除了指定索引以外全部显示
     /// </summary>
-    public int PlayerRadio
+    public bool PlayerRadio
     {
         set
         {
-            if(value == -1)
+            for (int i = 0; i < 3; i++)
             {
-                for(int i = 0; i < 4; i++)
-                {
-                    playerRadio[i].gameObject.SetActive(false);
-                }
-            }
-            else
-            {
-                for(int i = 0; i < 4; i++)
-                {
-                    if (i == value) continue;
-                    playerRadio[i].gameObject.SetActive(true);
-                }
+                playerRadio[i].gameObject.SetActive(value);
             }
         }
     }
@@ -185,15 +174,17 @@ public class GamePanel : BasePanel {
         lights[1] = skin.transform.Find("TimeImage/Right").gameObject;
         lights[2] = skin.transform.Find("TimeImage/Up").gameObject;
         lights[3] = skin.transform.Find("TimeImage/Left").gameObject;
-        playerRadio = new Toggle[4];
-        for(int i = 0; i < 4; i++)
+        playerRadio = new Toggle[3];
+        for(int i = 0; i < 3; i++)
         {
-            string str = "Toggle/Player" + (i + 1);
+            string str = "Toggle/Player" + (i + 2);
             playerRadio[i] = skin.transform.Find(str).GetComponent<Toggle>();
         }
         okButton = skin.transform.Find("OkButton").GetComponent<Button>();
         cancelButton = skin.transform.Find("CancelButton").GetComponent<Button>();
-        timeCount = skin.transform.Find("TimeCount").GetComponent<Image>();
+        timeCount = new Image[2];
+        timeCount[0] = skin.transform.Find("TimeCount_GeWei").GetComponent<Image>();
+        timeCount[1] = skin.transform.Find("TimeCount_ShiWei").GetComponent<Image>();
         pengButton = skin.transform.Find("PengButton").GetComponent<Button>();
         gangButton = skin.transform.Find("GangButton").GetComponent<Button>();
         huButton = skin.transform.Find("HuButton").GetComponent<Button>();
@@ -223,6 +214,7 @@ public class GamePanel : BasePanel {
 
         //生成背景图片
         GameObject bg = ResManager.LoadSprite("bg_game",0);
+        bg.name = "background";
         bg.transform.localScale = new Vector3(2,2,2);
 
         //灯光的初始化
@@ -246,7 +238,7 @@ public class GamePanel : BasePanel {
         huButton.gameObject.SetActive(false);
         noActionButton.gameObject.SetActive(false);
         skillButton.gameObject.SetActive(false);
-        PlayerRadio = -1;//隐藏用于发动数学系技能的单选框
+        PlayerRadio = false;//隐藏用于发动数学系技能的单选框
         skillingText.SetActive(false);
 
     }
@@ -260,7 +252,7 @@ public class GamePanel : BasePanel {
         skillingText.SetActive(false);
         if(gameManager.players[gameManager.id].skill == Skill.Math)
         {
-            PlayerRadio = -1;
+            PlayerRadio = false;
         }
     }
 
@@ -276,7 +268,20 @@ public class GamePanel : BasePanel {
 
     public void SetTimeCount(float lastTime)
     {
-        timeCount.sprite = ResManager.LoadUISprite(timePath[(int)lastTime]);
+        int time = (int)lastTime;
+        if(lastTime >= 10)
+        {
+            //[1]是十位，[0]是个位
+            timeCount[1].gameObject.SetActive(true);
+            timeCount[1].sprite = ResManager.LoadUISprite(timePath[time / 10]);
+            timeCount[0].sprite = ResManager.LoadUISprite(timePath[time % 10]);
+        }
+        else
+        {
+            timeCount[1].gameObject.SetActive(false);
+            timeCount[0].sprite = ResManager.LoadUISprite(timePath[time % 10]);
+        }
+        
     }
 
     //关闭
@@ -299,7 +304,7 @@ public class GamePanel : BasePanel {
             case Skill.Math:
                 okButton.onClick.AddListener(OnMathClick);
                 cancelButton.onClick.AddListener(OnCancelPlayerClick);
-                PlayerRadio = gameManager.id;//用来显示单选框
+                PlayerRadio = true;//用来显示单选框
 
                 OnCancelPaiClick();//在发动技能之前已经选中了牌，就要将牌降落下来
                 break;
@@ -319,7 +324,7 @@ public class GamePanel : BasePanel {
             case Skill.Math:
                 okButton.onClick.RemoveListener(OnMathClick);
                 cancelButton.onClick.RemoveListener(OnCancelPlayerClick);
-                PlayerRadio = -1;//隐藏发动数学系技能的单选框
+                PlayerRadio = false;//隐藏发动数学系技能的单选框
                 //还要添加取消选牌的操作
                 break;
             case Skill.Chemistry:
@@ -356,11 +361,11 @@ public class GamePanel : BasePanel {
         if (player == null) return;
         if (player.skill != Skill.Math) return;
         int selectedPlayerIndex = -1;
-        for(int i = 0; i < 4; i++)
+        for(int i = 0; i < 3; i++)
         {
             if (playerRadio[i].isOn)
             {
-                selectedPlayerIndex = i;
+                selectedPlayerIndex = i+1;
                 break;
             }
         }

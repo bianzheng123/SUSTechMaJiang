@@ -9,12 +9,12 @@ public abstract class BasePlayer : MonoBehaviour {
 
     //玩家手中的牌
     public List<GameObject> handPai;
-    public List<GameObject> discardPai;
+    public List<int> discardPai;
 
     //吃，碰杠
-    public List<GameObject> chi;
-    public List<GameObject> peng;
-    public List<GameObject> gang;
+    public List<int> chi;
+    public List<int> peng;
+    public List<int> gang;
 
     //id
     public int id;
@@ -25,10 +25,10 @@ public abstract class BasePlayer : MonoBehaviour {
 
     public virtual void Init(GamePanel gamePanel) {
         handPai = new List<GameObject>();
-        chi = new List<GameObject>();
-        peng = new List<GameObject>();
-        gang = new List<GameObject>();
-        discardPai = new List<GameObject>();
+        chi = new List<int>();
+        peng = new List<int>();
+        gang = new List<int>();
+        discardPai = new List<int>();
         gameManager = GameManager.GetInstance();
         this.gamePanel = gamePanel;
     }
@@ -55,14 +55,34 @@ public abstract class BasePlayer : MonoBehaviour {
     /// </summary>
     public void PlacePai()
     {
-        for (int i = 0; i < handPai.Count; i++)
+        switch (id)
         {
-            handPai[i].transform.position = new Vector3(i - 6,-1-id,0);
+            case 0:
+                for (int i = 0; i < handPai.Count; i++)
+                {
+                    handPai[i].transform.position = new Vector3(i * 0.76f - 5, -4, 0);
+                }
+                break;
+            case 1:
+                for (int i = 0; i < handPai.Count; i++)
+                {
+                    handPai[i].transform.position = new Vector3(7, -4 + i * 0.6f, 0);
+                }
+                break;
+            case 2:
+                for (int i = 0; i < handPai.Count; i++)
+                {
+                    handPai[i].transform.position = new Vector3(i * 0.76f - 5, 4, 0);
+                }
+                break;
+            case 3:
+                for (int i = 0; i < handPai.Count; i++)
+                {
+                    handPai[i].transform.position = new Vector3(-7, -4 + i * 0.6f, 0);
+                }
+                break;
         }
-        for(int i = 0; i < discardPai.Count; i++)
-        {
-            discardPai[i].transform.position = new Vector3(i-6,4-id,0);
-        }
+        
     }
 
     //出牌
@@ -117,9 +137,12 @@ public abstract class BasePlayer : MonoBehaviour {
     public void DiscardPai(int paiIndex)
     {
         GameObject go = handPai[paiIndex];
+        int paiId = go.GetComponent<Pai>().paiId;
         handPai.RemoveAt(paiIndex);
-        discardPai.Add(go);
+        discardPai.Add(paiId);
+        Destroy(go);
         PlacePai();
+        go = null;
     }
 
     /// <summary>
@@ -130,45 +153,19 @@ public abstract class BasePlayer : MonoBehaviour {
         //分为三种可能
         if(NumOfPai(paiId-1) >= 1 && NumOfPai(paiId - 2) >= 1)
         {
-            int index1 = IndexOf(paiId - 1);
-            GameObject pai1 = handPai[index1];
-            handPai.RemoveAt(index1);
-            chi.Add(pai1);
+            AddChiPengGang(paiId-1,enum_ChiPengGang.Chi);
 
-            int index2 = IndexOf(paiId - 2);
-            GameObject pai2 = handPai[index2];
-            handPai.RemoveAt(index2);
-            chi.Add(pai2);
-            gameManager.CreatePai(paiId,id,PlacePaiLocation.Chi);
-            PlaceChiPengGang();
+            AddChiPengGang(paiId - 2,enum_ChiPengGang.Chi);
         }
         else if(NumOfPai(paiId - 1) >= 1 && NumOfPai(paiId + 1) >= 1)
         {
-            int index1 = IndexOf(paiId - 1);
-            GameObject pai1 = handPai[index1];
-            handPai.RemoveAt(index1);
-            chi.Add(pai1);
-
-            int index2 = IndexOf(paiId + 1);
-            GameObject pai2 = handPai[index2];
-            handPai.RemoveAt(index2);
-            chi.Add(pai2);
-            gameManager.CreatePai(paiId, id, PlacePaiLocation.Chi);
-            PlaceChiPengGang();
+            AddChiPengGang(paiId - 1,enum_ChiPengGang.Chi);
+            AddChiPengGang(paiId + 1,enum_ChiPengGang.Chi);
         }
         else if(NumOfPai(paiId + 1) >= 1 && NumOfPai(paiId + 2) >= 1)
         {
-            int index1 = IndexOf(paiId + 1);
-            GameObject pai1 = handPai[index1];
-            handPai.RemoveAt(index1);
-            chi.Add(pai1);
-
-            int index2 = IndexOf(paiId + 2);
-            GameObject pai2 = handPai[index2];
-            handPai.RemoveAt(index2);
-            chi.Add(pai2);
-            gameManager.CreatePai(paiId, id, PlacePaiLocation.Chi);
-            PlaceChiPengGang();
+            AddChiPengGang(paiId + 1, enum_ChiPengGang.Chi);
+            AddChiPengGang(paiId + 2, enum_ChiPengGang.Chi);
         }
         else
         {
@@ -184,17 +181,8 @@ public abstract class BasePlayer : MonoBehaviour {
     {
         if (NumOfPai(paiId) >= 2)
         {
-            int index1 = IndexOf(paiId);
-            GameObject pai1 = handPai[index1];
-            handPai.RemoveAt(index1);
-            chi.Add(pai1);
-
-            int index2 = IndexOf(paiId);
-            GameObject pai2 = handPai[index2];
-            handPai.RemoveAt(index2);
-            chi.Add(pai2);
-            gameManager.CreatePai(paiId, id, PlacePaiLocation.Peng);
-            PlaceChiPengGang();
+            AddChiPengGang(paiId, enum_ChiPengGang.Peng);
+            AddChiPengGang(paiId, enum_ChiPengGang.Peng);
         }
         else
         {
@@ -210,22 +198,9 @@ public abstract class BasePlayer : MonoBehaviour {
     {
         if (NumOfPai(paiId) >= 3)
         {
-            int index1 = IndexOf(paiId);
-            GameObject pai1 = handPai[index1];
-            handPai.RemoveAt(index1);
-            chi.Add(pai1);
-
-            int index2 = IndexOf(paiId);
-            GameObject pai2 = handPai[index2];
-            handPai.RemoveAt(index2);
-            chi.Add(pai2);
-
-            int index3 = IndexOf(paiId);
-            GameObject pai3 = handPai[index3];
-            handPai.RemoveAt(index3);
-            chi.Add(pai3);
-            gameManager.CreatePai(paiId, id, PlacePaiLocation.Gang);
-            PlaceChiPengGang();
+            AddChiPengGang(paiId, enum_ChiPengGang.Gang);
+            AddChiPengGang(paiId, enum_ChiPengGang.Gang);
+            AddChiPengGang(paiId, enum_ChiPengGang.Gang);
         }
         else
         {
@@ -234,25 +209,31 @@ public abstract class BasePlayer : MonoBehaviour {
     }
 
     /// <summary>
-    /// 调整吃碰杠的牌的顺序
-    /// 这个可以和PlacePai放在一起优化
+    /// 处理吃碰杠事件，即从手牌中删除对应的牌，并添加到吃碰杠的列表中
     /// </summary>
-    private void PlaceChiPengGang()
+    /// <param name="paiId"></param>
+    /// <param name="type"></param>
+    private void AddChiPengGang(int paiId,enum_ChiPengGang type)
     {
-        for (int i = 0; i < chi.Count; i++)
+        int index1 = IndexOf(paiId);
+        GameObject pai1 = handPai[index1];
+        Destroy(pai1);
+        handPai.RemoveAt(index1);
+        int paiId1 = pai1.GetComponent<Pai>().paiId;
+        pai1 = null;
+        switch (type)
         {
-            chi[i].transform.position = new Vector3(i - 6, 20, 0);
+            case enum_ChiPengGang.Chi:
+                chi.Add(paiId1);
+                break;
+            case enum_ChiPengGang.Peng:
+                peng.Add(paiId1);
+                break;
+            case enum_ChiPengGang.Gang:
+                gang.Add(paiId1);
+                break;
         }
 
-        for (int i = 0; i < peng.Count; i++)
-        {
-            peng[i].transform.position = new Vector3(i - 6, 25, 0);
-        }
-
-        for (int i = 0; i < gang.Count; i++)
-        {
-            gang[i].transform.position = new Vector3(i - 6, 30, 0);
-        }
     }
 
     /// <summary>
@@ -292,4 +273,12 @@ public abstract class BasePlayer : MonoBehaviour {
         return index;
     }
 
+    enum enum_ChiPengGang
+    {
+        Chi = 0,
+        Peng = 1,
+        Gang = 2
+    }
 }
+
+

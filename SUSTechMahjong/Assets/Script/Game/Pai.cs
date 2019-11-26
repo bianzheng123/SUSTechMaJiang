@@ -13,6 +13,7 @@ public class Pai : MonoBehaviour
     public static string pai_player2;
     public static string pai_player3;
     public static string pai_player4;
+    public static Dictionary<int,string> int2name;
     
     public Pai(int paiId)
     {
@@ -64,5 +65,44 @@ public class Pai : MonoBehaviour
         pai_player1.Add(41, "Mahjong/Middle/handmah_41");
         pai_player1.Add(42, "Mahjong/Middle/handmah_42");
         pai_player1.Add(43, "Mahjong/Middle/handmah_43");
+
+        int2name = new Dictionary<int, string>();
+        int2name.Add(1, "一筒");
+        int2name.Add(2, "二筒");
+        int2name.Add(3, "三筒");
+        int2name.Add(4, "四筒");
+        int2name.Add(5, "五筒");
+        int2name.Add(6, "六筒");
+        int2name.Add(7, "七筒");
+        int2name.Add(8, "八筒");
+        int2name.Add(9, "九筒");
+
+        int2name.Add(11, "一万");
+        int2name.Add(12, "二万");
+        int2name.Add(13, "三万");
+        int2name.Add(14, "四万");
+        int2name.Add(15, "五万");
+        int2name.Add(16, "六万");
+        int2name.Add(17, "七万");
+        int2name.Add(18, "八万");
+        int2name.Add(19, "九万");
+
+        int2name.Add(21, "一条");
+        int2name.Add(22, "二条");
+        int2name.Add(23, "三条");
+        int2name.Add(24, "四条");
+        int2name.Add(25, "五条");
+        int2name.Add(26, "六条");
+        int2name.Add(27, "七条");
+        int2name.Add(28, "八条");
+        int2name.Add(29, "九条");
+
+        int2name.Add(31,"东");
+        int2name.Add(32,"南");
+        int2name.Add(33,"西");
+        int2name.Add(34, "北");
+        int2name.Add(41, "发财");
+        int2name.Add(42, "中");
+        int2name.Add(43, "空");
     }
 }

@@ -10,8 +10,7 @@ public class ResManager : MonoBehaviour {
     public static GameObject LoadSprite(string path,int sortingOrder)
     {
         Sprite s = Resources.Load<Sprite>(path);
-        string[] name = path.Split('/');
-        GameObject go = new GameObject(name[name.Length-1]);
+        GameObject go = new GameObject();
         SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
         sr.sortingOrder = sortingOrder;
         sr.sprite = s;
