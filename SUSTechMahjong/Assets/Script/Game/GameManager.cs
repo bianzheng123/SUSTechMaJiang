@@ -30,7 +30,7 @@ public class GameManager : MonoBehaviour
     public int id;//该客户端的id
     public BasePlayer[] players;
     private Dictionary<int, Direction> numToDir;
-    public const float timeCount = 10;//代表出牌计时的时间
+    public const float timeCount = 20;//代表出牌计时的时间
     public bool isChuPai = false;//是否为出牌，还是进行吃碰杠的判断
     public int nowTurnid = 0;
     public float timeLast = timeCount;
@@ -549,7 +549,7 @@ public class GameManager : MonoBehaviour
     /// <param name="index">牌放在哪里的索引</param>
     public void CreatePai(int paiId, int playerId, PlacePaiLocation location)
     {
-        string path = Pai.name2path_handPai[paiId];
+        string path = Pai.pai_player1[paiId];
         GameObject go = ResManager.LoadSprite(path,1);
         switch (location)
         {

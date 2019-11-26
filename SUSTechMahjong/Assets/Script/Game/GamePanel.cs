@@ -342,7 +342,7 @@ public class GamePanel : BasePanel {
             string path = "";
             for(int i = 0; i < pai.Length; i++)
             {
-                path += Pai.name2path_handPai[pai[i]] + ",";
+                path += Pai.pai_player1[pai[i]] + ",";
             }
             PanelManager.Open<MathTipPanel>(path);
         }
