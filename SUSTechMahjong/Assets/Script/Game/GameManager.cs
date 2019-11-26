@@ -274,6 +274,7 @@ public class GameManager : MonoBehaviour
                 //跳转到失败的界面
                 PanelManager.Open<GameoverPanel>(2,msg.id,id);
             }
+            PanelManager.Close("GamePanel");
         }
         else
         { 

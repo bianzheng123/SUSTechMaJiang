@@ -187,11 +187,11 @@ public class PaiManager {
     {
         List<int> cards = playerPai[playerId];
         int len = playerPai[playerId].Count;
-        //if(len == 14)//用于测试
-        //{
-        //    return true;
-        //}
-        if(len == 14)
+        if (len == 14)//用于测试
+        {
+            return true;
+        }
+        if (len == 14)
         {
             int count = 0;
             for(int i = 0; i < len; i += 2)
