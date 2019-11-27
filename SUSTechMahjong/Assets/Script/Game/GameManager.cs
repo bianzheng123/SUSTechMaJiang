@@ -93,7 +93,7 @@ public class GameManager : MonoBehaviour
             int[] res = paiManager.FaPai(num, i);
             msg.data[i].paiIndex = res;
         }
-        msg.id = 3;
+        msg.id = 2;
         ClientOnInitData(msg);//广播
         Debug.Log("庄家：" + zhuangIdx);
         //for(int i = 0; i < 3; i++)
@@ -124,9 +124,14 @@ public class GameManager : MonoBehaviour
         gamePanel.SkillDispalyText = (Skill)msg.data[msg.id].skillIndex;
         skillCount = msg.data[msg.id].skillCount;
         gamePanel.RestSkillCount = skillCount;
+        
         //生成牌
         for (int i = 0; i < 4; i++)
         {
+            if(msg.data[i].paiIndex.Length == 14)
+            {
+                gamePanel.ZhuangImage = numToDir[i];
+            }
             for (int j = 0; j < msg.data[i].paiIndex.Length; j++)
             {
                 CreatePai(msg.data[i].paiIndex[j], i);
@@ -583,7 +588,7 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 输入该回合玩家的id，输出他在这个客户端的相对位置
+    /// 输入玩家的id，输出他在这个客户端的相对位置
     /// </summary>
     private void InitNumToDir()
     {
@@ -629,7 +634,7 @@ public class GameManager : MonoBehaviour
             if(i == id)
             {
                 obj = playerFactory.createPlayer(PlayerName.CtrlPlayer);
-                Debug.Log("id: " + id);
+                Debug.Log("该客户端的id: " + id);
             }
             else
             {

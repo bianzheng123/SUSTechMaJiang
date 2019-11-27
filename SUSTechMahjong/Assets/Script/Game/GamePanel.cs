@@ -45,7 +45,8 @@ public class GamePanel : BasePanel {
     private Text restSkillCount;
     //用来显示是否发动了技能
     private GameObject skillingText;
-
+    //显示庄家的图片
+    private Image zhuangImage;
     //表示是否选中了发动技能的按钮
     public bool isDoSkilling = false;
     //表示现在id的技能类型
@@ -154,6 +155,29 @@ public class GamePanel : BasePanel {
             skillButton.gameObject.SetActive(value);
         }
     }
+    public Direction ZhuangImage
+    {
+        set
+        {
+            zhuangImage.gameObject.SetActive(true);
+            Debug.Log(value);
+            switch (value)
+            {
+                case Direction.DOWN:
+                    zhuangImage.transform.localPosition = new Vector3(0,-65.5f,0);
+                    break;
+                case Direction.RIGHT:
+                    zhuangImage.transform.localPosition = new Vector3(77f,0,0);
+                    break;
+                case Direction.UP:
+                    zhuangImage.transform.localPosition = new Vector3(0,77,0);
+                    break;
+                case Direction.LEFT:
+                    zhuangImage.transform.localPosition = new Vector3(-77,0,0);
+                    break;
+            }
+        }
+    }
 
     //初始化
     public override void OnInit()
@@ -194,6 +218,7 @@ public class GamePanel : BasePanel {
         skillDisplayText = skin.transform.Find("SkillDisplayText").GetComponent<Text>();
         restSkillCount = skin.transform.Find("RestSkillCount").GetComponent<Text>();
         skillingText = skin.transform.Find("SkillingText").gameObject;
+        zhuangImage = skin.transform.Find("ZhuangImage").GetComponent<Image>();
         //监听
         exitButton.onClick.AddListener(OnExitClick);
         setButton.onClick.AddListener(OnSetClick);
@@ -237,6 +262,7 @@ public class GamePanel : BasePanel {
         huButton.gameObject.SetActive(false);
         noActionButton.gameObject.SetActive(false);
         skillButton.gameObject.SetActive(false);
+        zhuangImage.gameObject.SetActive(false);
         PlayerRadio = false;//隐藏用于发动数学系技能的单选框
         skillingText.SetActive(false);
 
@@ -527,7 +553,6 @@ public enum Direction
     RIGHT = 1,
     UP = 2,
     LEFT = 3,
-    
 }
 
 
