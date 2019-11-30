@@ -602,11 +602,3 @@ public class GameManager : MonoBehaviour
     }
 
 }
-
-public enum PlacePaiLocation
-{
-    HandPai,
-    Chi,
-    Peng,
-    Gang
-}

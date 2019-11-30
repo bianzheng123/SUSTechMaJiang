@@ -3,7 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MathTipPanel : BasePanel
+/// <summary>
+/// 展示棋子的面板
+/// 用于发动数学系技能，查看别人丢弃的拍，吃碰杠的牌
+/// </summary>
+public class ObjectTipPanel : BasePanel
 {
     //提示文本
     private Transform content;
@@ -13,10 +17,14 @@ public class MathTipPanel : BasePanel
     //初始化
     public override void OnInit()
     {
-        skinPath = "MathTipPanel";
+        skinPath = "ObjectTipPanel";
         layer = PanelManager.Layer.Tip;
     }
-    //显示
+
+    /// <summary>
+    /// 显示牌
+    /// </summary>
+    /// <param name="args">存储牌的路径，不能为空</param>
     public override void OnShow(params object[] args)
     {
         //寻找组件
@@ -40,7 +48,7 @@ public class MathTipPanel : BasePanel
                 if (paths[i] == "") continue;
                 string[] split = paths[i].Split('/');
                 GameObject go = new GameObject(split[split.Length-1]);
-                go.transform.localScale = new Vector3(0.5f,0.5f,0.5f);
+                go.transform.localScale = new Vector3(0.7f,0.7f,0.7f);
                 Image image = go.AddComponent<Image>();
                 image.sprite = ResManager.LoadUISprite(paths[i]);
                 go.transform.SetParent(content);

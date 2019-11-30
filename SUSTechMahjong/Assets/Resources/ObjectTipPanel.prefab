@@ -58,7 +58,7 @@ GameObject:
   - component: {fileID: 222347318711707368}
   - component: {fileID: 114981292905292258}
   m_Layer: 0
-  m_Name: MathTipPanel
+  m_Name: ObjectTipPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

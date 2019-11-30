@@ -174,16 +174,18 @@ public abstract class BasePlayer : MonoBehaviour {
         if(NumOfPai(paiId-1) >= 1 && NumOfPai(paiId - 2) >= 1)
         {
             AddChiPengGang(paiId-1,enum_ChiPengGang.Chi);
-
             AddChiPengGang(paiId - 2,enum_ChiPengGang.Chi);
+            chi.Add(paiId);
         }
         else if(NumOfPai(paiId - 1) >= 1 && NumOfPai(paiId + 1) >= 1)
         {
             AddChiPengGang(paiId - 1,enum_ChiPengGang.Chi);
             AddChiPengGang(paiId + 1,enum_ChiPengGang.Chi);
+            chi.Add(paiId);
         }
         else if(NumOfPai(paiId + 1) >= 1 && NumOfPai(paiId + 2) >= 1)
         {
+            chi.Add(paiId);
             AddChiPengGang(paiId + 1, enum_ChiPengGang.Chi);
             AddChiPengGang(paiId + 2, enum_ChiPengGang.Chi);
         }
@@ -191,7 +193,7 @@ public abstract class BasePlayer : MonoBehaviour {
         {
             Debug.Log("客户端处理吃出现bug");
         }
-        
+        chi.Sort();
     }
 
     /// <summary>
@@ -203,6 +205,7 @@ public abstract class BasePlayer : MonoBehaviour {
         {
             AddChiPengGang(paiId, enum_ChiPengGang.Peng);
             AddChiPengGang(paiId, enum_ChiPengGang.Peng);
+            peng.Add(paiId);
             switch (gender)
             {
                 case Gender.Male:
@@ -217,7 +220,7 @@ public abstract class BasePlayer : MonoBehaviour {
         {
             Debug.Log("客户端处理碰出现bug");
         }
-        
+        peng.Sort();
     }
 
     /// <summary>
@@ -230,6 +233,7 @@ public abstract class BasePlayer : MonoBehaviour {
             AddChiPengGang(paiId, enum_ChiPengGang.Gang);
             AddChiPengGang(paiId, enum_ChiPengGang.Gang);
             AddChiPengGang(paiId, enum_ChiPengGang.Gang);
+            gang.Add(paiId);
             switch (gender)
             {
                 case Gender.Male:
@@ -244,6 +248,7 @@ public abstract class BasePlayer : MonoBehaviour {
         {
             Debug.Log("客户端处理杠出现bug");
         }
+        gang.Sort();
     }
 
     /// <summary>
