@@ -18,7 +18,7 @@ public class GamePanel : BasePanel {
     //存储选定玩家的单选框信息，用于发动数学系技能
     private Toggle[] playerRadio;
     //储存GameManager的引用
-    private GameManager gameManager;
+    private static GameManager gameManager;
 
     //表示出牌的按钮
     private Button okButton;
@@ -51,6 +51,8 @@ public class GamePanel : BasePanel {
     public bool isDoSkilling = false;
     //表示现在id的技能类型
     public Skill skill = Skill.None;
+    //掌管音乐文件的
+    private static AudioSource audioSource;
 
     /// <summary>
     /// -1，代表单选框全部不显示
@@ -234,7 +236,7 @@ public class GamePanel : BasePanel {
         gameManager = GameManager.GetInstance();
         gameManager.GamePanel = this;
         gameManager.PlayerFactory = new PlayerFactory();
-
+        audioSource = gameManager.gameObject.AddComponent<AudioSource>();
 
         //生成背景图片
         GameObject bg = ResManager.LoadSprite("bg_game",0);
@@ -265,7 +267,6 @@ public class GamePanel : BasePanel {
         zhuangImage.gameObject.SetActive(false);
         PlayerRadio = false;//隐藏用于发动数学系技能的单选框
         skillingText.SetActive(false);
-
     }
 
     /// <summary>
@@ -546,6 +547,11 @@ public class GamePanel : BasePanel {
         player.selectedPaiIndex = -1;
     }
 
+    public static void PlayAudio(string path)
+    {
+        audioSource.clip = ResManager.LoadAudio(path);
+        audioSource.Play();
+    }
 }
 public enum Direction
 {

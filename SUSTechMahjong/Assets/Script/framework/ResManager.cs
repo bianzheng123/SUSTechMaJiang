@@ -15,9 +15,12 @@ public class ResManager : MonoBehaviour {
         sr.sortingOrder = sortingOrder;
         sr.sprite = s;
         return go;
-        
     }
 
+    public static AudioClip LoadAudio(string path)
+    {
+        return Resources.Load<AudioClip>(path);
+    }
 
     public static Sprite LoadUISprite(string path)
     {

@@ -18,6 +18,7 @@ public class StartGameData
     public int[] paiIndex = null;
     public int skillIndex = 0;
     public int skillCount = 0;
+    public int gender = -1;//0代表男,1代表女,生成性别用于控制不同的声音播放
 }
 
 public enum Skill

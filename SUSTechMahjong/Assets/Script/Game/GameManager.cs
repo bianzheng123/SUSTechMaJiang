@@ -82,6 +82,7 @@ public class GameManager : MonoBehaviour
             msg.data[i] = new StartGameData();
             msg.data[i].skillIndex = (int)Skill.Math;//全部设为数学系
             msg.data[i].skillCount = maxSkillTime[i];
+            msg.data[i].gender = rd.Next() % 2;//随机生成性别
         }//初始化协议的牌数组
         for (int i = 0; i < 4; i++)
         {
@@ -270,6 +271,17 @@ public class GameManager : MonoBehaviour
         Debug.Log("PlayerId: " + msg.id);
         if(msg.paiIndex == -1)
         {
+            Gender gender = players[msg.id].gender;
+            switch (gender)
+            {
+                case Gender.Female:
+                    GamePanel.PlayAudio(Pai.audioHuFemale);
+                    break;
+                case Gender.Male:
+                    GamePanel.PlayAudio(Pai.audioHuMale);
+                    break;
+            }
+            
             Debug.Log("胡牌成功！");
             if(msg.id == turn)
             {
@@ -646,6 +658,7 @@ public class GameManager : MonoBehaviour
             bp.Init(gamePanel);
             players[i] = bp;
             players[i].id = i;
+            players[i].gender = (Gender)msg.data[i].gender;
             players[i].skill = (Skill)msg.data[i].skillIndex;
 
         }

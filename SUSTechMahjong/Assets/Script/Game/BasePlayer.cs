@@ -18,6 +18,7 @@ public abstract class BasePlayer : MonoBehaviour {
 
     //id
     public int id;
+    public Gender gender;
     //代表是否轮到自己出牌
     public bool isTurn;
     //描述自己的技能
@@ -125,20 +126,29 @@ public abstract class BasePlayer : MonoBehaviour {
         msg.paiIndex = index;
         gamePanel.ChuPaiButton = false;
         gamePanel.HuButton = false;
-        Debug.Log("出牌");
         gameManager.isChuPai = false;
         gameManager.ServerOnMsgChuPai(msg);
         
     }
 
     /// <summary>
-    /// 在客户端收到MsgChuPai的时候调用
+    /// 在客户端收到MsgChuPai的时候调用，对客户端进行同步，删除对应的牌，同时播放声音
     /// </summary>
     /// <param name="paiIndex"></param>
     public void DiscardPai(int paiIndex)
     {
         GameObject go = handPai[paiIndex];
         int paiId = go.GetComponent<Pai>().paiId;
+        Debug.Log("声音：" + paiId);
+        switch (gender)
+        {
+            case Gender.Male:
+                GamePanel.PlayAudio(Pai.audioPathMale[paiId]);
+                break;
+            case Gender.Female:
+                GamePanel.PlayAudio(Pai.audioPathMale[paiId]);
+                break;
+        }
         handPai.RemoveAt(paiIndex);
         discardPai.Add(paiId);
         Destroy(go);
@@ -151,6 +161,7 @@ public abstract class BasePlayer : MonoBehaviour {
     /// </summary>
     public void OnChi(int paiId)
     {
+        //无法播放对应的声音，没有音效
         //分为三种可能
         if(NumOfPai(paiId-1) >= 1 && NumOfPai(paiId - 2) >= 1)
         {
@@ -184,6 +195,15 @@ public abstract class BasePlayer : MonoBehaviour {
         {
             AddChiPengGang(paiId, enum_ChiPengGang.Peng);
             AddChiPengGang(paiId, enum_ChiPengGang.Peng);
+            switch (gender)
+            {
+                case Gender.Male:
+                    GamePanel.PlayAudio(Pai.audioPengMale);
+                    break;
+                case Gender.Female:
+                    GamePanel.PlayAudio(Pai.audioPengFemale);
+                    break;
+            }
         }
         else
         {
@@ -202,6 +222,15 @@ public abstract class BasePlayer : MonoBehaviour {
             AddChiPengGang(paiId, enum_ChiPengGang.Gang);
             AddChiPengGang(paiId, enum_ChiPengGang.Gang);
             AddChiPengGang(paiId, enum_ChiPengGang.Gang);
+            switch (gender)
+            {
+                case Gender.Male:
+                    GamePanel.PlayAudio(Pai.audioGangMale);
+                    break;
+                case Gender.Female:
+                    GamePanel.PlayAudio(Pai.audioGangFemale);
+                    break;
+            }
         }
         else
         {
@@ -280,6 +309,12 @@ public abstract class BasePlayer : MonoBehaviour {
         Peng = 1,
         Gang = 2
     }
+}
+
+public enum Gender
+{
+    Male = 0,
+    Female =1
 }
 
 
