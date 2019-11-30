@@ -27,14 +27,12 @@ public class GameManager : MonoBehaviour
 
     private PlayerFactory playerFactory;//简单工厂模式
     private GamePanel gamePanel;
-    public int id;//该客户端的id
-    public BasePlayer[] players;
-    public Dictionary<int, Direction> numToDir;
+    public int client_id;//该客户端的id
+    public BasePlayer[] players;//存放这些玩家的引用
     public const float timeCount = 20;//代表出牌计时的时间
     public bool isChuPai = false;//是否为出牌，还是进行吃碰杠的判断
     public int nowTurnid = 0;
     public float timeLast = timeCount;
-    public int hostTurnNum = 0;//现在该客户端控制的玩家能使用几次技能
     public bool startTimeCount = false;
     public int skillCount;//代表当前主机玩家还剩下几次技能可以使用
 
@@ -115,14 +113,11 @@ public class GameManager : MonoBehaviour
     public void ClientOnInitData(MsgBase msgBase)
     {
         MsgInitData msg = (MsgInitData)msgBase;
-        Pai.Init();
         players = new BasePlayer[4];
-        id = msg.id;
-        //NumtoDir的初始化一定要放在接收该客户端id之后
-        InitNumToDir();
+        client_id = msg.id;
+        gamePanel.InitNumToDir(msg.id);
         InitPlayer(msg);
-        gamePanel.skill = (Skill)msg.data[msg.id].skillIndex;
-        gamePanel.SkillDispalyText = (Skill)msg.data[msg.id].skillIndex;
+        gamePanel.Skill = (Skill)msg.data[msg.id].skillIndex;
         skillCount = msg.data[msg.id].skillCount;
         gamePanel.RestSkillCount = skillCount;
         
@@ -131,7 +126,7 @@ public class GameManager : MonoBehaviour
         {
             if(msg.data[i].paiIndex.Length == 14)
             {
-                gamePanel.ZhuangImage = numToDir[i];
+                gamePanel.ZhuangImage = i;
             }
             for (int j = 0; j < msg.data[i].paiIndex.Length; j++)
             {
@@ -175,52 +170,51 @@ public class GameManager : MonoBehaviour
 
     /// <summary>
     /// 客户端处理MsgFaPai协议
+    /// 客户端进行牌的同步与显示，如果是自己出牌，就显示对应的UI
     /// </summary>
     /// <param name="msgBase"></param>
     public void ClientOnMsgFaPai(MsgBase msgBase)
     {
         MsgFaPai msg = (MsgFaPai)msgBase;
-        if(msg.paiId == -1)
+        nowTurnid = msg.id;
+        if (msg.paiId == -1)
         {
             Debug.Log("没牌了，游戏结束");
-            PanelManager.Open<GameoverPanel>(0,-1,id);
+            PanelManager.Open<GameoverPanel>(0,-1,client_id);
+            PanelManager.Close("GamePanel");
             return;
         }
-        hostTurnNum = msg.turnNum;
-        gamePanel.TurnText = hostTurnNum;
 
-        gamePanel.TurnLight(numToDir[msg.id]);
-        if (msg.id == id)
+        gamePanel.TurnText = msg.turnNum;//设置现在是第几轮了
+        gamePanel.TurnLight(msg.id);//切换灯光
+        if (msg.id == client_id)//如果是玩家，就显示出牌/发动技能/胡的按钮
         {
-            gamePanel.ChuPaiButton = true;//可以出牌了
-            if (msg.isHu)//如果发现了胡，就显示胡的按钮
+            gamePanel.ChuPaiButton = true;
+            if (msg.isHu)
             {
                 gamePanel.HuButton = true;
             }
-            if (msg.canSkill)//如果可以发动技能，就显示发动技能的按钮
+            if (msg.canSkill)
             {
                 gamePanel.SkillButton = true;
             }
         }
         
-        nowTurnid = msg.id;
         CreatePai(msg.paiId,msg.id);
-
-        players[msg.id].SynHandPai();//同步牌的顺序
+        players[msg.id].SynHandPai();//调整牌的顺序
         players[msg.id].PlacePai();//调整牌的位置
 
-        string arrString = "";
-        for (int i = 0; i < paiManager.playerPai[msg.id].Count; i++)
-        {
-            arrString += paiManager.playerPai[msg.id][i] + " ";
-        }
-        Debug.Log("player" + msg.id + ": " + arrString);
+        //string arrString = "";
+        //for (int i = 0; i < paiManager.playerPai[msg.id].Count; i++)
+        //{
+        //    arrString += paiManager.playerPai[msg.id][i] + " ";
+        //}
+        //Debug.Log("player" + msg.id + ": " + arrString);//验证服务端的牌是否进行了同步
 
         isChuPai = true;
         //开始计时，玩家出牌
         StartTimeCount();
-        //如果不是自己控制的玩家，就收到协议显示
-        //如果是自己的玩家，就打出牌，同时发送协议
+        
     }
 
     /// <summary>
@@ -262,23 +256,23 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 客户端收到出牌的协议，进行对应的变化
+    /// 客户端收到出牌的协议，进行同步
     /// </summary>
     /// <param name="msgBase"></param>
     public void ClientOnMsgChuPai(MsgBase msgBase)
     {
         MsgChuPai msg = (MsgChuPai)msgBase;
         Debug.Log("PlayerId: " + msg.id);
-        if(msg.paiIndex == -1)
+        if(msg.paiIndex == -1)//胡的情况
         {
             Gender gender = players[msg.id].gender;
             switch (gender)
             {
                 case Gender.Female:
-                    GamePanel.PlayAudio(Pai.audioHuFemale);
+                    GamePanel.PlayAudio(Audio.audioHuFemale);
                     break;
                 case Gender.Male:
-                    GamePanel.PlayAudio(Pai.audioHuMale);
+                    GamePanel.PlayAudio(Audio.audioHuMale);
                     break;
             }
             
@@ -286,12 +280,12 @@ public class GameManager : MonoBehaviour
             if(msg.id == turn)
             {
                 //跳转到成功界面
-                PanelManager.Open<GameoverPanel>(1,msg.id,id);
+                PanelManager.Open<GameoverPanel>(1,msg.id,client_id);
             }
             else
             {
                 //跳转到失败的界面
-                PanelManager.Open<GameoverPanel>(2,msg.id,id);
+                PanelManager.Open<GameoverPanel>(2,msg.id,client_id);
             }
             PanelManager.Close("GamePanel");
         }
@@ -311,9 +305,29 @@ public class GameManager : MonoBehaviour
     public void ClientOnMsgChiPengGang(MsgBase msgBase)
     {
         MsgChiPengGang msg = (MsgChiPengGang)msgBase;
-        if(msg.result == -1)
+        if(msg.result == -1)//第一次收到协议
         {
-            GetChiPengGangResult(msg);
+            StartTimeCount();
+            nowTurnid = msg.id;
+
+            players[nowTurnid].msgChiPengGang = msg;
+            gamePanel.TurnLight(nowTurnid);
+            if (nowTurnid == client_id)
+            {
+                bool[] isChiPengGang = msg.isChiPengGang;
+                if (isChiPengGang[1])
+                {
+                    gamePanel.ChiButton = true;
+                }
+                if (isChiPengGang[2])
+                {
+                    gamePanel.PengButton = true;
+                }
+                if (isChiPengGang[3])
+                {
+                    gamePanel.GangButton = true;
+                }
+            }
         }
         else
         {
@@ -408,25 +422,25 @@ public class GameManager : MonoBehaviour
     public void ClientOnMsgChemistry(MsgBase msgBase)
     {
         MsgChemistry msg = (MsgChemistry)msgBase;
-        if(msg.id == id)
+        if(msg.id == client_id)
         {
             skillCount--;
             gamePanel.RestSkillCount = skillCount;
         }
-        players[msg.id].DiscardPai(msg.paiIndex);
-
-        CreatePai(msg.paiId, msg.id);
-
-        players[msg.id].SynHandPai();//同步牌的顺序
-        players[msg.id].PlacePai();//调整牌的位置
-        Debug.Log(msg.canSkill && msg.id == id);
-
-        if (msg.canSkill && msg.id == id)//如果可以发动技能，就显示发动技能的按钮
+        if (msg.canSkill && msg.id == client_id)//如果可以发动技能，就显示发动技能的按钮
         {
             gamePanel.SkillButton = true;
         }
-        isChuPai = true;
+
+        players[msg.id].DiscardPai(msg.paiIndex);
+
+        CreatePai(msg.paiId, msg.id);
+        players[msg.id].SynHandPai();//同步牌的顺序
+        players[msg.id].PlacePai();//调整牌的位置
+
+        
         Debug.Log("客户端接收msgchemistry信息");
+        isChuPai = true;
         StartTimeCount();
     }
 
@@ -453,32 +467,15 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("客户端接收msgMath信息");
         MsgMath msg = (MsgMath)msgBase;
-        if (msg.observerPlayerId == id)
+        if (msg.observerPlayerId == client_id)
         {
             skillCount--;
             gamePanel.RestSkillCount = skillCount;
         }
 
-        //生成查看面板
-        if(msg.paiId == null)
-        {
-            Debug.Log("经过的回合太多，生成牌失败");
-        }
-        else
-        {
-            string str = "";
-            for (int i = 0; i < msg.paiId.Length; i++)
-            {
-                str += msg.paiId[i] + " ";
-            }
-            Debug.Log(str);
-        }
-
         gamePanel.DisplayOtherPai(msg.paiId);
 
-        Debug.Log(msg.canSkill && msg.observerPlayerId == id);
-
-        if (msg.canSkill && msg.observerPlayerId == id)//如果可以发动技能，就显示发动技能的按钮
+        if (msg.canSkill && msg.observerPlayerId == client_id)//如果可以发动技能，就显示发动技能的按钮
         {
             gamePanel.SkillButton = true;
         }
@@ -500,17 +497,17 @@ public class GameManager : MonoBehaviour
         {
             timeLast = 0;
             startTimeCount = false;
-            if(nowTurnid == id)
+            if(nowTurnid == client_id)
             {
                 gamePanel.HideSkillUI();
                 if (isChuPai)//代表是自己出牌，到时间了
                 {
-                    CtrlPlayer self = (CtrlPlayer)players[id];
-                    self.DaPaiCompolsory();
+                    CtrlPlayer self = (CtrlPlayer)players[client_id];
+                    self.ChuPai();
                 }
                 else//该自己进行吃碰杠的判断，且到时间了
                 {
-                    CtrlPlayer self = (CtrlPlayer)players[id];
+                    CtrlPlayer self = (CtrlPlayer)players[client_id];
                     self.ChiPengGang();
                 }
             }
@@ -519,39 +516,16 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void GetChiPengGangResult(MsgChiPengGang msg)
-    {
-        nowTurnid = msg.id;
-        gamePanel.TurnLight(numToDir[nowTurnid]);
-        StartTimeCount();
-        players[nowTurnid].msgChiPengGang = msg;
-        if (nowTurnid != id) { return; }
-
-        bool[] isChiPengGang = msg.isChiPengGang;
-        if (isChiPengGang[1])
-        {
-            gamePanel.ChiButton = true;
-        }
-        if (isChiPengGang[2])
-        {
-            gamePanel.PengButton = true;
-        }
-        if (isChiPengGang[3])
-        {
-            gamePanel.GangButton = true;
-        }
-    }
-
     private void Update()
     {
         if (startTimeCount)
         {
             TimeCount();
-            if (isChuPai && !(id == nowTurnid && players[id].skill == Skill.Math && gamePanel.isDoSkilling == true))//是自己控制的玩家在出牌，而且是数学系的而且已经按下了发动技能的按钮
+            if (isChuPai && !(client_id == nowTurnid && players[client_id].skill == Skill.Math && gamePanel.isDoSkilling == true))//是自己控制的玩家在出牌，而且是数学系的而且已经按下了发动技能的按钮
             {        //发动数学系技能时不可选中自己的牌
                 players[nowTurnid].DaPai();//这里人机只是打牌，不发动任何技能
             }//否则进行吃碰杠的判断
-            else if(nowTurnid != id)
+            else if(nowTurnid != client_id)
             {//用于人机的操作
                 players[nowTurnid].ChiPengGang();
             }
@@ -569,7 +543,7 @@ public class GameManager : MonoBehaviour
     {
         string path = "";
         Vector3 scale = Vector3.one;
-        Direction dir = numToDir[playerId];
+        Direction dir = gamePanel.numToDir[playerId];
         switch (dir)
         {
             case Direction.DOWN:
@@ -599,43 +573,6 @@ public class GameManager : MonoBehaviour
         pai.paiId = paiId;
     }
 
-    /// <summary>
-    /// 输入玩家的id，输出他在这个客户端的相对位置
-    /// </summary>
-    private void InitNumToDir()
-    {
-        numToDir = new Dictionary<int, Direction>();
-        //这个id指的是这个客户端的玩家id
-        switch (id)
-        {
-            case 0:
-                numToDir[0] = Direction.DOWN;
-                numToDir[1] = Direction.RIGHT;
-                numToDir[2] = Direction.UP;
-                numToDir[3] = Direction.LEFT;
-                break;
-            case 1:
-                numToDir[0] = Direction.LEFT;
-                numToDir[1] = Direction.DOWN;
-                numToDir[2] = Direction.RIGHT;
-                numToDir[3] = Direction.UP;
-                break;
-            case 2:
-                numToDir[0] = Direction.UP;
-                numToDir[1] = Direction.LEFT;
-                numToDir[2] = Direction.DOWN;
-                numToDir[3] = Direction.RIGHT;
-                break;
-            case 3:
-                numToDir[0] = Direction.RIGHT;
-                numToDir[1] = Direction.UP;
-                numToDir[2] = Direction.LEFT;
-                numToDir[3] = Direction.DOWN;
-                break;
-        }
-        
-    }
-
     //添加CtrlPlayer和SyncPlayer
     private void InitPlayer(MsgInitData msg)
     {
@@ -645,15 +582,15 @@ public class GameManager : MonoBehaviour
             UnityEngine.Object[] obj = null;
             if(i == id)
             {
-                obj = playerFactory.createPlayer(PlayerName.CtrlPlayer);
+                obj = playerFactory.CreatePlayer(PlayerName.CtrlPlayer);
                 Debug.Log("该客户端的id: " + id);
             }
             else
             {
-                obj = playerFactory.createPlayer(PlayerName.SyncPlayer);
+                obj = playerFactory.CreatePlayer(PlayerName.SyncPlayer);
             }
             GameObject go = (GameObject)obj[0];
-            go.name = "Player " + (i + 1);
+            go.name = "Player " + (i);
             BasePlayer bp = (BasePlayer)obj[1];
             bp.Init(gamePanel);
             players[i] = bp;

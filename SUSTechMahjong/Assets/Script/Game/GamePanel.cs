@@ -15,6 +15,8 @@ public class GamePanel : BasePanel {
     //存储时间图片的路径
     private string[] timePath = { "GameLayer/timer_0", "GameLayer/timer_1", "GameLayer/timer_2", "GameLayer/timer_3",
         "GameLayer/timer_4", "GameLayer/timer_5","GameLayer/timer_6","GameLayer/timer_7","GameLayer/timer_8","GameLayer/timer_9"};
+    //用于输入id输出这个客户端对应的控制
+    public Dictionary<int, Direction> numToDir;
     //存储选定玩家的单选框信息，用于发动数学系技能
     private Toggle[] playerRadio;
     //储存GameManager的引用
@@ -69,10 +71,11 @@ public class GamePanel : BasePanel {
         }
     }
 
-    public Skill SkillDispalyText
+    public Skill Skill
     {
         set
         {
+            skill = value;
             switch (value)
             {
                 case Skill.None:
@@ -157,13 +160,13 @@ public class GamePanel : BasePanel {
             skillButton.gameObject.SetActive(value);
         }
     }
-    public Direction ZhuangImage
+    public int ZhuangImage
     {
         set
         {
+            Direction dir = numToDir[value];
             zhuangImage.gameObject.SetActive(true);
-            Debug.Log(value);
-            switch (value)
+            switch (dir)
             {
                 case Direction.DOWN:
                     zhuangImage.transform.localPosition = new Vector3(0,-65.5f,0);
@@ -276,15 +279,16 @@ public class GamePanel : BasePanel {
     {
         SkillButton = false;
         skillingText.SetActive(false);
-        if(gameManager.players[gameManager.id].skill == Skill.Math)
+        if(gameManager.players[gameManager.client_id].skill == Skill.Math)
         {
             PlayerRadio = false;
         }
     }
 
     //改变灯光的顺序
-    public void TurnLight(Direction dir)
+    public void TurnLight(int playerid)
     {
+        Direction dir = numToDir[playerid];
         for (int i = 0; i < lights.Length; i++)
         {
             lights[i].SetActive(false);
@@ -381,9 +385,8 @@ public class GamePanel : BasePanel {
 
     public void OnMathClick()//发动数学系技能时，点击确定按钮
     {
-        Debug.Log("发动数学系技能");
         if (gameManager.players == null) return;
-        CtrlPlayer player = (CtrlPlayer)gameManager.players[gameManager.id];
+        CtrlPlayer player = (CtrlPlayer)gameManager.players[gameManager.client_id];
         if (player == null) return;
         if (player.skill != Skill.Math) return;
         int selectedPlayerIndex = -1;
@@ -405,7 +408,7 @@ public class GamePanel : BasePanel {
         DeleteSkillClick();
         okButton.onClick.AddListener(OnChuPaiClick);
 
-        gameManager.startTimeCount = false;
+        gameManager.startTimeCount = false;//停止计时
         gameManager.isChuPai = false;
         HideSkillUI();
         isDoSkilling = false;
@@ -416,9 +419,8 @@ public class GamePanel : BasePanel {
 
     public void OnChemistryClick()//发动化学系技能时，点击确定按钮
     {
-        Debug.Log("发动化学系技能");
         if (gameManager.players == null) return;
-        CtrlPlayer player = (CtrlPlayer)gameManager.players[gameManager.id];
+        CtrlPlayer player = (CtrlPlayer)gameManager.players[gameManager.client_id];
         if (player == null) return;
         if (player.skill != Skill.Chemistry) return;
         if (player.selectedPaiIndex == -1) return;
@@ -449,7 +451,6 @@ public class GamePanel : BasePanel {
             DeleteSkillClick();
             okButton.onClick.AddListener(OnChuPaiClick);
         }
-        Debug.Log("发动技能");
 
     }
 
@@ -466,9 +467,8 @@ public class GamePanel : BasePanel {
 
     public void OnChiClick()
     {
-        Debug.Log("Chi");
         if (gameManager.players == null) return;
-        CtrlPlayer player = (CtrlPlayer)gameManager.players[gameManager.id];
+        CtrlPlayer player = (CtrlPlayer)gameManager.players[gameManager.client_id];
         if (player == null) return;
 
         player.ChiPengGang(1);
@@ -476,9 +476,8 @@ public class GamePanel : BasePanel {
 
     public void OnPengClick()
     {
-        Debug.Log("Peng");
         if (gameManager.players == null) return;
-        CtrlPlayer player = (CtrlPlayer)gameManager.players[gameManager.id];
+        CtrlPlayer player = (CtrlPlayer)gameManager.players[gameManager.client_id];
         if (player == null) return;
 
         player.ChiPengGang(2);
@@ -486,9 +485,8 @@ public class GamePanel : BasePanel {
 
     public void OnGangClick()
     {
-        Debug.Log("Gang");
         if (gameManager.players == null) return;
-        CtrlPlayer player = (CtrlPlayer)gameManager.players[gameManager.id];
+        CtrlPlayer player = (CtrlPlayer)gameManager.players[gameManager.client_id];
         if (player == null) return;
 
         player.ChiPengGang(3);
@@ -498,7 +496,7 @@ public class GamePanel : BasePanel {
     {
         Debug.Log("Hu");
         if (gameManager.players == null) return;
-        CtrlPlayer player = (CtrlPlayer)gameManager.players[gameManager.id];
+        CtrlPlayer player = (CtrlPlayer)gameManager.players[gameManager.client_id];
         if (player == null) return;
 
         player.Hu();
@@ -506,9 +504,8 @@ public class GamePanel : BasePanel {
 
     public void OnNoActionClick()
     {
-        Debug.Log("NoAction");
         if (gameManager.players == null) return;
-        CtrlPlayer player = (CtrlPlayer)gameManager.players[gameManager.id];
+        CtrlPlayer player = (CtrlPlayer)gameManager.players[gameManager.client_id];
         if (player == null) return;
 
         player.ChiPengGang(0);
@@ -528,18 +525,18 @@ public class GamePanel : BasePanel {
     public void OnChuPaiClick()
     {
         if (gameManager.players == null) return;
-        CtrlPlayer player = (CtrlPlayer)gameManager.players[gameManager.id];
+        CtrlPlayer player = (CtrlPlayer)gameManager.players[gameManager.client_id];
         if (player == null) return;
         if (player.selectedPaiIndex == -1) return;
 
-        player.DaPaiCompolsory();
+        player.ChuPai();
     }
 
     //不发动技能时点击取消按钮
     public void OnCancelPaiClick()
     {
         if (gameManager.players == null) return;
-        CtrlPlayer player = (CtrlPlayer)gameManager.players[gameManager.id];
+        CtrlPlayer player = (CtrlPlayer)gameManager.players[gameManager.client_id];
         if (player == null) return;
         if (player.selectedPaiIndex == -1) return;
 
@@ -551,6 +548,43 @@ public class GamePanel : BasePanel {
     {
         audioSource.clip = ResManager.LoadAudio(path);
         audioSource.Play();
+    }
+
+    /// <summary>
+    /// 输入玩家的id，输出他在这个客户端的相对位置
+    /// </summary>
+    public void InitNumToDir(int client_id)
+    {
+        numToDir = new Dictionary<int, Direction>();
+        //这个id指的是这个客户端的玩家id
+        switch (client_id)
+        {
+            case 0:
+                numToDir[0] = Direction.DOWN;
+                numToDir[1] = Direction.RIGHT;
+                numToDir[2] = Direction.UP;
+                numToDir[3] = Direction.LEFT;
+                break;
+            case 1:
+                numToDir[0] = Direction.LEFT;
+                numToDir[1] = Direction.DOWN;
+                numToDir[2] = Direction.RIGHT;
+                numToDir[3] = Direction.UP;
+                break;
+            case 2:
+                numToDir[0] = Direction.UP;
+                numToDir[1] = Direction.LEFT;
+                numToDir[2] = Direction.DOWN;
+                numToDir[3] = Direction.RIGHT;
+                break;
+            case 3:
+                numToDir[0] = Direction.RIGHT;
+                numToDir[1] = Direction.UP;
+                numToDir[2] = Direction.LEFT;
+                numToDir[3] = Direction.DOWN;
+                break;
+        }
+
     }
 }
 public enum Direction

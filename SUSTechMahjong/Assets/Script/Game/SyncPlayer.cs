@@ -6,7 +6,7 @@ public class SyncPlayer : BasePlayer {
 
     public override void DaPai()
     {
-        System.Threading.Thread.Sleep(500);
+        System.Threading.Thread.Sleep(2000);
         ChuPai_Hu(0);
     }
 }

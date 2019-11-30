@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerFactory : MonoBehaviour {
 
-	public UnityEngine.Object[] createPlayer(PlayerName name)
+	public UnityEngine.Object[] CreatePlayer(PlayerName name)
     {
         GameObject go = new GameObject();
         BasePlayer bp = null;

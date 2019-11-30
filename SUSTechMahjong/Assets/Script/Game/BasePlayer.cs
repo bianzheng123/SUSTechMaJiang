@@ -56,7 +56,7 @@ public abstract class BasePlayer : MonoBehaviour {
     /// </summary>
     public void PlacePai()
     {
-        Direction dir = gameManager.numToDir[id];
+        Direction dir = gamePanel.numToDir[id];
         switch (dir)
         {
             case Direction.DOWN:
@@ -120,7 +120,15 @@ public abstract class BasePlayer : MonoBehaviour {
     protected void ChuPai_Hu(int index = -1)
     {
         gameManager.startTimeCount = false;
-        Debug.Log("index: " + index + ",id: " + id);
+        if(index == -1)
+        {
+            Debug.Log("playerid: " + id + "胡了");
+        }
+        else
+        {
+            Debug.Log("playerid: " + id + " 打出 " + Pai.int2name[handPai[index].GetComponent<Pai>().paiId]);
+        }
+        
         MsgChuPai msg = new MsgChuPai();
         msg.id = id;
         msg.paiIndex = index;
@@ -143,10 +151,10 @@ public abstract class BasePlayer : MonoBehaviour {
         switch (gender)
         {
             case Gender.Male:
-                GamePanel.PlayAudio(Pai.audioPathMale[paiId]);
+                GamePanel.PlayAudio(Audio.audioPathMale[paiId]);
                 break;
             case Gender.Female:
-                GamePanel.PlayAudio(Pai.audioPathMale[paiId]);
+                GamePanel.PlayAudio(Audio.audioPathMale[paiId]);
                 break;
         }
         handPai.RemoveAt(paiIndex);
@@ -198,10 +206,10 @@ public abstract class BasePlayer : MonoBehaviour {
             switch (gender)
             {
                 case Gender.Male:
-                    GamePanel.PlayAudio(Pai.audioPengMale);
+                    GamePanel.PlayAudio(Audio.audioPengMale);
                     break;
                 case Gender.Female:
-                    GamePanel.PlayAudio(Pai.audioPengFemale);
+                    GamePanel.PlayAudio(Audio.audioPengFemale);
                     break;
             }
         }
@@ -225,10 +233,10 @@ public abstract class BasePlayer : MonoBehaviour {
             switch (gender)
             {
                 case Gender.Male:
-                    GamePanel.PlayAudio(Pai.audioGangMale);
+                    GamePanel.PlayAudio(Audio.audioGangMale);
                     break;
                 case Gender.Female:
-                    GamePanel.PlayAudio(Pai.audioGangFemale);
+                    GamePanel.PlayAudio(Audio.audioGangFemale);
                     break;
             }
         }

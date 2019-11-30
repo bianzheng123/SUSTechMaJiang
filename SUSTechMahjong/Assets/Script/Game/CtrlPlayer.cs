@@ -5,7 +5,10 @@ using UnityEngine;
 public class CtrlPlayer : BasePlayer {
     public int selectedPaiIndex = -1;
 
-    public void SelectPai()
+    /// <summary>
+    /// 这里就是点击牌，进行选择，当按下确定按钮时在进行打牌
+    /// </summary>
+    public override void DaPai()
     {
         if (Input.GetMouseButtonDown(0))
         { //检测鼠标左键是否点击
@@ -14,17 +17,17 @@ public class CtrlPlayer : BasePlayer {
 
             if (Physics.Raycast(ray, out hit))
             {
-                if(hit.collider.gameObject.tag == "Pai" + id)
+                if (hit.collider.gameObject.tag == "Pai" + id)
                 {
                     int nowSelectIndex = -1;
                     for (int i = 0; i < handPai.Count; i++)
                     {
-                        if(hit.collider.gameObject.transform.position == handPai[i].transform.position)
+                        if (hit.collider.gameObject.transform.position == handPai[i].transform.position)
                         {
                             nowSelectIndex = i;
                         }
                     }
-                    if(nowSelectIndex == -1)
+                    if (nowSelectIndex == -1)
                     {
                         Debug.Log("选牌错误,发生了bug");
                     }
@@ -32,7 +35,7 @@ public class CtrlPlayer : BasePlayer {
                     {//让取消选牌的降下来
                         handPai[selectedPaiIndex].transform.Translate(new Vector3(0, -0.5f, 0));
                     }
-                    if(nowSelectIndex == selectedPaiIndex)
+                    if (nowSelectIndex == selectedPaiIndex)
                     {//两次点击选中了相同的牌，相当于没有选中
                         selectedPaiIndex = -1;
                     }
@@ -48,12 +51,7 @@ public class CtrlPlayer : BasePlayer {
         }
     }
 
-    public override void DaPai()
-    {
-        SelectPai();
-    }
-
-    public void DaPaiCompolsory()
+    public void ChuPai()
     {
         int index = 0;
         if(selectedPaiIndex != -1)
@@ -61,10 +59,11 @@ public class CtrlPlayer : BasePlayer {
             handPai[selectedPaiIndex].transform.Translate(new Vector3(0, -0.5f, 0));
             index = selectedPaiIndex;
         }
+        selectedPaiIndex = -1;
         gamePanel.SkillButton = false;
         ChuPai_Hu(index);
         //对选择的牌进行初始化
-        selectedPaiIndex = -1;
+        
     }
 
     public void Hu()

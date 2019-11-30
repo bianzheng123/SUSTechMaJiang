@@ -7,6 +7,8 @@ public class TestMain : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         PanelManager.Init();
+        Pai.Init();
+        Audio.Init();
         PanelManager.Open<GamePanel>();
 	}
 
