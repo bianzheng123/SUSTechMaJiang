@@ -21,6 +21,7 @@ public class TipPanel : BasePanel {
 		okBtn = skin.transform.Find("OkBtn").GetComponent<Button>();
 		//监听
 		okBtn.onClick.AddListener(OnOkClick);
+        okBtn.onClick.AddListener(Audio.ButtonClick);
 		//提示语
 		if(args.Length == 1){
 			text.text = (string)args[0];

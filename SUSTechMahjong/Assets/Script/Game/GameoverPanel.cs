@@ -43,6 +43,7 @@ public class GameoverPanel : BasePanel
         okButton = skin.transform.Find("OkButton").GetComponent<Button>();
         //监听
         okButton.onClick.AddListener(OnOkClick);
+        okButton.onClick.AddListener(Audio.ButtonClick);
         //网络协议监听
         //NetManager.AddMsgListener("MsgLogin", OnMsgLogin);
         //发送查询

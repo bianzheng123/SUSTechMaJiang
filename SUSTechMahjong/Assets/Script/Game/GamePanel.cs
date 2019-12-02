@@ -277,30 +277,6 @@ public class GamePanel : BasePanel {
         setButton.onClick.AddListener(OnSetClick);
         okButton.onClick.AddListener(OnChuPaiClick);
         cancelButton.onClick.AddListener(OnCancelPaiClick);
-        //网络协议监听
-        //NetManager.AddMsgListener("MsgLogin", OnMsgLogin);
-        //发送查询
-        //MsgGetRoomInfo msg = new MsgGetRoomInfo();
-        //NetManager.Send(msg);
-
-        //生成gameManager类
-        gameManager = GameManager.GetInstance();
-        gameManager.GamePanel = this;
-        gameManager.PlayerFactory = new PlayerFactory();
-
-        //生成背景图片
-        GameObject bg = ResManager.LoadSprite("bg_game",0);
-        bg.name = "background";
-        bg.transform.localScale = new Vector3(2,2,2);
-
-        //灯光的初始化
-        for (int i = 0; i < lights.Length; i++)
-        {
-            lights[i].SetActive(false);
-        }
-        ChuPaiButton = false;
-
-        //特殊事件的初始化
         pengButton.onClick.AddListener(OnPengClick);
         gangButton.onClick.AddListener(OnGangClick);
         huButton.onClick.AddListener(OnHuClick);
@@ -327,6 +303,59 @@ public class GamePanel : BasePanel {
         playerPaiInfo[3].chi.onClick.AddListener(OnOtherInfoClick_chi_player4);
         playerPaiInfo[3].peng.onClick.AddListener(OnOtherInfoClick_peng_player4);
         playerPaiInfo[3].gang.onClick.AddListener(OnOtherInfoClick_gang_player4);
+
+        exitButton.onClick.AddListener(Audio.ButtonClick);
+        setButton.onClick.AddListener(Audio.ButtonClick);
+        okButton.onClick.AddListener(Audio.ButtonClick);
+        cancelButton.onClick.AddListener(Audio.ButtonClick);
+        pengButton.onClick.AddListener(Audio.ButtonClick);
+        gangButton.onClick.AddListener(Audio.ButtonClick);
+        huButton.onClick.AddListener(Audio.ButtonClick);
+        chiButton.onClick.AddListener(Audio.ButtonClick);
+        noActionButton.onClick.AddListener(Audio.ButtonClick);
+        skillButton.onClick.AddListener(Audio.ButtonClick);
+
+        playerPaiInfo[0].discardPai.onClick.AddListener(Audio.ButtonClick);
+        playerPaiInfo[0].chi.onClick.AddListener(Audio.ButtonClick);
+        playerPaiInfo[0].peng.onClick.AddListener(Audio.ButtonClick);
+        playerPaiInfo[0].gang.onClick.AddListener(Audio.ButtonClick);
+
+        playerPaiInfo[1].discardPai.onClick.AddListener(Audio.ButtonClick);
+        playerPaiInfo[1].chi.onClick.AddListener(Audio.ButtonClick);
+        playerPaiInfo[1].peng.onClick.AddListener(Audio.ButtonClick);
+        playerPaiInfo[1].gang.onClick.AddListener(Audio.ButtonClick);
+
+        playerPaiInfo[2].discardPai.onClick.AddListener(Audio.ButtonClick);
+        playerPaiInfo[2].chi.onClick.AddListener(Audio.ButtonClick);
+        playerPaiInfo[2].peng.onClick.AddListener(Audio.ButtonClick);
+        playerPaiInfo[2].gang.onClick.AddListener(Audio.ButtonClick);
+
+        playerPaiInfo[3].discardPai.onClick.AddListener(Audio.ButtonClick);
+        playerPaiInfo[3].chi.onClick.AddListener(Audio.ButtonClick);
+        playerPaiInfo[3].peng.onClick.AddListener(Audio.ButtonClick);
+        playerPaiInfo[3].gang.onClick.AddListener(Audio.ButtonClick);
+        //网络协议监听
+        //NetManager.AddMsgListener("MsgLogin", OnMsgLogin);
+        //发送查询
+        //MsgGetRoomInfo msg = new MsgGetRoomInfo();
+        //NetManager.Send(msg);
+
+        //生成gameManager类
+        gameManager = GameManager.GetInstance();
+        gameManager.GamePanel = this;
+        gameManager.PlayerFactory = new PlayerFactory();
+
+        //生成背景图片
+        GameObject bg = ResManager.LoadSprite("bg_game",0);
+        bg.name = "background";
+        bg.transform.localScale = new Vector3(2,2,2);
+
+        //灯光的初始化
+        for (int i = 0; i < lights.Length; i++)
+        {
+            lights[i].SetActive(false);
+        }
+        ChuPaiButton = false;
 
         chiButton.gameObject.SetActive(false);
         pengButton.gameObject.SetActive(false);

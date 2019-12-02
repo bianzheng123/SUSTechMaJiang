@@ -29,6 +29,8 @@ public class LoginPanel : BasePanel {
 		//监听
 		loginBtn.onClick.AddListener(OnLoginClick);
 		regBtn.onClick.AddListener(OnRegClick);
+        loginBtn.onClick.AddListener(Audio.ButtonClick);
+        regBtn.onClick.AddListener(Audio.ButtonClick);
 		//网络协议监听
 		NetManager.AddMsgListener("MsgLogin", OnMsgLogin);
 		//网络事件监听

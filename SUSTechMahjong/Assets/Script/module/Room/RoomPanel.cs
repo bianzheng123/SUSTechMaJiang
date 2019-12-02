@@ -31,6 +31,8 @@ public class RoomPanel : BasePanel {
 		//按钮事件
 		startButton.onClick.AddListener(OnStartClick);
 		closeButton.onClick.AddListener(OnCloseClick);
+        startButton.onClick.AddListener(Audio.ButtonClick);
+        closeButton.onClick.AddListener(Audio.ButtonClick);
 		//协议监听
 		NetManager.AddMsgListener("MsgGetRoomInfo", OnMsgGetRoomInfo);
 		NetManager.AddMsgListener("MsgLeaveRoom", OnMsgLeaveRoom);

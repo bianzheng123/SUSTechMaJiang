@@ -9,7 +9,7 @@ public class ChoosePanel : BasePanel
     private InputField idInput;
 
     //确认按钮
-    private Button ChooseBtn;
+    private Button chooseBtn;
 
     private Button closeBtn;
     //初始化
@@ -25,11 +25,13 @@ public class ChoosePanel : BasePanel
         //寻找组件
         idInput = skin.transform.Find("IdInput").GetComponent<InputField>();
 
-        ChooseBtn = skin.transform.Find("ChooseBtn").GetComponent<Button>();
+        chooseBtn = skin.transform.Find("ChooseBtn").GetComponent<Button>();
         closeBtn = skin.transform.Find("CloseBtn").GetComponent<Button>();
         //监听
-        ChooseBtn.onClick.AddListener(OnChooseClick);
+        chooseBtn.onClick.AddListener(OnChooseClick);
         closeBtn.onClick.AddListener(OnCloseClick);
+        chooseBtn.onClick.AddListener(Audio.ButtonClick);
+        closeBtn.onClick.AddListener(Audio.ButtonClick);
         //网络协议监听
         NetManager.AddMsgListener("MsgChoose", OnMsgChoose);
     }

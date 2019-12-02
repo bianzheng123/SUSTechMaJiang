@@ -51,6 +51,9 @@ public class RoomListPanel : BasePanel {
 		createButton.onClick.AddListener(OnCreateClick);
 		reflashButton.onClick.AddListener(OnReflashClick);
         chooseButton.onClick.AddListener(OnChooseClick);
+        createButton.onClick.AddListener(Audio.ButtonClick);
+        reflashButton.onClick.AddListener(Audio.ButtonClick);
+        chooseButton.onClick.AddListener(Audio.ButtonClick);
         //协议监听
         NetManager.AddMsgListener("MsgGetAchieve", OnMsgGetAchieve);
 		NetManager.AddMsgListener("MsgGetRoomList", OnMsgGetRoomList);

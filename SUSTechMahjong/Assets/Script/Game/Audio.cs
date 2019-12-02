@@ -22,6 +22,7 @@ public static class Audio {
     public static string lose;
     public static string timeup_alarm;
     public static string win;
+    public static string ui_click;
 
     public static string nowLoopSrc;
 
@@ -40,6 +41,7 @@ public static class Audio {
         lose = "Audios/lose";
         timeup_alarm = "Audios/timeup_alarm";
         win = "Audios/win";
+        ui_click = "Audios/ui_click";
 
         audioGangMale = "Audios/Mahjong/male/gang";
         audioHuMale = "Audios/Mahjong/male/hu";
@@ -96,6 +98,11 @@ public static class Audio {
     {
         cue.clip = ResManager.LoadAudio(path);
         cue.Play();
+    }
+
+    public static void ButtonClick()
+    {
+        PlayCue(ui_click);
     }
 
     /// <summary>

@@ -33,6 +33,8 @@ public class RegisterPanel : BasePanel {
 		//监听
 		regBtn.onClick.AddListener(OnRegClick);
 		closeBtn.onClick.AddListener(OnCloseClick);
+        regBtn.onClick.AddListener(Audio.ButtonClick);
+        closeBtn.onClick.AddListener(Audio.ButtonClick);
 		//网络协议监听
 		NetManager.AddMsgListener("MsgRegister", OnMsgRegister);
 	}

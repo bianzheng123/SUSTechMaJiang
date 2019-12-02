@@ -13,6 +13,8 @@ public class GameMain : MonoBehaviour {
 		NetManager.AddMsgListener("MsgKick", OnMsgKick);
 		//初始化
 		PanelManager.Init();
+        Audio.Init();
+        Pai.Init();
         Gamedata.Init();
 		//打开登陆面板
 		PanelManager.Open<LoginPanel>();
