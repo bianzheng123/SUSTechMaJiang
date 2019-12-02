@@ -19,6 +19,7 @@ public class StartGameData
     public int skillIndex = 0;
     public int skillCount = 0;
     public int gender = -1;//0代表男,1代表女,生成性别用于控制不同的声音播放
+    public string username = "";//该客户端的用户名
 }
 
 public enum Skill
@@ -87,5 +88,13 @@ public class MsgChiPengGang : MsgBase
     {
         return "执行玩家id: " + id + ",打出的牌id: " + paiId + ",是否吃: " + isChiPengGang[1] + ",是否碰: " + isChiPengGang[2] + ",是否杠: " + isChiPengGang[3];
     }
+}
+
+public class MsgChat : MsgBase
+{
+    public MsgChat() { protoName = "MsgChat"; }
+    //客户端发送
+    public string chatmsg;
+    public int id;//该客户端的玩家id
 }
 

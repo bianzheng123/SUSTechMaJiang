@@ -58,6 +58,8 @@ public class GamePanel : BasePanel {
     private Toggle[] playerRadio;
     //用于显示其他玩家信息的按钮
     private PlayerPaiInfo[] playerPaiInfo;
+    //用于存放聊天信息
+    public ChatRoom chatRoom;
 
     struct PlayerPaiInfo
     {
@@ -65,6 +67,13 @@ public class GamePanel : BasePanel {
         public Button chi;
         public Button peng;
         public Button gang;
+    }
+
+    public struct ChatRoom
+    {
+        public InputField chatInput;
+        public Text chatText;
+        public ScrollRect scrollRect;
     }
 
     /// <summary>
@@ -264,6 +273,9 @@ public class GamePanel : BasePanel {
         playerPaiInfo[3].chi = skin.transform.Find("OtherPlayerInfo/Player4/Chi").GetComponent<Button>();
         playerPaiInfo[3].peng = skin.transform.Find("OtherPlayerInfo/Player4/Peng").GetComponent<Button>();
         playerPaiInfo[3].gang = skin.transform.Find("OtherPlayerInfo/Player4/Gang").GetComponent<Button>();
+        chatRoom.chatInput = skin.transform.Find("ChatRoom/ChatInputField").GetComponent<InputField>();
+        chatRoom.chatText = skin.transform.Find("ChatRoom/ChatRoomPanel/TextShowPanel/ChatText").GetComponent<Text>();
+        chatRoom.scrollRect = skin.transform.Find("ChatRoom/ChatRoomPanel/TextShowPanel").GetComponent<ScrollRect>();
         //监听
         exitButton.onClick.AddListener(OnExitClick);
         setButton.onClick.AddListener(OnSetClick);

@@ -82,6 +82,10 @@ public class GameManager : MonoBehaviour
             msg.data[i].skillCount = maxSkillTime[i];
             msg.data[i].gender = rd.Next() % 2;//随机生成性别
         }//初始化协议的牌数组
+        msg.data[0].username = "a";
+        msg.data[1].username = "b";
+        msg.data[2].username = "c";
+        msg.data[3].username = "d";//用来初始化不同客户端的用户名
         for (int i = 0; i < 4; i++)
         {
             int num = 13;
@@ -483,6 +487,33 @@ public class GameManager : MonoBehaviour
         StartTimeCount();
     }
 
+    /// <summary>
+    /// 服务端接收到协议
+    /// </summary>
+    /// <param name="msgBase"></param>
+    public void ServerOnMsgChat(MsgBase msgBase)
+    {
+        MsgChat msg = (MsgChat)msgBase;
+        ClientOnMsgChat(msg);
+        Debug.Log(msg.chatmsg + "  " + msg.id);
+    }
+
+    /// <summary>
+    /// 客户端接收到协议
+    /// </summary>
+    /// <param name="msgBase"></param>
+    public void ClientOnMsgChat(MsgBase msgBase)
+    {
+        MsgChat msg = (MsgChat)msgBase;
+
+        string addText = "\n  " + "<color=red>" + players[msg.id].username + "</color>: " + msg.chatmsg;
+        gamePanel.chatRoom.chatText.text = gamePanel.chatRoom.chatText.text + addText;
+        gamePanel.chatRoom.chatInput.ActivateInputField();
+        Canvas.ForceUpdateCanvases();       //关键代码
+        gamePanel.chatRoom.scrollRect.verticalNormalizedPosition = 0f;  //关键代码
+        Canvas.ForceUpdateCanvases();   //关键代码
+    }
+
     public void StartTimeCount()
     {
         startTimeCount = true;
@@ -530,7 +561,20 @@ public class GameManager : MonoBehaviour
                 players[nowTurnid].ChiPengGang();
             }
         }
-        
+
+
+        //这个应该放在gameManager中，用于发送聊天的输入框
+        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+        {
+            if (gamePanel.chatRoom.chatInput.text != "")
+            {//发送聊天协议
+                MsgChat msg = new MsgChat();
+                msg.chatmsg = gamePanel.chatRoom.chatInput.text;
+                msg.id = client_id;
+                gamePanel.chatRoom.chatInput.text = "";
+                ServerOnMsgChat(msg);
+            }
+        }
     }
 
     /// <summary>
@@ -595,6 +639,7 @@ public class GameManager : MonoBehaviour
             bp.Init(gamePanel);
             players[i] = bp;
             players[i].id = i;
+            players[i].username = msg.data[i].username;
             players[i].gender = (Gender)msg.data[i].gender;
             players[i].skill = (Skill)msg.data[i].skillIndex;
 

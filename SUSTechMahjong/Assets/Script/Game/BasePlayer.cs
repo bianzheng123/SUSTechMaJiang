@@ -18,6 +18,7 @@ public abstract class BasePlayer : MonoBehaviour {
 
     //id
     public int id;
+    public string username;
     public Gender gender;
     //代表是否轮到自己出牌
     public bool isTurn;
