@@ -35,6 +35,7 @@ public class GameManager : MonoBehaviour
     public float timeLast = timeCount;
     public bool startTimeCount = false;
     public int skillCount;//代表当前主机玩家还剩下几次技能可以使用
+    public bool canTimeAlarm = false;//代表是否剩下最后三秒，是否可以开始播放倒计时的bgm了
 
     public PlayerFactory PlayerFactory
     {
@@ -273,10 +274,10 @@ public class GameManager : MonoBehaviour
             switch (gender)
             {
                 case Gender.Female:
-                    GamePanel.PlayAudio(Audio.audioHuFemale);
+                    Audio.PlayCue(Audio.audioHuFemale);
                     break;
                 case Gender.Male:
-                    GamePanel.PlayAudio(Audio.audioHuMale);
+                    Audio.PlayCue(Audio.audioHuMale);
                     break;
             }
             
@@ -524,8 +525,14 @@ public class GameManager : MonoBehaviour
     {
         timeLast -= Time.deltaTime;
         gamePanel.SetTimeCount(timeLast);
+        if(timeLast <= 3 && !canTimeAlarm)
+        {
+            Audio.PlayCue(Audio.timeup_alarm);
+            canTimeAlarm = true;
+        }
         if(timeLast <= 0)
         {
+            canTimeAlarm = false;//对播放倒计时进行重置
             timeLast = 0;
             startTimeCount = false;
             if(nowTurnid == client_id)

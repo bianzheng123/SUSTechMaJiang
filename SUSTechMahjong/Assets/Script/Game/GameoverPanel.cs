@@ -78,7 +78,19 @@ public class GameoverPanel : BasePanel
     {
         players[thisId].text = "你";
         title[result].gameObject.SetActive(true);
-        for(int i = 0; i < 4; i++)
+        switch (result)
+        {
+            case 0:
+                Debug.Log("播放平局音乐");
+                break;
+            case 1:
+                Audio.PlayCue(Audio.win);
+                break;
+            case 2:
+                Audio.PlayCue(Audio.lose);
+                break;
+        }
+        for (int i = 0; i < 4; i++)
         {
             switch (result)
             {

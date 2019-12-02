@@ -61,6 +61,8 @@ public class RoomListPanel : BasePanel {
 		NetManager.Send(msgGetAchieve);
 		MsgGetRoomList msgGetRoomList = new MsgGetRoomList();
 		NetManager.Send(msgGetRoomList);
+
+        Audio.PlayLoop(Audio.bgRoomListPanel);
 	}
 
 

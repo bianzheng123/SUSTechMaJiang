@@ -38,6 +38,8 @@ public class RoomPanel : BasePanel {
 		//发送查询
 		MsgGetRoomInfo msg = new MsgGetRoomInfo();
 		NetManager.Send(msg);
+
+        Audio.PlayLoop(Audio.bgRoomPanel);
 	}
 
 	//关闭

@@ -36,7 +36,9 @@ public class LoginPanel : BasePanel {
 		NetManager.AddEventListener(NetManager.NetEvent.ConnectFail, OnConnectFail);
 		//连接服务器
 		NetManager.Connect("127.0.0.1", 8888);
-	}
+
+        Audio.PlayLoop(Audio.bgLoginPanel);
+    }
 
 	//关闭
 	public override void OnClose() {

@@ -17,10 +17,6 @@ public class GamePanel : BasePanel {
     public bool isDoSkilling = false;
     //表示现在id的技能类型
     public Skill skill = Skill.None;
-    //掌管音乐文件的
-    private static AudioSource audioSource;
-
-    
 
     //表示出牌的按钮
     private Button okButton;
@@ -291,7 +287,6 @@ public class GamePanel : BasePanel {
         gameManager = GameManager.GetInstance();
         gameManager.GamePanel = this;
         gameManager.PlayerFactory = new PlayerFactory();
-        audioSource = gameManager.gameObject.AddComponent<AudioSource>();
 
         //生成背景图片
         GameObject bg = ResManager.LoadSprite("bg_game",0);
@@ -342,6 +337,8 @@ public class GamePanel : BasePanel {
         zhuangImage.gameObject.SetActive(false);
         PlayerRadio = false;//隐藏用于发动数学系技能的单选框
         skillingText.SetActive(false);
+
+        Audio.PlayLoop(Audio.bgGamePanel);
     }
 
     /// <summary>
@@ -679,12 +676,6 @@ public class GamePanel : BasePanel {
             }
             PanelManager.Open<ObjectTipPanel>(path);
         }
-    }
-
-    public static void PlayAudio(string path)
-    {
-        audioSource.clip = ResManager.LoadAudio(path);
-        audioSource.Play();
     }
 
     /// <summary>

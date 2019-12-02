@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 记录声音路径，提供播放声音的api
+/// </summary>
 public static class Audio {
     public static Dictionary<int, string> audioPathMale;
     public static string audioGangMale;
@@ -20,8 +23,14 @@ public static class Audio {
     public static string timeup_alarm;
     public static string win;
 
+    public static AudioSource loop;
+    public static AudioSource cue;
+
     public static void Init()
     {
+        loop = GameObject.Find("Loop").GetComponent<AudioSource>();
+        cue = GameObject.Find("Cue").GetComponent<AudioSource>();
+
         bgGamePanel = "Audios/bgGamePanel";
         bgLoginPanel = "Audios/bgLoginPanel";
         bgRoomListPanel = "Audios/bgRoomListPanel";
@@ -72,5 +81,17 @@ public static class Audio {
         audioPathFemale.Add(41, "Audios/Mahjong/female/mjt4_1");
         audioPathFemale.Add(42, "Audios/Mahjong/female/mjt4_2");
         audioPathFemale.Add(43, "Audios/Mahjong/female/mjt4_3");
+    }
+
+    public static void PlayLoop(string path)
+    {
+        loop.clip = ResManager.LoadAudio(path);
+        loop.Play();
+    }
+
+    public static void PlayCue(string path)
+    {
+        cue.clip = ResManager.LoadAudio(path);
+        cue.Play();
     }
 }

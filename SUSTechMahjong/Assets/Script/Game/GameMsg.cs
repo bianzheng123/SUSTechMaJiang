@@ -94,7 +94,7 @@ public class MsgChat : MsgBase
 {
     public MsgChat() { protoName = "MsgChat"; }
     //客户端发送
-    public string chatmsg;
+    public string chatmsg;//该轮玩家发送的信息
     public int id;//该客户端的玩家id
 }
 

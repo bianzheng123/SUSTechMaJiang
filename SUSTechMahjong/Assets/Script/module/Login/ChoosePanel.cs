@@ -32,7 +32,6 @@ public class ChoosePanel : BasePanel
         closeBtn.onClick.AddListener(OnCloseClick);
         //网络协议监听
         NetManager.AddMsgListener("MsgChoose", OnMsgChoose);
-
     }
 
     //关闭

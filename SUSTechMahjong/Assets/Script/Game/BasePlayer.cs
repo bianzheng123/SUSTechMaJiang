@@ -152,10 +152,10 @@ public abstract class BasePlayer : MonoBehaviour {
         switch (gender)
         {
             case Gender.Male:
-                GamePanel.PlayAudio(Audio.audioPathMale[paiId]);
+                Audio.PlayCue(Audio.audioPathMale[paiId]);
                 break;
             case Gender.Female:
-                GamePanel.PlayAudio(Audio.audioPathMale[paiId]);
+                Audio.PlayCue(Audio.audioPathMale[paiId]);
                 break;
         }
         handPai.RemoveAt(paiIndex);
@@ -210,10 +210,10 @@ public abstract class BasePlayer : MonoBehaviour {
             switch (gender)
             {
                 case Gender.Male:
-                    GamePanel.PlayAudio(Audio.audioPengMale);
+                    Audio.PlayCue(Audio.audioPengMale);
                     break;
                 case Gender.Female:
-                    GamePanel.PlayAudio(Audio.audioPengFemale);
+                    Audio.PlayCue(Audio.audioPengFemale);
                     break;
             }
         }
@@ -238,10 +238,10 @@ public abstract class BasePlayer : MonoBehaviour {
             switch (gender)
             {
                 case Gender.Male:
-                    GamePanel.PlayAudio(Audio.audioGangMale);
+                    Audio.PlayCue(Audio.audioGangMale);
                     break;
                 case Gender.Female:
-                    GamePanel.PlayAudio(Audio.audioGangFemale);
+                    Audio.PlayCue(Audio.audioGangFemale);
                     break;
             }
         }
