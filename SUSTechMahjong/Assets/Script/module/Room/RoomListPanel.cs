@@ -73,7 +73,8 @@ public class RoomListPanel : BasePanel {
 		NetManager.RemoveMsgListener("MsgGetRoomList", OnMsgGetRoomList);
 		NetManager.RemoveMsgListener("MsgCreateRoom", OnMsgCreateRoom);
 		NetManager.RemoveMsgListener("MsgEnterRoom", OnMsgEnterRoom);
-	}
+        Audio.MuteLoop(Audio.bgRoomListPanel);
+    }
 
 	//收到成绩查询协议
 	public void OnMsgGetAchieve (MsgBase msgBase) {

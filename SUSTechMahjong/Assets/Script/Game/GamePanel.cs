@@ -391,6 +391,8 @@ public class GamePanel : BasePanel {
         //网络事件监听
         //NetManager.RemoveEventListener(NetManager.NetEvent.ConnectSucc, OnConnectSucc);
         //NetManager.RemoveEventListener(NetManager.NetEvent.ConnectFail, OnConnectFail);
+
+        Audio.MuteLoop(Audio.bgGamePanel);
     }
 
     public void AddSkillClick()

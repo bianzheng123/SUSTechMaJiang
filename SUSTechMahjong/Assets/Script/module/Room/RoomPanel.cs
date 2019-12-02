@@ -48,7 +48,8 @@ public class RoomPanel : BasePanel {
 		NetManager.RemoveMsgListener("MsgGetRoomInfo", OnMsgGetRoomInfo);
 		NetManager.RemoveMsgListener("MsgLeaveRoom", OnMsgLeaveRoom);
 		NetManager.RemoveMsgListener("MsgStartBattle", OnMsgStartBattle);
-	}
+        Audio.MuteLoop(Audio.bgRoomPanel);
+    }
 
 	//收到玩家列表协议
 	public void OnMsgGetRoomInfo (MsgBase msgBase) {

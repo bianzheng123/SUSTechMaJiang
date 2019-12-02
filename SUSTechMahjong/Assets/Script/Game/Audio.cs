@@ -23,6 +23,8 @@ public static class Audio {
     public static string timeup_alarm;
     public static string win;
 
+    public static string nowLoopSrc;
+
     public static AudioSource loop;
     public static AudioSource cue;
 
@@ -85,6 +87,7 @@ public static class Audio {
 
     public static void PlayLoop(string path)
     {
+        nowLoopSrc = path;
         loop.clip = ResManager.LoadAudio(path);
         loop.Play();
     }
@@ -93,5 +96,17 @@ public static class Audio {
     {
         cue.clip = ResManager.LoadAudio(path);
         cue.Play();
+    }
+
+    /// <summary>
+    /// 根据src的内容禁用对应的bgm
+    /// </summary>
+    /// <param name="src"></param>
+    public static void MuteLoop(string src)
+    {
+        if(nowLoopSrc == src)
+        {
+            loop.clip = null;
+        }
     }
 }

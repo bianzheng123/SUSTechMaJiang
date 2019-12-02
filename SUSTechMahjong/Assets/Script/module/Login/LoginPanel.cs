@@ -47,7 +47,8 @@ public class LoginPanel : BasePanel {
 		//网络事件监听
 		NetManager.RemoveEventListener(NetManager.NetEvent.ConnectSucc, OnConnectSucc);
 		NetManager.RemoveEventListener(NetManager.NetEvent.ConnectFail, OnConnectFail);
-	}
+        Audio.MuteLoop(Audio.bgLoginPanel);
+    }
 
 
 	//连接成功回调
