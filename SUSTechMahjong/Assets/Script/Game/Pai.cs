@@ -31,44 +31,44 @@ public class Pai : MonoBehaviour
         pai_player4 = "Mahjong/hand_left";
 
         pai_player1 = new Dictionary<int, string>();
-        pai_player1.Add(1, "Mahjong/Middle/handmah_1");
-        pai_player1.Add(2, "Mahjong/Middle/handmah_2");
-        pai_player1.Add(3, "Mahjong/Middle/handmah_3");
-        pai_player1.Add(4, "Mahjong/Middle/handmah_4");
-        pai_player1.Add(5, "Mahjong/Middle/handmah_5");
-        pai_player1.Add(6, "Mahjong/Middle/handmah_6");
-        pai_player1.Add(7, "Mahjong/Middle/handmah_7");
-        pai_player1.Add(8, "Mahjong/Middle/handmah_8");
-        pai_player1.Add(9, "Mahjong/Middle/handmah_9");
+        pai_player1.Add(1, "Mahjong/HandMah/handmah_1");
+        pai_player1.Add(2, "Mahjong/HandMah/handmah_2");
+        pai_player1.Add(3, "Mahjong/HandMah/handmah_3");
+        pai_player1.Add(4, "Mahjong/HandMah/handmah_4");
+        pai_player1.Add(5, "Mahjong/HandMah/handmah_5");
+        pai_player1.Add(6, "Mahjong/HandMah/handmah_6");
+        pai_player1.Add(7, "Mahjong/HandMah/handmah_7");
+        pai_player1.Add(8, "Mahjong/HandMah/handmah_8");
+        pai_player1.Add(9, "Mahjong/HandMah/handmah_9");
 
-        pai_player1.Add(11, "Mahjong/Middle/handmah_11");
-        pai_player1.Add(12, "Mahjong/Middle/handmah_12");
-        pai_player1.Add(13, "Mahjong/Middle/handmah_13");
-        pai_player1.Add(14, "Mahjong/Middle/handmah_14");
-        pai_player1.Add(15, "Mahjong/Middle/handmah_15");
-        pai_player1.Add(16, "Mahjong/Middle/handmah_16");
-        pai_player1.Add(17, "Mahjong/Middle/handmah_17");
-        pai_player1.Add(18, "Mahjong/Middle/handmah_18");
-        pai_player1.Add(19, "Mahjong/Middle/handmah_19");
+        pai_player1.Add(11, "Mahjong/HandMah/handmah_11");
+        pai_player1.Add(12, "Mahjong/HandMah/handmah_12");
+        pai_player1.Add(13, "Mahjong/HandMah/handmah_13");
+        pai_player1.Add(14, "Mahjong/HandMah/handmah_14");
+        pai_player1.Add(15, "Mahjong/HandMah/handmah_15");
+        pai_player1.Add(16, "Mahjong/HandMah/handmah_16");
+        pai_player1.Add(17, "Mahjong/HandMah/handmah_17");
+        pai_player1.Add(18, "Mahjong/HandMah/handmah_18");
+        pai_player1.Add(19, "Mahjong/HandMah/handmah_19");
 
-        pai_player1.Add(21, "Mahjong/Middle/handmah_21");
-        pai_player1.Add(22, "Mahjong/Middle/handmah_22");
-        pai_player1.Add(23, "Mahjong/Middle/handmah_23");
-        pai_player1.Add(24, "Mahjong/Middle/handmah_24");
-        pai_player1.Add(25, "Mahjong/Middle/handmah_25");
-        pai_player1.Add(26, "Mahjong/Middle/handmah_26");
-        pai_player1.Add(27, "Mahjong/Middle/handmah_27");
-        pai_player1.Add(28, "Mahjong/Middle/handmah_28");
-        pai_player1.Add(29, "Mahjong/Middle/handmah_29");
+        pai_player1.Add(21, "Mahjong/HandMah/handmah_21");
+        pai_player1.Add(22, "Mahjong/HandMah/handmah_22");
+        pai_player1.Add(23, "Mahjong/HandMah/handmah_23");
+        pai_player1.Add(24, "Mahjong/HandMah/handmah_24");
+        pai_player1.Add(25, "Mahjong/HandMah/handmah_25");
+        pai_player1.Add(26, "Mahjong/HandMah/handmah_26");
+        pai_player1.Add(27, "Mahjong/HandMah/handmah_27");
+        pai_player1.Add(28, "Mahjong/HandMah/handmah_28");
+        pai_player1.Add(29, "Mahjong/HandMah/handmah_29");
 
-        pai_player1.Add(31, "Mahjong/Middle/handmah_31");
-        pai_player1.Add(32, "Mahjong/Middle/handmah_32");
-        pai_player1.Add(33, "Mahjong/Middle/handmah_33");
-        pai_player1.Add(34, "Mahjong/Middle/handmah_34");
+        pai_player1.Add(31, "Mahjong/HandMah/handmah_31");
+        pai_player1.Add(32, "Mahjong/HandMah/handmah_32");
+        pai_player1.Add(33, "Mahjong/HandMah/handmah_33");
+        pai_player1.Add(34, "Mahjong/HandMah/handmah_34");
 
-        pai_player1.Add(41, "Mahjong/Middle/handmah_41");
-        pai_player1.Add(42, "Mahjong/Middle/handmah_42");
-        pai_player1.Add(43, "Mahjong/Middle/handmah_43");
+        pai_player1.Add(41, "Mahjong/HandMah/handmah_41");
+        pai_player1.Add(42, "Mahjong/HandMah/handmah_42");
+        pai_player1.Add(43, "Mahjong/HandMah/handmah_43");
 
         
 
