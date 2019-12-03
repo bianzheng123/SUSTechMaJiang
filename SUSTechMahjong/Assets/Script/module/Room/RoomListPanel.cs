@@ -83,7 +83,7 @@ public class RoomListPanel : BasePanel {
 	public void OnMsgGetAchieve (MsgBase msgBase) {
 		MsgGetAchieve msg = (MsgGetAchieve)msgBase;
 		scoreText.text = msg.win + "胜 " + msg.lost + "负";
-        campText.text = Gamedata.majors[msg.camp];
+        campText.text = Gamedata.majors[msg.major];
     }
 
 	//收到房间列表协议

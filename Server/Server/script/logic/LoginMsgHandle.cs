@@ -2,7 +2,6 @@
 
 public partial class MsgHandler {
 
-
 	//注册协议处理
 	public static void MsgRegister(ClientState c, MsgBase msgBase){
 		MsgRegister msg = (MsgRegister)msgBase;
@@ -21,7 +20,7 @@ public partial class MsgHandler {
     {
         MsgChoose msg = (MsgChoose)msgBase;
         PlayerData playerData = DbManager.GetPlayerData(msg.id);
-        playerData.camp = msg.camp;
+        playerData.major = msg.major;
         if(DbManager.UpdatePlayerData(msg.id, playerData))
         {
             msg.result = 0;

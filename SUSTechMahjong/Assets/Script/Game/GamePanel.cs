@@ -16,7 +16,7 @@ public class GamePanel : BasePanel {
     //表示是否选中了发动技能的按钮
     public bool isDoSkilling = false;
     //表示现在id的技能类型
-    public Skill skill = Skill.None;
+    public Major skill = Major.None;
 
     //表示出牌的按钮
     private Button okButton;
@@ -89,24 +89,24 @@ public class GamePanel : BasePanel {
         }
     }
 
-    public Skill Skill
+    public Major Skill
     {
         set
         {
             skill = value;
             switch (value)
             {
-                case Skill.None:
+                case Major.None:
                     skillDisplayText.text = "你是通识通修";
                     Debug.Log("没加入系，出现了bug");
                     break;
-                case Skill.Math:
+                case Major.Math:
                     skillDisplayText.text = "你是数学系";
                     break;
-                case Skill.Chemistry:
+                case Major.Chemistry:
                     skillDisplayText.text = "你是化学系";
                     break;
-                case Skill.ComputerScience:
+                case Major.ComputerScience:
                     skillDisplayText.text = "你是计算机系";
                     break;
             }
@@ -385,7 +385,7 @@ public class GamePanel : BasePanel {
     {
         SkillButton = false;
         skillingText.SetActive(false);
-        if(gameManager.players[gameManager.client_id].skill == Skill.Math)
+        if(gameManager.players[gameManager.client_id].skill == Major.Math)
         {
             PlayerRadio = false;
         }
@@ -439,17 +439,17 @@ public class GamePanel : BasePanel {
     {
         switch (skill)
         {
-            case Skill.None:
+            case Major.None:
                 PanelManager.Open<TipPanel>("你没有技能");
                 Debug.Log("技能不可能为空，出现bug");
                 break;
-            case Skill.Math:
+            case Major.Math:
                 PanelManager.Open<TipPanel>("数学系：查看场上随机一人的N张牌（N = 14-轮数）（可查看的牌的数量与时间相关，越早使用该技能可以看到的牌数越多）");
                 break;
-            case Skill.Chemistry:
+            case Major.Chemistry:
                 PanelManager.Open<TipPanel>("化学系：摧毁一张己方手牌，获得一张新的牌（化学物质）");
                 break;
-            case Skill.ComputerScience:
+            case Major.ComputerScience:
                 PanelManager.Open<TipPanel>("计算机系：任意打出一张牌，这张牌无法触发吃碰杠技能");
                 break;
         }
@@ -459,20 +459,20 @@ public class GamePanel : BasePanel {
     {
         switch (skill)
         {
-            case Skill.None:
+            case Major.None:
                 Debug.Log("技能不可能为空，出现bug");
                 break;
-            case Skill.Math:
+            case Major.Math:
                 okButton.onClick.AddListener(OnMathClick);
                 cancelButton.onClick.AddListener(OnCancelPlayerClick);
                 PlayerRadio = true;//用来显示单选框
 
                 OnCancelPaiClick();//在发动技能之前已经选中了牌，就要将牌降落下来
                 break;
-            case Skill.Chemistry:
+            case Major.Chemistry:
                 okButton.onClick.AddListener(OnChemistryClick);
                 break;
-            case Skill.ComputerScience:
+            case Major.ComputerScience:
                 okButton.onClick.AddListener(OnComputerScienceClick);
                 break;
         }
@@ -482,19 +482,19 @@ public class GamePanel : BasePanel {
     {
         switch (skill)
         {
-            case Skill.None:
+            case Major.None:
                 Debug.Log("技能不可能为空，出现bug");
                 break;
-            case Skill.Math:
+            case Major.Math:
                 okButton.onClick.RemoveListener(OnMathClick);
                 cancelButton.onClick.RemoveListener(OnCancelPlayerClick);
                 PlayerRadio = false;//隐藏发动数学系技能的单选框
                 //还要添加取消选牌的操作
                 break;
-            case Skill.Chemistry:
+            case Major.Chemistry:
                 okButton.onClick.RemoveListener(OnChemistryClick);
                 break;
-            case Skill.ComputerScience:
+            case Major.ComputerScience:
                 okButton.onClick.RemoveListener(OnComputerScienceClick);
                 break;
         }
@@ -506,7 +506,7 @@ public class GamePanel : BasePanel {
         if (gameManager.players == null) return;
         CtrlPlayer player = (CtrlPlayer)gameManager.players[gameManager.client_id];
         if (player == null) return;
-        if (player.skill != Skill.ComputerScience) return;
+        if (player.skill != Major.ComputerScience) return;
         if (player.selectedPaiIndex == -1) return;
 
         DeleteSkillClick();
@@ -524,7 +524,7 @@ public class GamePanel : BasePanel {
         if (gameManager.players == null) return;
         CtrlPlayer player = (CtrlPlayer)gameManager.players[gameManager.client_id];
         if (player == null) return;
-        if (player.skill != Skill.Math) return;
+        if (player.skill != Major.Math) return;
         int selectedPlayerIndex = -1;
         for(int i = 0; i < 3; i++)
         {
@@ -559,7 +559,7 @@ public class GamePanel : BasePanel {
         if (gameManager.players == null) return;
         CtrlPlayer player = (CtrlPlayer)gameManager.players[gameManager.client_id];
         if (player == null) return;
-        if (player.skill != Skill.Chemistry) return;
+        if (player.skill != Major.Chemistry) return;
         if (player.selectedPaiIndex == -1) return;
 
         DeleteSkillClick();
@@ -655,7 +655,7 @@ public class GamePanel : BasePanel {
 
     public void OnSetClick()
     {
-        Debug.Log("Set");
+        PanelManager.Open<SettingPanel>();
     }
 
     //不发动技能时点击确定按钮

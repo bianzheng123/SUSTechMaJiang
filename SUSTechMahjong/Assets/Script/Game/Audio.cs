@@ -116,4 +116,10 @@ public static class Audio {
             loop.clip = null;
         }
     }
+
+    public static void SetVolume(float value)
+    {
+        loop.volume = value;
+        cue.volume = value;
+    }
 }

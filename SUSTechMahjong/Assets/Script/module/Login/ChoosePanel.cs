@@ -75,7 +75,7 @@ public class ChoosePanel : BasePanel
         //发送
         MsgChoose MsgChoose = new MsgChoose();
 
-        MsgChoose.camp = major;
+        MsgChoose.major = major;
         MsgChoose.id = GameMain.id;
         NetManager.Send(MsgChoose);
     }
@@ -92,7 +92,7 @@ public class ChoosePanel : BasePanel
             if(PanelManager.panels.ContainsKey("RoomListPanel") && PanelManager.panels["RoomListPanel"] != null)
             {
                 RoomListPanel panel = (RoomListPanel)PanelManager.panels["RoomListPanel"];
-                panel.Camp = Gamedata.majors[msg.camp];
+                panel.Camp = Gamedata.majors[msg.major];
             }
             //关闭界面
             Close();

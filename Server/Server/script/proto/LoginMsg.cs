@@ -12,7 +12,7 @@ public class MsgChoose : MsgBase
 {
     public MsgChoose() { protoName = "MsgChoose"; }
     //客户端发
-    public int camp = 0;
+    public int major = 0;
     public string id = "";
     //服务端回（0-成功，1-失败）
     public int result = 0;

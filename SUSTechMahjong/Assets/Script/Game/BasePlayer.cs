@@ -23,7 +23,7 @@ public abstract class BasePlayer : MonoBehaviour {
     //代表是否轮到自己出牌
     public bool isTurn;
     //描述自己的技能
-    public Skill skill;
+    public Major skill;
 
     public virtual void Init(GamePanel gamePanel) {
         handPai = new List<GameObject>();

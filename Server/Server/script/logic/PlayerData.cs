@@ -1,12 +1,13 @@
-﻿public class PlayerData{
+﻿/// <summary>
+/// 用来存放数据库中的类
+/// </summary>
+public class PlayerData{
 	//金币
 	public int coin = 0;
-	//记事本
-	public string text = "new text";
 	//胜利数
 	public int win = 0;
 	//失败数
 	public int lost = 0;
     //院系
-    public int camp = 0;
+    public int major = (int)Major.None;
 }

@@ -79,7 +79,7 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < msg.data.Length; i++)
         {
             msg.data[i] = new StartGameData();
-            msg.data[i].skillIndex = (int)Skill.ComputerScience;//全部设为计算机系
+            msg.data[i].skillIndex = (int)Major.ComputerScience;//全部设为计算机系
             msg.data[i].skillCount = maxSkillTime[i];
             msg.data[i].gender = rd.Next() % 2;//随机生成性别
         }//初始化协议的牌数组
@@ -122,7 +122,7 @@ public class GameManager : MonoBehaviour
         client_id = msg.id;
         gamePanel.InitNumToDir(msg.id);
         InitPlayer(msg);
-        gamePanel.Skill = (Skill)msg.data[msg.id].skillIndex;
+        gamePanel.Skill = (Major)msg.data[msg.id].skillIndex;
         skillCount = msg.data[msg.id].skillCount;
         gamePanel.RestSkillCount = skillCount;
         
@@ -591,7 +591,7 @@ public class GameManager : MonoBehaviour
         if (startTimeCount)
         {
             TimeCount();
-            if (isChuPai && !(client_id == nowTurnid && players[client_id].skill == Skill.Math && gamePanel.isDoSkilling == true))//是自己控制的玩家在出牌，而且是数学系的而且已经按下了发动技能的按钮
+            if (isChuPai && !(client_id == nowTurnid && players[client_id].skill == Major.Math && gamePanel.isDoSkilling == true))//是自己控制的玩家在出牌，而且是数学系的而且已经按下了发动技能的按钮
             {        //发动数学系技能时不可选中自己的牌
                 players[nowTurnid].DaPai();//这里人机只是打牌，不发动任何技能
             }//否则进行吃碰杠的判断
@@ -680,7 +680,7 @@ public class GameManager : MonoBehaviour
             players[i].id = i;
             players[i].username = msg.data[i].username;
             players[i].gender = (Gender)msg.data[i].gender;
-            players[i].skill = (Skill)msg.data[i].skillIndex;
+            players[i].skill = (Major)msg.data[i].skillIndex;
 
         }
     }

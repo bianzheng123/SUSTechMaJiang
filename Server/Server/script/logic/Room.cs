@@ -141,7 +141,7 @@ public class Room {
 			PlayerInfo playerInfo = new PlayerInfo();
 			//赋值
 			playerInfo.id = player.id;
-			playerInfo.camp = player.data.camp;
+			playerInfo.major = player.data.major;
 			playerInfo.win = player.data.win;
 			playerInfo.lost = player.data.lost;
 			playerInfo.isOwner = 0;

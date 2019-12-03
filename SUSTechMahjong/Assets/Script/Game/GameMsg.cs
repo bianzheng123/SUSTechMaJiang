@@ -22,7 +22,7 @@ public class StartGameData
     public string username = "";//该客户端的用户名
 }
 
-public enum Skill
+public enum Major
 {
     None = 0,
     Math = 1,

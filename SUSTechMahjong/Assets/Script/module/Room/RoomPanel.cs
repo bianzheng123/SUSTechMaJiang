@@ -84,7 +84,7 @@ public class RoomPanel : BasePanel {
 		Text scoreText = trans.Find("ScoreText").GetComponent<Text>();
 		//填充信息
 		idText.text = playerInfo.id;
-        campText.text = Gamedata.majors[playerInfo.camp];
+        campText.text = Gamedata.majors[playerInfo.major];
         if (playerInfo.isOwner == 1){
 			campText.text = campText.text+"*";
 		}

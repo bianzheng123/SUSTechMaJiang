@@ -4,7 +4,7 @@ public class MsgGetAchieve:MsgBase {
 	//服务端回
 	public int win = 0;
 	public int lost = 0;
-    public int camp = 0;
+    public int major = 0;
 }
 
 //房间信息
@@ -44,7 +44,7 @@ public class MsgEnterRoom:MsgBase {
 //玩家信息
 public class PlayerInfo{
 	public string id = "lpy";	//账号
-	public int camp = 0;		//阵营
+	public int major = 0;		//院系
 	public int win = 0;			//胜利数
 	public int lost = 0;		//失败数
 	public int isOwner = 0;		//是否是房主
