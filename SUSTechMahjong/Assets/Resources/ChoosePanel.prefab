@@ -515,7 +515,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "1\uFF1A\u8BA1\u7B97\u673A\u7CFB 2\uFF1A\u5316\u5B66\u7CFB 3\uFF1A\u751F\u7269\u7CFB"
+  m_Text: "1\uFF1A\u5316\u5B66\u7CFB 2\uFF1A\u6570\u5B66\u7CFB 3\uFF1A\u8BA1\u7B97\u673A\u7CFB"
 --- !u!114 &114600886914969020
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -791,7 +791,7 @@ RectTransform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1902456527051502}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:

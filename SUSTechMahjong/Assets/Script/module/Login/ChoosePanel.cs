@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// 选择输入的阵营
+/// </summary>
 public class ChoosePanel : BasePanel
 {
     //院系输入框

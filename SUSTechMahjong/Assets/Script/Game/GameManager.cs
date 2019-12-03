@@ -79,7 +79,7 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < msg.data.Length; i++)
         {
             msg.data[i] = new StartGameData();
-            msg.data[i].skillIndex = (int)Skill.Math;//全部设为数学系
+            msg.data[i].skillIndex = (int)Skill.ComputerScience;//全部设为计算机系
             msg.data[i].skillCount = maxSkillTime[i];
             msg.data[i].gender = rd.Next() % 2;//随机生成性别
         }//初始化协议的牌数组
@@ -486,6 +486,38 @@ public class GameManager : MonoBehaviour
         }
         isChuPai = true;
         StartTimeCount();
+    }
+
+    /// <summary>
+    /// 服务端接收到计算机系协议
+    /// </summary>
+    /// <param name="msgBase"></param>
+    public void ServerOnMsgComputerScience(MsgBase msgBase)
+    {
+        MsgComputerScience msg = (MsgComputerScience)msgBase;
+        int paiIndex = msg.paiIndex;//牌在这个玩家的索引
+        int id = msg.id;//出牌的玩家id
+        MsgChuPai msgChuPai = new MsgChuPai();
+        msgChuPai.id = msg.id;
+        msgChuPai.paiIndex = msg.paiIndex;
+        ClientOnMsgChuPai(msgChuPai);//广播
+        if (paiIndex == -1)
+        {
+            //服务端执行胡的操作，清空数据，写入数据库等
+            return;
+        }
+
+        int paiId = paiManager.ChuPai(paiIndex, id);
+        queueChiPengGang = paiManager.HasEvent(paiId, id);//检测是否有吃碰杠这件事
+
+        if (queueChiPengGang.Count != 0)//一直发送吃碰杠协议，直到发完或者有人同意吃碰杠为止
+        {
+            Debug.Log("存在吃碰杠,但是计算机系发动的技能，不产生吃碰杠协议");
+        }
+        MsgFaPai msgFaPai = new MsgFaPai();
+        turn = (turn + 1) % 4;
+
+        ServerOnMsgFaPai(msgFaPai);
     }
 
     /// <summary>

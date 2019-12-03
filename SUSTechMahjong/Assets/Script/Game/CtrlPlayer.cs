@@ -96,4 +96,13 @@ public class CtrlPlayer : BasePlayer {
         Debug.Log("被观察的id为 " + selectedPlayerIndex);
         gameManager.ServerOnMsgMath(msg);
     }
+
+    public void LaunchComputerScience()
+    {
+        MsgComputerScience msg = new MsgComputerScience();
+        msg.id = id;
+        msg.paiIndex = selectedPaiIndex;
+        selectedPaiIndex = -1;
+        gameManager.ServerOnMsgComputerScience(msg);
+    }
 }

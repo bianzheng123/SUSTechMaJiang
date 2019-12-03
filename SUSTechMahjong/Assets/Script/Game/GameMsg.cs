@@ -26,7 +26,8 @@ public enum Skill
 {
     None = 0,
     Math = 1,
-    Chemistry = 2
+    Chemistry = 2,
+    ComputerScience = 3
 }
 
 //用于发牌
@@ -41,6 +42,9 @@ public class MsgFaPai : MsgBase
     public bool canSkill;//代表能否使用技能
 }
 
+/// <summary>
+/// 丢一张牌，拿一张牌
+/// </summary>
 public class MsgChemistry : MsgBase
 {
     public MsgChemistry() { protoName = "MsgChemistry"; }
@@ -52,6 +56,9 @@ public class MsgChemistry : MsgBase
     public bool canSkill;//接收到牌之后能否继续使用技能
 }
 
+/// <summary>
+/// 观察对手x张牌
+/// </summary>
 public class MsgMath: MsgBase
 {
     public MsgMath() { protoName = "MsgMath"; }
@@ -61,6 +68,17 @@ public class MsgMath: MsgBase
     //服务端发回
     public int[] paiId;
     public bool canSkill;//代表能否继续使用技能
+}
+
+/// <summary>
+/// 把所有的牌当成白板打出
+/// </summary>
+public class MsgComputerScience : MsgBase
+{
+    public MsgComputerScience() { protoName = "MsgComputerScience"; }
+    //客户端发送
+    public int paiIndex;//牌在这个玩家的索引
+    public int id;//出牌玩家的id
 }
 
 /// <summary>

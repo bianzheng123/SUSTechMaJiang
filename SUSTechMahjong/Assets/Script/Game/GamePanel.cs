@@ -104,6 +104,9 @@ public class GamePanel : BasePanel {
                 case Skill.Chemistry:
                     skillDisplayText.text = "你是化学系";
                     break;
+                case Skill.ComputerScience:
+                    skillDisplayText.text = "你是计算机系";
+                    break;
             }
         }
     }
@@ -441,6 +444,9 @@ public class GamePanel : BasePanel {
             case Skill.Chemistry:
                 okButton.onClick.AddListener(OnChemistryClick);
                 break;
+            case Skill.ComputerScience:
+                okButton.onClick.AddListener(OnComputerScienceClick);
+                break;
         }
     }
 
@@ -460,7 +466,29 @@ public class GamePanel : BasePanel {
             case Skill.Chemistry:
                 okButton.onClick.RemoveListener(OnChemistryClick);
                 break;
+            case Skill.ComputerScience:
+                okButton.onClick.RemoveListener(OnComputerScienceClick);
+                break;
         }
+    }
+
+    public void OnComputerScienceClick()//发动计算机系技能时，调用此方法
+    {
+        Debug.Log("发送计算机系技能");
+        if (gameManager.players == null) return;
+        CtrlPlayer player = (CtrlPlayer)gameManager.players[gameManager.client_id];
+        if (player == null) return;
+        if (player.skill != Skill.ComputerScience) return;
+        if (player.selectedPaiIndex == -1) return;
+
+        DeleteSkillClick();
+        okButton.onClick.AddListener(OnChuPaiClick);
+
+        gameManager.startTimeCount = false;//这里需要质疑，可能是多余的代码
+        gameManager.isChuPai = false;
+        HideSkillUI();
+
+        player.LaunchComputerScience();
     }
 
     public void OnMathClick()//发动数学系技能时，点击确定按钮

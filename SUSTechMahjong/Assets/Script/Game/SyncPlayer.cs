@@ -9,4 +9,11 @@ public class SyncPlayer : BasePlayer {
         System.Threading.Thread.Sleep(2000);
         ChuPai_Hu(0);
     }
+
+    IEnumerator SyncDaPai()
+    {
+        yield return new WaitForSeconds(2f);
+        ChuPai_Hu(0);
+    }
+
 }
