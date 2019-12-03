@@ -12,6 +12,7 @@ public partial class MsgHandler {
 		msg.win = player.data.win;
 		msg.lost = player.data.lost;
         msg.major = player.data.major;
+        msg.coin = player.data.coin;
 
 		player.Send(msg);
 	}

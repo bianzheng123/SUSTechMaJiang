@@ -5,6 +5,7 @@ public class MsgGetAchieve:MsgBase {
 	public int win = 0;
 	public int lost = 0;
     public int major = 0;
+    public int coin = 0;
 }
 
 //房间信息

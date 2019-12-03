@@ -11,6 +11,8 @@ public class RoomListPanel : BasePanel {
 	private Text scoreText;
     //院系文本
     private Text campText;
+    //现在拥有的金币数
+    private Text coinText;
 	//创建房间按钮
 	private Button createButton;
 	//刷新列表按钮
@@ -38,6 +40,7 @@ public class RoomListPanel : BasePanel {
 		idText = skin.transform.Find("InfoPanel/IdText").GetComponent<Text>();
 		scoreText = skin.transform.Find("InfoPanel/ScoreText").GetComponent<Text>();
         campText = skin.transform.Find("InfoPanel/CampText").GetComponent<Text>();
+        coinText = skin.transform.Find("InfoPanel/GoldText").GetComponent<Text>();
         createButton = skin.transform.Find("CtrlPanel/CreateButton").GetComponent<Button>();
 		reflashButton = skin.transform.Find("CtrlPanel/RefreshButton").GetComponent<Button>();
         chooseButton = skin.transform.Find("CtrlPanel/ChooseBtn").GetComponent<Button>();
@@ -84,6 +87,7 @@ public class RoomListPanel : BasePanel {
 		MsgGetAchieve msg = (MsgGetAchieve)msgBase;
 		scoreText.text = msg.win + "胜 " + msg.lost + "负";
         campText.text = Gamedata.majors[msg.major];
+        coinText.text = msg.coin.ToString();
     }
 
 	//收到房间列表协议
