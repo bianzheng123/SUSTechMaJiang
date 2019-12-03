@@ -40,6 +40,8 @@ public class GamePanel : BasePanel {
     private Button noActionButton;
     //发动技能的按钮
     private Button skillButton;
+    //用于说明技能的按钮
+    private Button skillDescriptionButton;
     //用来显示轮数的列表
     private Text turnText;
     //用来显示你是哪个系的
@@ -246,6 +248,7 @@ public class GamePanel : BasePanel {
         chiButton = skin.transform.Find("ChiButton").GetComponent<Button>();
         noActionButton = skin.transform.Find("NoActionButton").GetComponent<Button>();
         skillButton = skin.transform.Find("SkillButton").GetComponent<Button>();
+        skillDescriptionButton = skin.transform.Find("SkillDescriptionButton").GetComponent<Button>();
         turnText = skin.transform.Find("TurnText").GetComponent<Text>();
         skillDisplayText = skin.transform.Find("SkillDisplayText").GetComponent<Text>();
         restSkillCount = skin.transform.Find("RestSkillCount").GetComponent<Text>();
@@ -286,6 +289,7 @@ public class GamePanel : BasePanel {
         chiButton.onClick.AddListener(OnChiClick);
         noActionButton.onClick.AddListener(OnNoActionClick);
         skillButton.onClick.AddListener(OnSkillClick);
+        skillDescriptionButton.onClick.AddListener(OnSkillDescriptionClick);
 
         playerPaiInfo[0].discardPai.onClick.AddListener(OnOtherInfoClick_discardPai_player1);
         playerPaiInfo[0].chi.onClick.AddListener(OnOtherInfoClick_chi_player1);
@@ -317,6 +321,7 @@ public class GamePanel : BasePanel {
         chiButton.onClick.AddListener(Audio.ButtonClick);
         noActionButton.onClick.AddListener(Audio.ButtonClick);
         skillButton.onClick.AddListener(Audio.ButtonClick);
+        skillDescriptionButton.onClick.AddListener(Audio.ButtonClick);
 
         playerPaiInfo[0].discardPai.onClick.AddListener(Audio.ButtonClick);
         playerPaiInfo[0].chi.onClick.AddListener(Audio.ButtonClick);
@@ -425,6 +430,29 @@ public class GamePanel : BasePanel {
         //NetManager.RemoveEventListener(NetManager.NetEvent.ConnectFail, OnConnectFail);
 
         Audio.MuteLoop(Audio.bgGamePanel);
+    }
+
+    /// <summary>
+    /// 按下技能介绍按钮时响应
+    /// </summary>
+    public void OnSkillDescriptionClick()
+    {
+        switch (skill)
+        {
+            case Skill.None:
+                PanelManager.Open<TipPanel>("你没有技能");
+                Debug.Log("技能不可能为空，出现bug");
+                break;
+            case Skill.Math:
+                PanelManager.Open<TipPanel>("数学系：查看场上随机一人的N张牌（N = 14-轮数）（可查看的牌的数量与时间相关，越早使用该技能可以看到的牌数越多）");
+                break;
+            case Skill.Chemistry:
+                PanelManager.Open<TipPanel>("化学系：摧毁一张己方手牌，获得一张新的牌（化学物质）");
+                break;
+            case Skill.ComputerScience:
+                PanelManager.Open<TipPanel>("计算机系：任意打出一张牌，这张牌无法触发吃碰杠技能");
+                break;
+        }
     }
 
     public void AddSkillClick()
