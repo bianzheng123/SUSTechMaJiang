@@ -137,7 +137,6 @@ public class RoomPanel : BasePanel {
     public void OnMsgInitData(MsgBase msgBase)
     {
         MsgInitData msg = (MsgInitData)msgBase;
-        Debug.Log("成功接收到初始化数据,切换到战斗页面");
         Close();
         PanelManager.Open<GamePanel>(msg);
     }

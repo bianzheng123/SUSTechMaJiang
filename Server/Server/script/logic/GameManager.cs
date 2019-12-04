@@ -77,6 +77,31 @@ public class GameManager
         return msg;
     }
 
+    public MsgFaPai ProcessMsgFaPai(MsgFaPai msg)
+    {
+        msg.id = turn;
+        msg.turnNum = turnNum;
+        msg.canSkill = doSkillTime[turn] < maxSkillTime[turn] ? true : false;//表示对于当前玩家能否使用技能
+        turnCount++;
+        if (turnCount % 4 == 0)
+        {
+            turnCount = 0;
+            turnNum++;
+        }//判断下一次出牌是在第几轮
+        int paiIdx = paiManager.FaPai(turn);
+        msg.paiId = paiIdx;
+        if (paiManager.HasHu(turn))
+        {
+            msg.isHu = true;
+        }
+        else
+        {
+            msg.isHu = false;
+        }
+        //广播
+        return msg;
+    }
+
     //广播消息
     public void Broadcast(MsgBase msg)
     {

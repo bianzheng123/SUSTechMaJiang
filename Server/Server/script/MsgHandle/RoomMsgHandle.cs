@@ -139,7 +139,7 @@ public partial class MsgHandler {
         for (int i = 0; i < 4; i++)
         {
             msgInit.id = i;
-            room.gameManager.players[i].Send(msg);
+            room.gameManager.players[i].Send(msgInit);
         }
         Console.WriteLine("Send MsgInitData success, this is do the broadcast");
     }

@@ -36,6 +36,7 @@ public class GameManager : MonoBehaviour
     public bool startTimeCount = false;
     public int skillCount;//代表当前主机玩家还剩下几次技能可以使用
     public bool canTimeAlarm = false;//代表是否剩下最后三秒，是否可以开始播放倒计时的bgm了
+    public bool isZhuang = false;
 
     public PlayerFactory PlayerFactory
     {
@@ -53,7 +54,11 @@ public class GameManager : MonoBehaviour
         gamePanel = GameObject.Find("Root").GetComponent<GamePanel>();
     }
 
-    public void ProcessInitData(MsgInitData msg)
+    /// <summary>
+    /// 接收到初始数据的消息
+    /// </summary>
+    /// <param name="msg"></param>
+    public void OnMsgInitData(MsgInitData msg)
     {
         players = new BasePlayer[4];
         client_id = msg.id;
@@ -70,6 +75,10 @@ public class GameManager : MonoBehaviour
             if (msg.data[i].paiIndex.Length == 14)
             {
                 gamePanel.ZhuangImage = i;
+                if(i == client_id)
+                {
+                    isZhuang = true;
+                }
             }
             for (int j = 0; j < msg.data[i].paiIndex.Length; j++)
             {
@@ -80,43 +89,57 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 客户端接收到初始数据的消息
-    /// 只有房主才会发送这个协议
+    /// 客户端处理发牌协议
     /// </summary>
     /// <param name="msgBase"></param>
-    public void ClientOnInitData(MsgBase msgBase)
+    public void OnMsgFaPai(MsgBase msgBase)
     {
-        MsgInitData msg = (MsgInitData)msgBase;
-        players = new BasePlayer[4];
-        client_id = msg.id;
-        gamePanel.InitNumToDir(msg.id);
-        InitPlayer(msg);
-        gamePanel.Skill = (Major)msg.data[msg.id].skillIndex;
-        skillCount = msg.data[msg.id].skillCount;
-        gamePanel.RestSkillCount = skillCount;
-        //gamePanel中先给Skill进行赋值，才能给RestSkillCount进行赋值
-        
-        //生成牌
-        for (int i = 0; i < 4; i++)
+        Debug.Log("can receive msgFaPai");
+        MsgFaPai msg = (MsgFaPai)msgBase;
+        nowTurnid = msg.id;
+        if (msg.paiId == -1)
         {
-            if(msg.data[i].paiIndex.Length == 14)
-            {
-                gamePanel.ZhuangImage = i;
-            }
-            for (int j = 0; j < msg.data[i].paiIndex.Length; j++)
-            {
-                CreatePai(msg.data[i].paiIndex[j], i);
-            }
-            players[i].PlacePai();
+            Debug.Log("没牌了，游戏结束");
+            PanelManager.Open<GameoverPanel>(0, -1, client_id);
+            PanelManager.Close("GamePanel");
+            return;
         }
 
-        //发送发牌协议
-        MsgFaPai msgFaPai = new MsgFaPai();
-        ServerOnMsgFaPai(msgFaPai);
-        //可以不发这个协议
+        gamePanel.TurnText = msg.turnNum;//设置现在是第几轮了
+        gamePanel.TurnLight(msg.id);//切换灯光
+        if (msg.id == client_id)//如果是玩家，就显示出牌/发动技能/胡的按钮
+        {
+            gamePanel.ChuPaiButton = true;
+            if (msg.isHu)
+            {
+                gamePanel.HuButton = true;
+            }
+            if (msg.canSkill)
+            {
+                gamePanel.SkillButton = true;
+            }
+        }
+
+        CreatePai(msg.paiId, msg.id);
+        players[msg.id].SynHandPai();//调整牌的顺序
+        players[msg.id].PlacePai();//调整牌的位置
+
+        //string arrString = "";
+        //for (int i = 0; i < paiManager.playerPai[msg.id].Count; i++)
+        //{
+        //    arrString += paiManager.playerPai[msg.id][i] + " ";
+        //}
+        //Debug.Log("player" + msg.id + ": " + arrString);//验证服务端的牌是否进行了同步
+
+        isChuPai = true;
+        //开始计时，玩家出牌
+        StartTimeCount();
     }
 
-    //服务端收到发牌的协议
+    /// <summary>
+    /// 服务端处理发牌的协议
+    /// </summary>
+    /// <param name="msgBase"></param>
     public void ServerOnMsgFaPai(MsgBase msgBase)
     {
         MsgFaPai msg = (MsgFaPai)msgBase;

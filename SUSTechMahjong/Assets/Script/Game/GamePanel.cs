@@ -234,31 +234,44 @@ public class GamePanel : BasePanel {
     {
         //寻找组件
         GetUIComponent();
-        //监听
+        //对按钮添加点击事件
         AddButtonClick();
-        //网络协议监听
-        //NetManager.AddMsgListener("MsgLogin", OnMsgLogin);
-        //发送查询
-        //MsgGetRoomInfo msg = new MsgGetRoomInfo();
-        //NetManager.Send(msg);
-        //隐藏各种UI，对他们进行初始化
-        InitUI();
         //生成gameManager类
         gameManager = GameManager.GetInstance();
         gameManager.GamePanel = this;
         gameManager.PlayerFactory = new PlayerFactory();
+        //GameManager处理发过来的数据,这个一定要放在生成gameManager类后面
+        MsgInitData msgInitData = (MsgInitData)args[0];
+        gameManager.OnMsgInitData(msgInitData);
+        //网络协议监听
+        NetManager.AddMsgListener("MsgFaPai", gameManager.OnMsgFaPai);
+        //发送查询,发动查询要在处理InitData之后
+        if (gameManager.isZhuang)
+        {
+            MsgFaPai msgFaPai = new MsgFaPai();
+            NetManager.Send(msgFaPai);
+        }//第一次出牌，只有庄家发送发牌协议
+        //隐藏各种UI，对他们进行初始化
+        InitUI();
+        
         //生成背景图片
         GameObject bg = ResManager.LoadSprite("bg_game", 0);
         bg.name = "background";
         bg.transform.localScale = new Vector3(2, 2, 2);
-        //GameManager处理发过来的数据,这个一定要放在生成gameManager类后面
-        MsgInitData msg = (MsgInitData)args[0];
-        gameManager.ProcessInitData(msg);
-
-        
-
         
         Audio.PlayLoop(Audio.bgGamePanel);
+    }
+
+    //关闭
+    public override void OnClose()
+    {
+        //网络协议监听
+        NetManager.RemoveMsgListener("MsgFaPai", gameManager.OnMsgFaPai);
+        //网络事件监听
+        //NetManager.RemoveEventListener(NetManager.NetEvent.ConnectSucc, OnConnectSucc);
+        //NetManager.RemoveEventListener(NetManager.NetEvent.ConnectFail, OnConnectFail);
+
+        Audio.MuteLoop(Audio.bgGamePanel);
     }
 
     /// <summary>
@@ -301,18 +314,6 @@ public class GamePanel : BasePanel {
             timeCount[0].sprite = ResManager.LoadUISprite(timePath[time % 10]);
         }
         
-    }
-
-    //关闭
-    public override void OnClose()
-    {
-        //网络协议监听
-        //NetManager.RemoveMsgListener("MsgLogin", OnMsgLogin);
-        //网络事件监听
-        //NetManager.RemoveEventListener(NetManager.NetEvent.ConnectSucc, OnConnectSucc);
-        //NetManager.RemoveEventListener(NetManager.NetEvent.ConnectFail, OnConnectFail);
-
-        Audio.MuteLoop(Audio.bgGamePanel);
     }
 
     /// <summary>
