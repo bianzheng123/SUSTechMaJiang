@@ -14,3 +14,13 @@ public enum Major
     Chemistry = 2,
     ComputerScience = 3
 }
+/// <summary>
+/// 每一局游戏中可以使用的最大技能次数
+/// </summary>
+public enum MaxSkillTime
+{
+    None = 0,
+    Math = 3,
+    Chemistry = 3,
+    ComputerScience = 10
+}

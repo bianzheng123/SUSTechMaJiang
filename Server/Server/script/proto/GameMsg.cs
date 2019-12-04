@@ -48,7 +48,7 @@ public class MsgChemistry : MsgBase
 /// <summary>
 /// 观察对手x张牌
 /// </summary>
-public class MsgMath: MsgBase
+public class MsgMath : MsgBase
 {
     public MsgMath() { protoName = "MsgMath"; }
     //客户端发送

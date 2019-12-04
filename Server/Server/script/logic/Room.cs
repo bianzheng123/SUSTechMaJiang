@@ -5,9 +5,10 @@ public class Room {
 	//id
 	public int id = 0;
 	//最大玩家数
-	public int maxPlayer = 6;
+	public int maxPlayer = 4;
 	//玩家列表
-	public Dictionary<string, bool> playerIds = new Dictionary<string, bool>();
+	public HashSet<string> playerIds = new HashSet<string>();
+    //现在限定没有观战的人
 	//房主id
 	public string ownerId = "";
 	//状态
@@ -16,7 +17,8 @@ public class Room {
 		FIGHT = 1 ,
 	}
 	public Status status = Status.PREPARE;
-
+    //管理这个房间的牌
+    public GameManager gameManager;
 
 	//添加玩家
 	public bool AddPlayer(string id){
@@ -37,12 +39,12 @@ public class Room {
 			return false;
 		}
 		//已经在房间里
-		if(playerIds.ContainsKey(id)){
+		if(playerIds.Contains(id)){
 			Console.WriteLine("room.AddPlayer fail, already in this room");
 			return false;
 		}
-		//加入列表
-		playerIds[id] = true;
+        //加入列表
+        playerIds.Add(id);
         //设置玩家数据
          
 		player.roomId = this.id;
@@ -54,25 +56,6 @@ public class Room {
 		Broadcast(ToMsg());
 		return true;
 	}
-
-	//分配阵营
-	/*public int SwitchCamp() {
-		//计数
-		int count1 = 0;
-		int count2 = 0;
-		foreach(string id in playerIds.Keys) {
-			Player player = PlayerManager.GetPlayer(id);
-			if(player.camp == 1) {count1++;}
-			if(player.camp == 2) {count2++;}
-		}
-		//选择
-		if (count1 <= count2){
-			return 1;
-		}
-		else{
-			return 2;
-		}
-	}*/
 
 	//是不是房主
 	public bool isOwner(Player player){
@@ -88,14 +71,13 @@ public class Room {
 			return false;
 		}
 		//没有在房间里
-		if(!playerIds.ContainsKey(id)){
+		if(!playerIds.Contains(id)){
 			Console.WriteLine("room.RemovePlayer fail, not in this room");
 			return false;
 		}
 		//删除列表
 		playerIds.Remove(id);
 		//设置玩家数据
-		player.camp = 0;
 		player.roomId = -1;
 		//设置房主
 		if(ownerId == player.id){
@@ -113,7 +95,7 @@ public class Room {
 	//选择房主
 	public string SwitchOwner() {
 		//选择第一个玩家
-		foreach(string id in playerIds.Keys) {
+		foreach(string id in playerIds) {
 			return id;
 		}
 		//房间没人
@@ -123,7 +105,7 @@ public class Room {
 
 	//广播消息
 	public void Broadcast(MsgBase msg){
-		foreach(string id in playerIds.Keys) {
+		foreach(string id in playerIds) {
 			Player player = PlayerManager.GetPlayer(id);
 			player.Send(msg);
 		}
@@ -136,7 +118,7 @@ public class Room {
 		msg.players = new PlayerInfo[count];
 		//players
 		int i = 0;
-		foreach(string id in playerIds.Keys){
+		foreach(string id in playerIds){
 			Player player = PlayerManager.GetPlayer(id);
 			PlayerInfo playerInfo = new PlayerInfo();
 			//赋值

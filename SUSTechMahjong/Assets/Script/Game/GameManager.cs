@@ -51,63 +51,32 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         gamePanel = GameObject.Find("Root").GetComponent<GamePanel>();
-        //发送开始接收游戏数据的协议
-        MsgInitData msg = new MsgInitData();
-        ServerOnInitData(msg);
     }
 
-    //服务端收到开始接收游戏数据的协议，并对使用技能的次数进行初始化
-    public void ServerOnInitData(MsgBase msgBase)
+    public void ProcessInitData(MsgInitData msg)
     {
-        //服务端的初始化
-        doSkillTime = new int[4];
-        maxSkillTime = new int[4];
-        for (int i = 0; i < 4; i++) {
-            doSkillTime[i] = 0;
-            maxSkillTime[i] = 3;
-            //不同系的技能不同
-        }
-        paiManager.Init();
+        players = new BasePlayer[4];
+        client_id = msg.id;
+        gamePanel.InitNumToDir(msg.id);
+        InitPlayer(msg);
+        gamePanel.Skill = (Major)msg.data[msg.id].skillIndex;
+        skillCount = msg.data[msg.id].skillCount;
+        gamePanel.RestSkillCount = skillCount;
+        //gamePanel中先给Skill进行赋值，才能给RestSkillCount进行赋值
 
-        MsgInitData msg = (MsgInitData)msgBase;
-        //获取骰子的点数
-        System.Random rd = new System.Random();
-        int zhuangIdx = rd.Next() % 4;//随机确定庄家
-        turn = zhuangIdx;
-        //对协议名称进行初始化，这里表述不完全
-        msg.data = new StartGameData[4];
-        for (int i = 0; i < msg.data.Length; i++)
-        {
-            msg.data[i] = new StartGameData();
-            msg.data[i].skillIndex = (int)Major.None;//全部设为计算机系
-            msg.data[i].skillCount = maxSkillTime[i];
-            msg.data[i].gender = rd.Next() % 2;//随机生成性别
-        }//初始化协议的牌数组
-        msg.data[0].username = "a";
-        msg.data[1].username = "b";
-        msg.data[2].username = "c";
-        msg.data[3].username = "d";//用来初始化不同客户端的用户名
+        //生成牌
         for (int i = 0; i < 4; i++)
         {
-            int num = 13;
-            if (i == zhuangIdx)
+            if (msg.data[i].paiIndex.Length == 14)
             {
-                num = 14;
+                gamePanel.ZhuangImage = i;
             }
-            int[] res = paiManager.FaPai(num, i);
-            msg.data[i].paiIndex = res;
+            for (int j = 0; j < msg.data[i].paiIndex.Length; j++)
+            {
+                CreatePai(msg.data[i].paiIndex[j], i);
+            }
+            players[i].PlacePai();
         }
-        msg.id = 2;
-        ClientOnInitData(msg);//广播
-        Debug.Log("庄家：" + zhuangIdx);
-        //for(int i = 0; i < 3; i++)
-        //{
-        //    msg.id = (zhuangIdx + i) % 4;
-        //    ClientOnMsgStartRecieveGameData(msg);
-        //}
-
-        //发初始手牌
-        //庄家出牌
     }
 
     /// <summary>

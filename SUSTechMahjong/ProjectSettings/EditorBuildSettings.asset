@@ -6,8 +6,5 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/02-Lobby.unity
-    guid: 08c79446e50ded74290dfe949f91e70e
-  - enabled: 1
-    path: Assets/Scenes/03-NetGameFourMode.unity
-    guid: 097774fd77877fa4483ed4b6af37e5b7
+    path: Assets/MaJiang.unity
+    guid: b5b7164b77103bd4f92fea90fffc423d

@@ -17,7 +17,6 @@ public class Player {
 	public int roomId = -1;
     //数据库数据
 	public PlayerData data;
-    public int camp = 0;
     //发送信息
     public void Send(MsgBase msgBase){
 		NetManager.Send(state, msgBase);

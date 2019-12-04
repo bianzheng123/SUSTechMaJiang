@@ -3,7 +3,7 @@
 
 public partial class MsgHandler {
 	
-	//查询战绩
+	//进入RoomListPanel时查询自己的战绩
 	public static void MsgGetAchieve(ClientState c, MsgBase msgBase){
 		MsgGetAchieve msg = (MsgGetAchieve)msgBase;
 		Player player = c.player;
@@ -109,6 +109,35 @@ public partial class MsgHandler {
 		msg.result = 0;
 		player.Send(msg);
 	}
+
+    //用于开战的协议，代表是否可以开战
+    public static void MsgStartBattle(ClientState c, MsgBase msgBase)
+    {
+        MsgStartBattle msg = (MsgStartBattle)msgBase;
+        //检查是否是四个人，用于开战
+        Player player = c.player;
+        if (player == null) return;
+        Room room = RoomManager.GetRoom(player.roomId);
+        if (room == null)
+        {
+            msg.result = 1;
+            player.Send(msg);
+            return;
+        }
+        int playerNum = room.playerIds.Count;
+        if (playerNum != 4)
+        {
+            msg.result = 1;
+            player.Send(msg);
+            return;
+        }//只需要点击开战的收到开战协议就行了，其余的只需要收到了初始化游戏数据的协议即可
+        room.status = Room.Status.FIGHT;
+
+        room.gameManager = new GameManager(room);//对gameManager进行初始化
+
+        room.gameManager.SendMsgInitData();
+
+    }
 
 }
 

@@ -37,6 +37,7 @@ public class RoomPanel : BasePanel {
 		NetManager.AddMsgListener("MsgGetRoomInfo", OnMsgGetRoomInfo);
 		NetManager.AddMsgListener("MsgLeaveRoom", OnMsgLeaveRoom);
 		NetManager.AddMsgListener("MsgStartBattle", OnMsgStartBattle);
+        NetManager.AddMsgListener("MsgInitData", OnMsgInitData);
 		//发送查询
 		MsgGetRoomInfo msg = new MsgGetRoomInfo();
 		NetManager.Send(msg);
@@ -50,6 +51,7 @@ public class RoomPanel : BasePanel {
 		NetManager.RemoveMsgListener("MsgGetRoomInfo", OnMsgGetRoomInfo);
 		NetManager.RemoveMsgListener("MsgLeaveRoom", OnMsgLeaveRoom);
 		NetManager.RemoveMsgListener("MsgStartBattle", OnMsgStartBattle);
+        NetManager.AddMsgListener("MsgInitData", OnMsgInitData);
         Audio.MuteLoop(Audio.bgRoomPanel);
     }
 
@@ -120,15 +122,24 @@ public class RoomPanel : BasePanel {
 
 	//收到开战返回
 	public void OnMsgStartBattle (MsgBase msgBase) {
-		MsgLeaveRoom msg = (MsgLeaveRoom)msgBase;
+		MsgStartBattle msg = (MsgStartBattle)msgBase;
 		//开战
 		if(msg.result == 0){
+            PanelManager.Open<TipPanel>("开战成功！");
 			//等待战斗推送的协议
 		}
 		//开战失败
 		else{
-			PanelManager.Open<TipPanel>("开战失败！两队至少都需要一名玩家，只有队长可以开始战斗！");
+			PanelManager.Open<TipPanel>("开战失败！");
 		}
 	}
+
+    public void OnMsgInitData(MsgBase msgBase)
+    {
+        MsgInitData msg = (MsgInitData)msgBase;
+        Debug.Log("成功接收到初始化数据,切换到战斗页面");
+        Close();
+        PanelManager.Open<GamePanel>(msg);
+    }
 
 }

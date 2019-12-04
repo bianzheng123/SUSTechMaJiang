@@ -233,158 +233,31 @@ public class GamePanel : BasePanel {
     public override void OnShow(params object[] args)
     {
         //寻找组件
-        exitButton = skin.transform.Find("ExitButton").GetComponent<Button>();
-        setButton = skin.transform.Find("SetButton").GetComponent<Button>();
-        lights = new GameObject[4];
-        lights[0] = skin.transform.Find("TimeImage/Down").gameObject;
-        lights[1] = skin.transform.Find("TimeImage/Right").gameObject;
-        lights[2] = skin.transform.Find("TimeImage/Up").gameObject;
-        lights[3] = skin.transform.Find("TimeImage/Left").gameObject;
-        playerRadio = new Toggle[3];
-        for(int i = 0; i < 3; i++)
-        {
-            //默认下方为player1，然后逆时针为player2,3,4...
-            string str = "Toggle/Player" + (i + 2);
-            playerRadio[i] = skin.transform.Find(str).GetComponent<Toggle>();
-        }
-        okButton = skin.transform.Find("OkButton").GetComponent<Button>();
-        cancelButton = skin.transform.Find("CancelButton").GetComponent<Button>();
-        timeCount = new Image[2];
-        timeCount[0] = skin.transform.Find("TimeCount_GeWei").GetComponent<Image>();
-        timeCount[1] = skin.transform.Find("TimeCount_ShiWei").GetComponent<Image>();
-        pengButton = skin.transform.Find("PengButton").GetComponent<Button>();
-        gangButton = skin.transform.Find("GangButton").GetComponent<Button>();
-        huButton = skin.transform.Find("HuButton").GetComponent<Button>();
-        chiButton = skin.transform.Find("ChiButton").GetComponent<Button>();
-        noActionButton = skin.transform.Find("NoActionButton").GetComponent<Button>();
-        skillButton = skin.transform.Find("SkillButton").GetComponent<Button>();
-        skillDescriptionButton = skin.transform.Find("SkillDescriptionButton").GetComponent<Button>();
-        turnText = skin.transform.Find("TurnText").GetComponent<Text>();
-        skillDisplayText = skin.transform.Find("SkillDisplayText").GetComponent<Text>();
-        restSkillCount = skin.transform.Find("RestSkillCount").GetComponent<Text>();
-        skillingText = skin.transform.Find("SkillingText").gameObject;
-        zhuangImage = skin.transform.Find("ZhuangImage").GetComponent<Image>();
-        playerPaiInfo = new PlayerPaiInfo[4];
-        //第一个用来显示自己的弃牌，吃碰杠
-        playerPaiInfo[0].discardPai = skin.transform.Find("OtherPlayerInfo/Player1/DiscardPai").GetComponent<Button>();
-        playerPaiInfo[0].chi = skin.transform.Find("OtherPlayerInfo/Player1/Chi").GetComponent<Button>();
-        playerPaiInfo[0].peng = skin.transform.Find("OtherPlayerInfo/Player1/Peng").GetComponent<Button>();
-        playerPaiInfo[0].gang = skin.transform.Find("OtherPlayerInfo/Player1/Gang").GetComponent<Button>();
-
-        playerPaiInfo[1].discardPai = skin.transform.Find("OtherPlayerInfo/Player2/DiscardPai").GetComponent<Button>();
-        playerPaiInfo[1].chi = skin.transform.Find("OtherPlayerInfo/Player2/Chi").GetComponent<Button>();
-        playerPaiInfo[1].peng = skin.transform.Find("OtherPlayerInfo/Player2/Peng").GetComponent<Button>();
-        playerPaiInfo[1].gang = skin.transform.Find("OtherPlayerInfo/Player2/Gang").GetComponent<Button>();
-
-        playerPaiInfo[2].discardPai = skin.transform.Find("OtherPlayerInfo/Player3/DiscardPai").GetComponent<Button>();
-        playerPaiInfo[2].chi = skin.transform.Find("OtherPlayerInfo/Player3/Chi").GetComponent<Button>();
-        playerPaiInfo[2].peng = skin.transform.Find("OtherPlayerInfo/Player3/Peng").GetComponent<Button>();
-        playerPaiInfo[2].gang = skin.transform.Find("OtherPlayerInfo/Player3/Gang").GetComponent<Button>();
-
-        playerPaiInfo[3].discardPai = skin.transform.Find("OtherPlayerInfo/Player4/DiscardPai").GetComponent<Button>();
-        playerPaiInfo[3].chi = skin.transform.Find("OtherPlayerInfo/Player4/Chi").GetComponent<Button>();
-        playerPaiInfo[3].peng = skin.transform.Find("OtherPlayerInfo/Player4/Peng").GetComponent<Button>();
-        playerPaiInfo[3].gang = skin.transform.Find("OtherPlayerInfo/Player4/Gang").GetComponent<Button>();
-        chatRoom.chatInput = skin.transform.Find("ChatRoom/ChatInputField").GetComponent<InputField>();
-        chatRoom.chatText = skin.transform.Find("ChatRoom/ChatRoomPanel/TextShowPanel/ChatText").GetComponent<Text>();
-        chatRoom.scrollRect = skin.transform.Find("ChatRoom/ChatRoomPanel/TextShowPanel").GetComponent<ScrollRect>();
+        GetUIComponent();
         //监听
-        exitButton.onClick.AddListener(OnExitClick);
-        setButton.onClick.AddListener(OnSetClick);
-        okButton.onClick.AddListener(OnChuPaiClick);
-        cancelButton.onClick.AddListener(OnCancelPaiClick);
-        pengButton.onClick.AddListener(OnPengClick);
-        gangButton.onClick.AddListener(OnGangClick);
-        huButton.onClick.AddListener(OnHuClick);
-        chiButton.onClick.AddListener(OnChiClick);
-        noActionButton.onClick.AddListener(OnNoActionClick);
-        skillButton.onClick.AddListener(OnSkillClick);
-        skillDescriptionButton.onClick.AddListener(OnSkillDescriptionClick);
-
-        playerPaiInfo[0].discardPai.onClick.AddListener(OnOtherInfoClick_discardPai_player1);
-        playerPaiInfo[0].chi.onClick.AddListener(OnOtherInfoClick_chi_player1);
-        playerPaiInfo[0].peng.onClick.AddListener(OnOtherInfoClick_peng_player1);
-        playerPaiInfo[0].gang.onClick.AddListener(OnOtherInfoClick_gang_player1);
-
-        playerPaiInfo[1].discardPai.onClick.AddListener(OnOtherInfoClick_discardPai_player2);
-        playerPaiInfo[1].chi.onClick.AddListener(OnOtherInfoClick_chi_player2);
-        playerPaiInfo[1].peng.onClick.AddListener(OnOtherInfoClick_peng_player2);
-        playerPaiInfo[1].gang.onClick.AddListener(OnOtherInfoClick_gang_player2);
-
-        playerPaiInfo[2].discardPai.onClick.AddListener(OnOtherInfoClick_discardPai_player3);
-        playerPaiInfo[2].chi.onClick.AddListener(OnOtherInfoClick_chi_player3);
-        playerPaiInfo[2].peng.onClick.AddListener(OnOtherInfoClick_peng_player3);
-        playerPaiInfo[2].gang.onClick.AddListener(OnOtherInfoClick_gang_player3);
-
-        playerPaiInfo[3].discardPai.onClick.AddListener(OnOtherInfoClick_discardPai_player4);
-        playerPaiInfo[3].chi.onClick.AddListener(OnOtherInfoClick_chi_player4);
-        playerPaiInfo[3].peng.onClick.AddListener(OnOtherInfoClick_peng_player4);
-        playerPaiInfo[3].gang.onClick.AddListener(OnOtherInfoClick_gang_player4);
-
-        exitButton.onClick.AddListener(Audio.ButtonClick);
-        setButton.onClick.AddListener(Audio.ButtonClick);
-        okButton.onClick.AddListener(Audio.ButtonClick);
-        cancelButton.onClick.AddListener(Audio.ButtonClick);
-        pengButton.onClick.AddListener(Audio.ButtonClick);
-        gangButton.onClick.AddListener(Audio.ButtonClick);
-        huButton.onClick.AddListener(Audio.ButtonClick);
-        chiButton.onClick.AddListener(Audio.ButtonClick);
-        noActionButton.onClick.AddListener(Audio.ButtonClick);
-        skillButton.onClick.AddListener(Audio.ButtonClick);
-        skillDescriptionButton.onClick.AddListener(Audio.ButtonClick);
-
-        playerPaiInfo[0].discardPai.onClick.AddListener(Audio.ButtonClick);
-        playerPaiInfo[0].chi.onClick.AddListener(Audio.ButtonClick);
-        playerPaiInfo[0].peng.onClick.AddListener(Audio.ButtonClick);
-        playerPaiInfo[0].gang.onClick.AddListener(Audio.ButtonClick);
-
-        playerPaiInfo[1].discardPai.onClick.AddListener(Audio.ButtonClick);
-        playerPaiInfo[1].chi.onClick.AddListener(Audio.ButtonClick);
-        playerPaiInfo[1].peng.onClick.AddListener(Audio.ButtonClick);
-        playerPaiInfo[1].gang.onClick.AddListener(Audio.ButtonClick);
-
-        playerPaiInfo[2].discardPai.onClick.AddListener(Audio.ButtonClick);
-        playerPaiInfo[2].chi.onClick.AddListener(Audio.ButtonClick);
-        playerPaiInfo[2].peng.onClick.AddListener(Audio.ButtonClick);
-        playerPaiInfo[2].gang.onClick.AddListener(Audio.ButtonClick);
-
-        playerPaiInfo[3].discardPai.onClick.AddListener(Audio.ButtonClick);
-        playerPaiInfo[3].chi.onClick.AddListener(Audio.ButtonClick);
-        playerPaiInfo[3].peng.onClick.AddListener(Audio.ButtonClick);
-        playerPaiInfo[3].gang.onClick.AddListener(Audio.ButtonClick);
+        AddButtonClick();
         //网络协议监听
         //NetManager.AddMsgListener("MsgLogin", OnMsgLogin);
         //发送查询
         //MsgGetRoomInfo msg = new MsgGetRoomInfo();
         //NetManager.Send(msg);
-
+        //隐藏各种UI，对他们进行初始化
+        InitUI();
         //生成gameManager类
         gameManager = GameManager.GetInstance();
         gameManager.GamePanel = this;
         gameManager.PlayerFactory = new PlayerFactory();
-
         //生成背景图片
-        GameObject bg = ResManager.LoadSprite("bg_game",0);
+        GameObject bg = ResManager.LoadSprite("bg_game", 0);
         bg.name = "background";
-        bg.transform.localScale = new Vector3(2,2,2);
+        bg.transform.localScale = new Vector3(2, 2, 2);
+        //GameManager处理发过来的数据,这个一定要放在生成gameManager类后面
+        MsgInitData msg = (MsgInitData)args[0];
+        gameManager.ProcessInitData(msg);
 
-        //灯光的初始化
-        for (int i = 0; i < lights.Length; i++)
-        {
-            lights[i].SetActive(false);
-        }
-        ChuPaiButton = false;
+        
 
-        chiButton.gameObject.SetActive(false);
-        pengButton.gameObject.SetActive(false);
-        gangButton.gameObject.SetActive(false);
-        huButton.gameObject.SetActive(false);
-        noActionButton.gameObject.SetActive(false);
-        skillButton.gameObject.SetActive(false);
-        zhuangImage.gameObject.SetActive(false);
-        PlayerRadio = false;//隐藏用于发动数学系技能的单选框
-        skillingText.SetActive(false);
-
+        
         Audio.PlayLoop(Audio.bgGamePanel);
     }
 
@@ -808,7 +681,161 @@ public class GamePanel : BasePanel {
                 numToDir[3] = Direction.DOWN;
                 break;
         }
+    }
 
+    /// <summary>
+    /// 添加按钮事件
+    /// </summary>
+    public void AddButtonClick()
+    {
+        exitButton.onClick.AddListener(OnExitClick);
+        setButton.onClick.AddListener(OnSetClick);
+        okButton.onClick.AddListener(OnChuPaiClick);
+        cancelButton.onClick.AddListener(OnCancelPaiClick);
+        pengButton.onClick.AddListener(OnPengClick);
+        gangButton.onClick.AddListener(OnGangClick);
+        huButton.onClick.AddListener(OnHuClick);
+        chiButton.onClick.AddListener(OnChiClick);
+        noActionButton.onClick.AddListener(OnNoActionClick);
+        skillButton.onClick.AddListener(OnSkillClick);
+        skillDescriptionButton.onClick.AddListener(OnSkillDescriptionClick);
+
+        playerPaiInfo[0].discardPai.onClick.AddListener(OnOtherInfoClick_discardPai_player1);
+        playerPaiInfo[0].chi.onClick.AddListener(OnOtherInfoClick_chi_player1);
+        playerPaiInfo[0].peng.onClick.AddListener(OnOtherInfoClick_peng_player1);
+        playerPaiInfo[0].gang.onClick.AddListener(OnOtherInfoClick_gang_player1);
+
+        playerPaiInfo[1].discardPai.onClick.AddListener(OnOtherInfoClick_discardPai_player2);
+        playerPaiInfo[1].chi.onClick.AddListener(OnOtherInfoClick_chi_player2);
+        playerPaiInfo[1].peng.onClick.AddListener(OnOtherInfoClick_peng_player2);
+        playerPaiInfo[1].gang.onClick.AddListener(OnOtherInfoClick_gang_player2);
+
+        playerPaiInfo[2].discardPai.onClick.AddListener(OnOtherInfoClick_discardPai_player3);
+        playerPaiInfo[2].chi.onClick.AddListener(OnOtherInfoClick_chi_player3);
+        playerPaiInfo[2].peng.onClick.AddListener(OnOtherInfoClick_peng_player3);
+        playerPaiInfo[2].gang.onClick.AddListener(OnOtherInfoClick_gang_player3);
+
+        playerPaiInfo[3].discardPai.onClick.AddListener(OnOtherInfoClick_discardPai_player4);
+        playerPaiInfo[3].chi.onClick.AddListener(OnOtherInfoClick_chi_player4);
+        playerPaiInfo[3].peng.onClick.AddListener(OnOtherInfoClick_peng_player4);
+        playerPaiInfo[3].gang.onClick.AddListener(OnOtherInfoClick_gang_player4);
+
+        exitButton.onClick.AddListener(Audio.ButtonClick);
+        setButton.onClick.AddListener(Audio.ButtonClick);
+        okButton.onClick.AddListener(Audio.ButtonClick);
+        cancelButton.onClick.AddListener(Audio.ButtonClick);
+        pengButton.onClick.AddListener(Audio.ButtonClick);
+        gangButton.onClick.AddListener(Audio.ButtonClick);
+        huButton.onClick.AddListener(Audio.ButtonClick);
+        chiButton.onClick.AddListener(Audio.ButtonClick);
+        noActionButton.onClick.AddListener(Audio.ButtonClick);
+        skillButton.onClick.AddListener(Audio.ButtonClick);
+        skillDescriptionButton.onClick.AddListener(Audio.ButtonClick);
+
+        playerPaiInfo[0].discardPai.onClick.AddListener(Audio.ButtonClick);
+        playerPaiInfo[0].chi.onClick.AddListener(Audio.ButtonClick);
+        playerPaiInfo[0].peng.onClick.AddListener(Audio.ButtonClick);
+        playerPaiInfo[0].gang.onClick.AddListener(Audio.ButtonClick);
+
+        playerPaiInfo[1].discardPai.onClick.AddListener(Audio.ButtonClick);
+        playerPaiInfo[1].chi.onClick.AddListener(Audio.ButtonClick);
+        playerPaiInfo[1].peng.onClick.AddListener(Audio.ButtonClick);
+        playerPaiInfo[1].gang.onClick.AddListener(Audio.ButtonClick);
+
+        playerPaiInfo[2].discardPai.onClick.AddListener(Audio.ButtonClick);
+        playerPaiInfo[2].chi.onClick.AddListener(Audio.ButtonClick);
+        playerPaiInfo[2].peng.onClick.AddListener(Audio.ButtonClick);
+        playerPaiInfo[2].gang.onClick.AddListener(Audio.ButtonClick);
+
+        playerPaiInfo[3].discardPai.onClick.AddListener(Audio.ButtonClick);
+        playerPaiInfo[3].chi.onClick.AddListener(Audio.ButtonClick);
+        playerPaiInfo[3].peng.onClick.AddListener(Audio.ButtonClick);
+        playerPaiInfo[3].gang.onClick.AddListener(Audio.ButtonClick);
+    }
+
+    /// <summary>
+    /// 寻找UI的组件
+    /// </summary>
+    public void GetUIComponent()
+    {
+        exitButton = skin.transform.Find("ExitButton").GetComponent<Button>();
+        setButton = skin.transform.Find("SetButton").GetComponent<Button>();
+        lights = new GameObject[4];
+        lights[0] = skin.transform.Find("TimeImage/Down").gameObject;
+        lights[1] = skin.transform.Find("TimeImage/Right").gameObject;
+        lights[2] = skin.transform.Find("TimeImage/Up").gameObject;
+        lights[3] = skin.transform.Find("TimeImage/Left").gameObject;
+        playerRadio = new Toggle[3];
+        for (int i = 0; i < 3; i++)
+        {
+            //默认下方为player1，然后逆时针为player2,3,4...
+            string str = "Toggle/Player" + (i + 2);
+            playerRadio[i] = skin.transform.Find(str).GetComponent<Toggle>();
+        }
+        okButton = skin.transform.Find("OkButton").GetComponent<Button>();
+        cancelButton = skin.transform.Find("CancelButton").GetComponent<Button>();
+        timeCount = new Image[2];
+        timeCount[0] = skin.transform.Find("TimeCount_GeWei").GetComponent<Image>();
+        timeCount[1] = skin.transform.Find("TimeCount_ShiWei").GetComponent<Image>();
+        pengButton = skin.transform.Find("PengButton").GetComponent<Button>();
+        gangButton = skin.transform.Find("GangButton").GetComponent<Button>();
+        huButton = skin.transform.Find("HuButton").GetComponent<Button>();
+        chiButton = skin.transform.Find("ChiButton").GetComponent<Button>();
+        noActionButton = skin.transform.Find("NoActionButton").GetComponent<Button>();
+        skillButton = skin.transform.Find("SkillButton").GetComponent<Button>();
+        skillDescriptionButton = skin.transform.Find("SkillDescriptionButton").GetComponent<Button>();
+        turnText = skin.transform.Find("TurnText").GetComponent<Text>();
+        skillDisplayText = skin.transform.Find("SkillDisplayText").GetComponent<Text>();
+        restSkillCount = skin.transform.Find("RestSkillCount").GetComponent<Text>();
+        skillingText = skin.transform.Find("SkillingText").gameObject;
+        zhuangImage = skin.transform.Find("ZhuangImage").GetComponent<Image>();
+        playerPaiInfo = new PlayerPaiInfo[4];
+        //第一个用来显示自己的弃牌，吃碰杠
+        playerPaiInfo[0].discardPai = skin.transform.Find("OtherPlayerInfo/Player1/DiscardPai").GetComponent<Button>();
+        playerPaiInfo[0].chi = skin.transform.Find("OtherPlayerInfo/Player1/Chi").GetComponent<Button>();
+        playerPaiInfo[0].peng = skin.transform.Find("OtherPlayerInfo/Player1/Peng").GetComponent<Button>();
+        playerPaiInfo[0].gang = skin.transform.Find("OtherPlayerInfo/Player1/Gang").GetComponent<Button>();
+
+        playerPaiInfo[1].discardPai = skin.transform.Find("OtherPlayerInfo/Player2/DiscardPai").GetComponent<Button>();
+        playerPaiInfo[1].chi = skin.transform.Find("OtherPlayerInfo/Player2/Chi").GetComponent<Button>();
+        playerPaiInfo[1].peng = skin.transform.Find("OtherPlayerInfo/Player2/Peng").GetComponent<Button>();
+        playerPaiInfo[1].gang = skin.transform.Find("OtherPlayerInfo/Player2/Gang").GetComponent<Button>();
+
+        playerPaiInfo[2].discardPai = skin.transform.Find("OtherPlayerInfo/Player3/DiscardPai").GetComponent<Button>();
+        playerPaiInfo[2].chi = skin.transform.Find("OtherPlayerInfo/Player3/Chi").GetComponent<Button>();
+        playerPaiInfo[2].peng = skin.transform.Find("OtherPlayerInfo/Player3/Peng").GetComponent<Button>();
+        playerPaiInfo[2].gang = skin.transform.Find("OtherPlayerInfo/Player3/Gang").GetComponent<Button>();
+
+        playerPaiInfo[3].discardPai = skin.transform.Find("OtherPlayerInfo/Player4/DiscardPai").GetComponent<Button>();
+        playerPaiInfo[3].chi = skin.transform.Find("OtherPlayerInfo/Player4/Chi").GetComponent<Button>();
+        playerPaiInfo[3].peng = skin.transform.Find("OtherPlayerInfo/Player4/Peng").GetComponent<Button>();
+        playerPaiInfo[3].gang = skin.transform.Find("OtherPlayerInfo/Player4/Gang").GetComponent<Button>();
+        chatRoom.chatInput = skin.transform.Find("ChatRoom/ChatInputField").GetComponent<InputField>();
+        chatRoom.chatText = skin.transform.Find("ChatRoom/ChatRoomPanel/TextShowPanel/ChatText").GetComponent<Text>();
+        chatRoom.scrollRect = skin.transform.Find("ChatRoom/ChatRoomPanel/TextShowPanel").GetComponent<ScrollRect>();
+    }
+
+    /// <summary>
+    /// 隐藏各个组件，对他们进行初始化
+    /// </summary>
+    public void InitUI()
+    {
+        //灯光的初始化
+        for (int i = 0; i < lights.Length; i++)
+        {
+            lights[i].SetActive(false);
+        }
+        ChuPaiButton = false;
+
+        chiButton.gameObject.SetActive(false);
+        pengButton.gameObject.SetActive(false);
+        gangButton.gameObject.SetActive(false);
+        huButton.gameObject.SetActive(false);
+        noActionButton.gameObject.SetActive(false);
+        skillButton.gameObject.SetActive(false);
+        zhuangImage.gameObject.SetActive(false);
+        PlayerRadio = false;//隐藏用于发动数学系技能的单选框
+        skillingText.SetActive(false);
     }
 }
 public enum Direction

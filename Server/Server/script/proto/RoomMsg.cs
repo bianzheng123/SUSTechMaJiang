@@ -69,5 +69,5 @@ public class MsgLeaveRoom:MsgBase {
 public class MsgStartBattle:MsgBase {
 	public MsgStartBattle() {protoName = "MsgStartBattle";}
 	//服务端回
-	public int result = 0;
+	public int result = 0;//0代表成功，1代表失败
 }
