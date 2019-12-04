@@ -22,14 +22,6 @@ public class StartGameData
     public string username = "";//该客户端的用户名
 }
 
-public enum Major
-{
-    None = 0,
-    Math = 1,
-    Chemistry = 2,
-    ComputerScience = 3
-}
-
 //用于发牌
 public class MsgFaPai : MsgBase
 {

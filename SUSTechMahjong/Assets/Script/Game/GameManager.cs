@@ -79,7 +79,7 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < msg.data.Length; i++)
         {
             msg.data[i] = new StartGameData();
-            msg.data[i].skillIndex = (int)Major.ComputerScience;//全部设为计算机系
+            msg.data[i].skillIndex = (int)Major.None;//全部设为计算机系
             msg.data[i].skillCount = maxSkillTime[i];
             msg.data[i].gender = rd.Next() % 2;//随机生成性别
         }//初始化协议的牌数组
@@ -125,6 +125,7 @@ public class GameManager : MonoBehaviour
         gamePanel.Skill = (Major)msg.data[msg.id].skillIndex;
         skillCount = msg.data[msg.id].skillCount;
         gamePanel.RestSkillCount = skillCount;
+        //gamePanel中先给Skill进行赋值，才能给RestSkillCount进行赋值
         
         //生成牌
         for (int i = 0; i < 4; i++)

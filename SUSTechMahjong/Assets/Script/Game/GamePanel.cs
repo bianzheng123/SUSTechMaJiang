@@ -97,8 +97,7 @@ public class GamePanel : BasePanel {
             switch (value)
             {
                 case Major.None:
-                    skillDisplayText.text = "你是通识通修";
-                    Debug.Log("没加入系，出现了bug");
+                    skillDisplayText.text = "你是通识通修,不能发送技能";
                     break;
                 case Major.Math:
                     skillDisplayText.text = "你是数学系";
@@ -127,6 +126,10 @@ public class GamePanel : BasePanel {
         {
             string str = value == 0 ? "你不能使用技能了" : "你还剩下" + value + "次技能";
             restSkillCount.text = str;
+            if(skill == Major.None)
+            {
+                restSkillCount.gameObject.SetActive(false);
+            }
         }
     }
 
@@ -185,7 +188,14 @@ public class GamePanel : BasePanel {
     {
         set
         {
-            skillButton.gameObject.SetActive(value);
+            if(skill == Major.None)
+            {
+                skillButton.gameObject.SetActive(false);
+            }
+            else
+            {
+                skillButton.gameObject.SetActive(value);
+            }
         }
     }
     public int ZhuangImage
@@ -441,7 +451,6 @@ public class GamePanel : BasePanel {
         {
             case Major.None:
                 PanelManager.Open<TipPanel>("你没有技能");
-                Debug.Log("技能不可能为空，出现bug");
                 break;
             case Major.Math:
                 PanelManager.Open<TipPanel>("数学系：查看场上随机一人的N张牌（N = 14-轮数）（可查看的牌的数量与时间相关，越早使用该技能可以看到的牌数越多）");
@@ -752,7 +761,7 @@ public class GamePanel : BasePanel {
     {
         if (pai == null)
         {
-            PanelManager.Open<TipPanel>("无法观察到牌");
+            PanelManager.Open<TipPanel>("没有牌能观察");
         }
         else
         {

@@ -12,9 +12,16 @@ public static class Gamedata
     public static void Init()
     {
         majors = new Dictionary<int, string>();
+        majors.Add(0,"通识通修");
         majors.Add(1, "化学系");
         majors.Add(2, "数学系");
         majors.Add(3, "计算机系");
     }
 }
-
+public enum Major
+{
+    None = 0,
+    Math = 1,
+    Chemistry = 2,
+    ComputerScience = 3
+}
