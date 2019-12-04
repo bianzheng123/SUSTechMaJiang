@@ -137,6 +137,116 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
+    /// 客户端接收到聊天协议
+    /// </summary>
+    /// <param name="msgBase"></param>
+    public void OnMsgChat(MsgBase msgBase)
+    {
+        MsgChat msg = (MsgChat)msgBase;
+
+        string addText = "\n  " + "<color=red>" + players[msg.id].username + "</color>: " + msg.chatmsg;
+        gamePanel.chatRoom.chatText.text = gamePanel.chatRoom.chatText.text + addText;
+        gamePanel.chatRoom.chatInput.ActivateInputField();
+        Canvas.ForceUpdateCanvases();       //关键代码
+        gamePanel.chatRoom.scrollRect.verticalNormalizedPosition = 0f;  //关键代码
+        Canvas.ForceUpdateCanvases();   //关键代码
+    }
+
+    /// <summary>
+    /// 客户端收到出牌的协议，进行同步
+    /// </summary>
+    /// <param name="msgBase"></param>
+    public void OnMsgChuPai(MsgBase msgBase)
+    {
+        MsgChuPai msg = (MsgChuPai)msgBase;
+        Debug.Log("PlayerId: " + msg.id);
+        if (msg.paiIndex == -1)//胡的情况
+        {
+            Gender gender = players[msg.id].gender;
+            switch (gender)
+            {
+                case Gender.Female:
+                    Audio.PlayCue(Audio.audioHuFemale);
+                    break;
+                case Gender.Male:
+                    Audio.PlayCue(Audio.audioHuMale);
+                    break;
+            }
+
+            Debug.Log("胡牌成功！");
+            if (msg.id == turn)
+            {
+                //跳转到成功界面
+                PanelManager.Open<GameoverPanel>(1, msg.id, client_id);
+            }
+            else
+            {
+                //跳转到失败的界面
+                PanelManager.Open<GameoverPanel>(2, msg.id, client_id);
+            }
+            PanelManager.Close("GamePanel");
+        }
+        else
+        {
+            players[msg.id].DiscardPai(msg.paiIndex);
+        }
+    }
+
+    /// <summary>
+    /// 客户端接收到吃碰杠的协议
+    /// 第一次收到协议，就让玩家操作是否进行吃碰杠，并将结果传给服务端
+    /// 第二次收到协议，同步结果
+    /// 这两次协议都需要服务端广播
+    /// </summary>
+    /// <param name="msgBase"></param>
+    public void OnMsgChiPengGang(MsgBase msgBase)
+    {
+        MsgChiPengGang msg = (MsgChiPengGang)msgBase;
+        if (msg.result == -1)//第一次收到协议
+        {
+            StartTimeCount();
+            nowTurnid = msg.id;
+
+            players[nowTurnid].msgChiPengGang = msg;
+            gamePanel.TurnLight(nowTurnid);
+            if (nowTurnid == client_id)
+            {
+                bool[] isChiPengGang = msg.isChiPengGang;
+                if (isChiPengGang[1])
+                {
+                    gamePanel.ChiButton = true;
+                }
+                if (isChiPengGang[2])
+                {
+                    gamePanel.PengButton = true;
+                }
+                if (isChiPengGang[3])
+                {
+                    gamePanel.GangButton = true;
+                }
+            }
+        }
+        else
+        {
+            switch (msg.result)
+            {
+                case 0://取消操作，不需要任何改变
+                    break;
+                case 1:
+                    players[msg.id].OnChi(msg.paiId);
+                    break;
+                case 2:
+                    players[msg.id].OnPeng(msg.paiId);
+                    break;
+                case 3:
+                    players[msg.id].OnGang(msg.paiId);
+                    break;
+            }
+        }
+    }
+
+
+    /// <summary>
     /// 服务端处理发牌的协议
     /// </summary>
     /// <param name="msgBase"></param>
@@ -513,33 +623,6 @@ public class GameManager : MonoBehaviour
         ServerOnMsgFaPai(msgFaPai);
     }
 
-    /// <summary>
-    /// 服务端接收到协议
-    /// </summary>
-    /// <param name="msgBase"></param>
-    public void ServerOnMsgChat(MsgBase msgBase)
-    {
-        MsgChat msg = (MsgChat)msgBase;
-        ClientOnMsgChat(msg);
-        Debug.Log(msg.chatmsg + "  " + msg.id);
-    }
-
-    /// <summary>
-    /// 客户端接收到协议
-    /// </summary>
-    /// <param name="msgBase"></param>
-    public void ClientOnMsgChat(MsgBase msgBase)
-    {
-        MsgChat msg = (MsgChat)msgBase;
-
-        string addText = "\n  " + "<color=red>" + players[msg.id].username + "</color>: " + msg.chatmsg;
-        gamePanel.chatRoom.chatText.text = gamePanel.chatRoom.chatText.text + addText;
-        gamePanel.chatRoom.chatInput.ActivateInputField();
-        Canvas.ForceUpdateCanvases();       //关键代码
-        gamePanel.chatRoom.scrollRect.verticalNormalizedPosition = 0f;  //关键代码
-        Canvas.ForceUpdateCanvases();   //关键代码
-    }
-
     public void StartTimeCount()
     {
         startTimeCount = true;
@@ -550,7 +633,7 @@ public class GameManager : MonoBehaviour
     {
         timeLast -= Time.deltaTime;
         gamePanel.SetTimeCount(timeLast);
-        if(timeLast <= 3 && !canTimeAlarm)
+        if(timeLast <= 3 && !canTimeAlarm && nowTurnid == client_id)
         {
             Audio.PlayCue(Audio.timeup_alarm);
             canTimeAlarm = true;
@@ -588,10 +671,6 @@ public class GameManager : MonoBehaviour
             {        //发动数学系技能时不可选中自己的牌
                 players[nowTurnid].DaPai();//这里人机只是打牌，不发动任何技能
             }//否则进行吃碰杠的判断
-            else if(nowTurnid != client_id)
-            {//用于人机的操作
-                players[nowTurnid].ChiPengGang();
-            }
         }
 
 
@@ -604,7 +683,7 @@ public class GameManager : MonoBehaviour
                 msg.chatmsg = gamePanel.chatRoom.chatInput.text;
                 msg.id = client_id;
                 gamePanel.chatRoom.chatInput.text = "";
-                ServerOnMsgChat(msg);
+                NetManager.Send(msg);
             }
         }
     }

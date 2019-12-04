@@ -110,7 +110,7 @@ public abstract class BasePlayer : MonoBehaviour {
         gamePanel.PengButton = false;
         gamePanel.GangButton = false;
         gameManager.startTimeCount = false;
-        gameManager.ServerOnMsgChiPengGang(msgChiPengGang);
+        NetManager.Send(msgChiPengGang);
         msgChiPengGang = null;
     }
 
@@ -136,7 +136,7 @@ public abstract class BasePlayer : MonoBehaviour {
         gamePanel.ChuPaiButton = false;
         gamePanel.HuButton = false;
         gameManager.isChuPai = false;
-        gameManager.ServerOnMsgChuPai(msg);
+        NetManager.Send(msg);
         
     }
 

@@ -245,6 +245,9 @@ public class GamePanel : BasePanel {
         gameManager.OnMsgInitData(msgInitData);
         //网络协议监听
         NetManager.AddMsgListener("MsgFaPai", gameManager.OnMsgFaPai);
+        NetManager.AddMsgListener("MsgChat", gameManager.OnMsgChat);
+        NetManager.AddMsgListener("MsgChuPai",gameManager.OnMsgChuPai);
+        NetManager.AddMsgListener("MsgChiPengGang",gameManager.OnMsgChiPengGang);
         //发送查询,发动查询要在处理InitData之后
         if (gameManager.isZhuang)
         {
@@ -267,9 +270,9 @@ public class GamePanel : BasePanel {
     {
         //网络协议监听
         NetManager.RemoveMsgListener("MsgFaPai", gameManager.OnMsgFaPai);
-        //网络事件监听
-        //NetManager.RemoveEventListener(NetManager.NetEvent.ConnectSucc, OnConnectSucc);
-        //NetManager.RemoveEventListener(NetManager.NetEvent.ConnectFail, OnConnectFail);
+        NetManager.RemoveMsgListener("MsgChat", gameManager.OnMsgChat);
+        NetManager.RemoveMsgListener("MsgChuPai", gameManager.OnMsgChuPai);
+        NetManager.RemoveMsgListener("MsgChiPengGang", gameManager.OnMsgChiPengGang);
 
         Audio.MuteLoop(Audio.bgGamePanel);
     }

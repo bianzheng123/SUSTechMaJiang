@@ -51,7 +51,7 @@ public class RoomPanel : BasePanel {
 		NetManager.RemoveMsgListener("MsgGetRoomInfo", OnMsgGetRoomInfo);
 		NetManager.RemoveMsgListener("MsgLeaveRoom", OnMsgLeaveRoom);
 		NetManager.RemoveMsgListener("MsgStartBattle", OnMsgStartBattle);
-        NetManager.AddMsgListener("MsgInitData", OnMsgInitData);
+        NetManager.RemoveMsgListener("MsgInitData", OnMsgInitData);
         Audio.MuteLoop(Audio.bgRoomPanel);
     }
 

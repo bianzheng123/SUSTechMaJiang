@@ -102,6 +102,85 @@ public class GameManager
         return msg;
     }
 
+    /// <summary>
+    /// 判断是否触发了吃碰杠，如果触发了，就发送吃碰杠协议
+    /// 否则，发送发牌协议，并广播
+    /// </summary>
+    /// <param name="paiIndex"></param>
+    /// <param name="id"></param>
+    public void ProcessMsgChuPai(int paiIndex,int id)
+    {
+        int paiId = paiManager.ChuPai(paiIndex, id);
+
+        queueChiPengGang = paiManager.HasEvent(paiId, id);//检测是否有吃碰杠这件事
+
+        if (queueChiPengGang.Count != 0)//一直发送吃碰杠协议，直到发完或者有人同意吃碰杠为止
+        {
+            Console.WriteLine("存在吃碰杠!");
+            foreach (MsgChiPengGang item in queueChiPengGang)
+            {
+                Console.WriteLine(item.ToString());
+            }
+            MsgChiPengGang chiPengGang = queueChiPengGang.Dequeue();
+            Broadcast(chiPengGang);//广播吃碰杠协议
+        }
+        else
+        {
+            MsgFaPai msgFaPai = new MsgFaPai();
+            turn = (turn + 1) % 4;
+
+            msgFaPai = ProcessMsgFaPai(msgFaPai);
+            //广播
+            Broadcast(msgFaPai);
+        }
+    }
+
+    /// <summary>
+    /// 服务端接收到吃碰杠的协议，将本轮吃碰杠的结果进行广播,同时将服务端的牌进行同步
+    /// 如果本轮没有进行吃碰杠，就轮到下一个玩家判断
+    /// 如果有人进行了吃碰杠，就轮到下一个人进行发牌
+    /// </summary>
+    /// <param name="msgBase"></param>
+    public void ProcessChiPengGang(MsgChiPengGang msg)
+    {
+        //取消操作，就发送下一个吃碰杠协议
+        if (msg.result == 0 && queueChiPengGang.Count > 0)
+        {
+            MsgChiPengGang msgChiPengGang = queueChiPengGang.Dequeue();
+            Broadcast(msgChiPengGang);
+            return;
+        }
+
+        switch (msg.result)
+        {
+            case 0://这里的queue一定为空，不需要进行任何的改变
+                break;
+            case 1://更新牌库
+                if (paiManager.OnChi(msg.id, msg.paiId) == false)
+                {
+                    Console.WriteLine("更新牌库吃出现了bug");
+                }
+                break;
+            case 2:
+                if (paiManager.OnPeng(msg.id, msg.paiId) == false)
+                {
+                    Console.WriteLine("更新牌库碰出现了bug");
+                }
+                break;
+            case 3:
+                if (paiManager.OnGang(msg.id, msg.paiId) == false)
+                {
+                    Console.WriteLine("更新牌库杠出现了bug");
+                }
+                break;
+        }
+        MsgFaPai msgFaPai = new MsgFaPai();
+        turn = (turn + 1) % 4;
+        msgFaPai = ProcessMsgFaPai(msgFaPai);
+        //广播
+        Broadcast(msgFaPai);
+    }
+
     //广播消息
     public void Broadcast(MsgBase msg)
     {
