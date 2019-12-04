@@ -14,7 +14,7 @@ class NetManager
 	//Select的检查列表
 	static List<Socket> checkRead = new List<Socket>();
 	//ping间隔
-	public static long pingInterval = 30;
+	public static long pingInterval = 60;
 
 	public static void StartLoop(int listenPort)
 	{

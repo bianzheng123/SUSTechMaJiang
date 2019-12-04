@@ -8,7 +8,7 @@ public class GameManager
 {
     //这里的username指的是player中的id
     private PaiManager paiManager;
-    Player[] players;
+    public Player[] players;
     public int turn;//代表现在轮到谁了
     public Queue<MsgChiPengGang> queueChiPengGang;//每一个房间都存放用来判断是否吃碰杠的列表
     public int turnNum = 1;//代表现在是第几轮
@@ -49,7 +49,7 @@ public class GameManager
         }
     }
 
-    public void SendMsgInitData()
+    public MsgInitData GetMsgInitData()
     {
         MsgInitData msg = new MsgInitData();
         Random rd = new Random();
@@ -74,12 +74,7 @@ public class GameManager
             int[] res = paiManager.FaPai(num, i);
             msg.data[i].paiIndex = res;
         }
-        for(int i = 0; i < 4; i++)
-        {
-            msg.id = i;
-            players[i].Send(msg);
-        }
-        Console.WriteLine("Send MsgInitData success, this is do the broadcast");
+        return msg;
     }
 
     //广播消息

@@ -135,8 +135,13 @@ public partial class MsgHandler {
 
         room.gameManager = new GameManager(room);//对gameManager进行初始化
 
-        room.gameManager.SendMsgInitData();
-
+        MsgInitData msgInit = room.gameManager.GetMsgInitData();
+        for (int i = 0; i < 4; i++)
+        {
+            msgInit.id = i;
+            room.gameManager.players[i].Send(msg);
+        }
+        Console.WriteLine("Send MsgInitData success, this is do the broadcast");
     }
 
 }

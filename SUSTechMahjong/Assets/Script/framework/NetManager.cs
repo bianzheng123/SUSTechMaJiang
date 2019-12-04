@@ -24,7 +24,7 @@ public static class NetManager {
 	//是否启用心跳
 	public static bool isUsePing = true;
 	//心跳间隔时间
-	public static int pingInterval = 30;
+	public static int pingInterval = 5;
 	//上一次发送PING的时间
 	static float lastPingTime = 0;
 	//上一次收到PONG的时间
@@ -364,6 +364,7 @@ public static class NetManager {
 		if(!isUsePing){
 			return;
 		}
+
 		//发送PING
 		if(Time.time - lastPingTime > pingInterval){
 			MsgPing msgPing = new MsgPing();
@@ -380,4 +381,5 @@ public static class NetManager {
 	private static void OnMsgPong(MsgBase msgBase){
 		lastPongTime = Time.time;
 	}
+
 }
