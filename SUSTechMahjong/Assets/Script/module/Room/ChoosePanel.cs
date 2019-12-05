@@ -67,7 +67,7 @@ public class ChoosePanel : BasePanel
             PanelManager.Open<TipPanel>("请正确输入数字");
             return;
         }
-        if(!(1<=major && major <= 3))
+        if(!(0<=major && major <= 3))
         {
             PanelManager.Open<TipPanel>("请正确输入数字");
             return;

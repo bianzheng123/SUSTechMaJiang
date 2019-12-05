@@ -15,22 +15,6 @@ public partial class MsgHandler {
 		}
 		NetManager.Send(c, msg);
 	}
-    //专业选择协议处理
-    public static void MsgChoose(ClientState c, MsgBase msgBase)
-    {
-        MsgChoose msg = (MsgChoose)msgBase;
-        PlayerData playerData = DbManager.GetPlayerData(msg.id);
-        playerData.major = msg.major;
-        if(DbManager.UpdatePlayerData(msg.id, playerData))
-        {
-            msg.result = 0;
-        }
-        else
-        {
-            msg.result = 1;
-        }
-        NetManager.Send(c, msg);
-    }
 
     //登陆协议处理
     public static void MsgLogin(ClientState c, MsgBase msgBase){

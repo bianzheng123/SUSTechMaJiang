@@ -139,13 +139,6 @@ public class GamePanel : BasePanel {
         {
             okButton.gameObject.SetActive(value);
             cancelButton.gameObject.SetActive(value);
-            for(int i = 0; i < playerPaiInfo.Length; i++)
-            {
-                playerPaiInfo[i].discardPai.gameObject.SetActive(value);
-                playerPaiInfo[i].chi.gameObject.SetActive(value);
-                playerPaiInfo[i].peng.gameObject.SetActive(value);
-                playerPaiInfo[i].gang.gameObject.SetActive(value);
-            }
         }
     }
 
@@ -248,6 +241,8 @@ public class GamePanel : BasePanel {
         NetManager.AddMsgListener("MsgChat", gameManager.OnMsgChat);
         NetManager.AddMsgListener("MsgChuPai",gameManager.OnMsgChuPai);
         NetManager.AddMsgListener("MsgChiPengGang",gameManager.OnMsgChiPengGang);
+        NetManager.AddMsgListener("MsgChemistry", gameManager.OnMsgChemistry);
+        NetManager.AddMsgListener("MsgMath",gameManager.OnMsgMath);
         //发送查询,发动查询要在处理InitData之后
         if (gameManager.isZhuang)
         {
@@ -273,7 +268,8 @@ public class GamePanel : BasePanel {
         NetManager.RemoveMsgListener("MsgChat", gameManager.OnMsgChat);
         NetManager.RemoveMsgListener("MsgChuPai", gameManager.OnMsgChuPai);
         NetManager.RemoveMsgListener("MsgChiPengGang", gameManager.OnMsgChiPengGang);
-
+        NetManager.RemoveMsgListener("MsgChemistry", gameManager.OnMsgChemistry);
+        NetManager.RemoveMsgListener("MsgMath", gameManager.OnMsgMath);
         Audio.MuteLoop(Audio.bgGamePanel);
     }
 
@@ -288,6 +284,7 @@ public class GamePanel : BasePanel {
         {
             PlayerRadio = false;
         }
+        ChuPaiButton = false;
     }
 
     //改变灯光的顺序
@@ -401,7 +398,7 @@ public class GamePanel : BasePanel {
         gameManager.startTimeCount = false;//这里需要质疑，可能是多余的代码
         gameManager.isChuPai = false;
         HideSkillUI();
-
+        ChuPaiButton = false;
         player.LaunchComputerScience();
     }
 
@@ -521,7 +518,6 @@ public class GamePanel : BasePanel {
         if (gameManager.players == null) return;
         CtrlPlayer player = (CtrlPlayer)gameManager.players[gameManager.client_id];
         if (player == null) return;
-
         player.Hu();
     }
 
@@ -551,7 +547,6 @@ public class GamePanel : BasePanel {
         CtrlPlayer player = (CtrlPlayer)gameManager.players[gameManager.client_id];
         if (player == null) return;
         if (player.selectedPaiIndex == -1) return;
-
         player.ChuPai();
     }
 

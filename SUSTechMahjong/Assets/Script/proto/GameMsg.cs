@@ -24,8 +24,8 @@ public class MsgFaPai : MsgBase
 {
     public MsgFaPai() { protoName = "MsgFaPai"; }
     //服务端发送
-    public int paiId;//牌的类型
-    public int id;//收到牌的玩家id,如果是-1代表剩余牌没了，游戏结束
+    public int paiId;//牌的类型,如果是-1代表剩余牌没了，游戏结束
+    public int id;//收到牌的玩家id
     public bool isHu;//代表该玩家的牌是否能胡
     public int turnNum;//代表现在到第几轮了
     public bool canSkill;//代表能否使用技能

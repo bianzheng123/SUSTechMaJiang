@@ -80,7 +80,7 @@ public class CtrlPlayer : BasePlayer {
         msg.id = id;
         msg.paiIndex = selectedPaiIndex;
         selectedPaiIndex = -1;
-        gameManager.ServerOnMsgChemistry(msg);
+        NetManager.Send(msg);
     }
 
     /// <summary>
@@ -94,7 +94,7 @@ public class CtrlPlayer : BasePlayer {
         msg.paiId = null;
         Debug.Log("发动技能的玩家id为 " + id);
         Debug.Log("被观察的id为 " + selectedPlayerIndex);
-        gameManager.ServerOnMsgMath(msg);
+        NetManager.Send(msg);
     }
 
     public void LaunchComputerScience()
@@ -103,6 +103,6 @@ public class CtrlPlayer : BasePlayer {
         msg.id = id;
         msg.paiIndex = selectedPaiIndex;
         selectedPaiIndex = -1;
-        gameManager.ServerOnMsgComputerScience(msg);
+        NetManager.Send(msg);
     }
 }

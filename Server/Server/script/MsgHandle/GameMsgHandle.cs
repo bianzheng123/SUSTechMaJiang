@@ -3,7 +3,6 @@
 
 public partial class MsgHandler
 {
-    //用于开战的协议，代表是否可以开战
     public static void MsgFaPai(ClientState c, MsgBase msgBase)
     {
         MsgFaPai msg = (MsgFaPai)msgBase;
@@ -24,7 +23,7 @@ public partial class MsgHandler
     /// <param name="msgBase"></param>
     public static void MsgChat(ClientState c, MsgBase msgBase)
     {
-        MsgFaPai msg = (MsgFaPai)msgBase;
+        MsgChat msg = (MsgChat)msgBase;
         Player player = c.player;
         if (player == null) return;
         Room room = RoomManager.GetRoom(player.roomId);
@@ -43,18 +42,8 @@ public partial class MsgHandler
         if (room == null) return;
         GameManager gameManager = room.gameManager;
         if (gameManager == null) return;
-        
-        int paiIndex = msg.paiIndex;//牌在这个玩家的索引
-        int id = msg.id;//出牌的玩家id
-        gameManager.Broadcast(msg);//对客户端广播出牌协议，对出牌进行同步
 
-        if (paiIndex == -1)
-        {
-            //服务端执行胡的操作，清空数据，写入数据库等
-            return;
-        }
-
-        gameManager.ProcessMsgChuPai(paiIndex,id);
+        gameManager.ProcessMsgChuPai(msg);
     }
 
     public static void MsgChiPengGang(ClientState c,MsgBase msgBase)
@@ -66,9 +55,43 @@ public partial class MsgHandler
         if (room == null) return;
         GameManager gameManager = room.gameManager;
         if (gameManager == null) return;
-        gameManager.Broadcast(msg);//对得到的本轮结果进行广播
-
         gameManager.ProcessChiPengGang(msg);
         
+    }
+
+    public static void MsgChemistry(ClientState c,MsgBase msgBase)
+    {
+        MsgChemistry msg = (MsgChemistry)msgBase;
+        Player player = c.player;
+        if (player == null) return;
+        Room room = RoomManager.GetRoom(player.roomId);
+        if (room == null) return;
+        GameManager gameManager = room.gameManager;
+        if (gameManager == null) return;
+        gameManager.ProcessChemistry(msg);
+    }
+
+    public static void MsgMath(ClientState c, MsgBase msgBase)
+    {
+        MsgMath msg = (MsgMath)msgBase;
+        Player player = c.player;
+        if (player == null) return;
+        Room room = RoomManager.GetRoom(player.roomId);
+        if (room == null) return;
+        GameManager gameManager = room.gameManager;
+        if (gameManager == null) return;
+        gameManager.ProcessMath(msg);
+    }
+
+    public static void MsgComputerScience(ClientState c, MsgBase msgBase)
+    {
+        MsgComputerScience msg = (MsgComputerScience)msgBase;
+        Player player = c.player;
+        if (player == null) return;
+        Room room = RoomManager.GetRoom(player.roomId);
+        if (room == null) return;
+        GameManager gameManager = room.gameManager;
+        if (gameManager == null) return;
+        gameManager.ProcessComputerScience(msg);
     }
 }

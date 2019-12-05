@@ -44,50 +44,69 @@ public class GameoverPanel : BasePanel
         //监听
         okButton.onClick.AddListener(OnOkClick);
         okButton.onClick.AddListener(Audio.ButtonClick);
-        //网络协议监听
-        //NetManager.AddMsgListener("MsgLogin", OnMsgLogin);
-        //发送查询
-        //MsgGetRoomInfo msg = new MsgGetRoomInfo();
-        //NetManager.Send(msg);
 
-        int result = (int)args[0];//0代表平局，或者意外发生，1代表成功，2代表失败
-        int winId = (int)args[1];//代表赢的玩家的id
-        int thisId = (int)args[2];//代表该客户端的玩家id
-        ShowResult(result,winId,thisId);
+        int winId = (int)args[0];//代表赢的玩家的id
+        int thisId = (int)args[1];//代表该客户端的玩家id
+        
+        ShowResult(winId,thisId);
+        EndGame();
     }
 
-    //关闭
-    public override void OnClose()
+    public void EndGame()
     {
-        //网络协议监听
-        //NetManager.RemoveMsgListener("MsgLogin", OnMsgLogin);
-        //网络事件监听
-        //NetManager.RemoveEventListener(NetManager.NetEvent.ConnectSucc, OnConnectSucc);
-        //NetManager.RemoveEventListener(NetManager.NetEvent.ConnectFail, OnConnectFail);
+        GameManager gameManager = GameManager.GetInstance();
+        BasePlayer[] players = gameManager.players;
+        for(int i = 0; i < players.Length; i++)
+        {
+            GameObject[] pai = players[i].handPai.ToArray();
+            for(int j = 0; j < pai.Length; j++)
+            {
+                Destroy(pai[i]);
+                pai[i] = null;
+            }
+            Destroy(players[i].gameObject);
+            players[i] = null;
+        }
+        Destroy(gameManager.gameObject);
     }
 
     public void OnOkClick()
     {
-        Debug.Log("返回");
+        Close();
+        PanelManager.Open<RoomPanel>();
     }
 
     /// <summary>
     /// 展示结果，用来根据传递的参数进行画面的显示
     /// </summary>
     /// <param name="result">0代表意外发生或者平局，1代表该角色成功，2代表失败</param>
-    private void ShowResult(int result,int winId,int thisId)
+    private void ShowResult(int winId,int thisId)
     {
+        GameOver result;
+        if (winId == -1)
+        {
+            result = GameOver.Peace;
+        }
+        else if (winId == thisId)
+        {
+            result = GameOver.Win;
+        }
+        else
+        {
+            result = GameOver.Lose;
+        }
+
         players[thisId].text = "你";
-        title[result].gameObject.SetActive(true);
+        title[(int)result].gameObject.SetActive(true);
         switch (result)
         {
-            case 0:
+            case GameOver.Peace:
                 Debug.Log("播放平局音乐");
                 break;
-            case 1:
+            case GameOver.Win:
                 Audio.PlayCue(Audio.win);
                 break;
-            case 2:
+            case GameOver.Lose:
                 Audio.PlayCue(Audio.lose);
                 break;
         }
@@ -95,24 +114,30 @@ public class GameoverPanel : BasePanel
         {
             switch (result)
             {
-                case 0:
-                    results[i].text = "+0";
+                case GameOver.Peace:
+                    results[i].text = "+25";
                     break;
-                case 1:
-                case 2:
+                case GameOver.Win:
+                case GameOver.Lose:
                     if (i == winId)
                     {
-                        results[i].text = "-100";
+                        results[i].text = "+60";
                     }
                     else
                     {
-                        results[i].text = "-100";
+                        results[i].text = "+10";
                     }
                     break;
             }
         }
         
     }
+}
+public enum GameOver
+{
+    Peace = 0,
+    Win = 1,
+    Lose = 2
 }
 
 

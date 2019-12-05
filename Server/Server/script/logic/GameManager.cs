@@ -8,6 +8,7 @@ public class GameManager
 {
     //这里的username指的是player中的id
     private PaiManager paiManager;
+    private Room room;
     public Player[] players;
     public int turn;//代表现在轮到谁了
     public Queue<MsgChiPengGang> queueChiPengGang;//每一个房间都存放用来判断是否吃碰杠的列表
@@ -18,6 +19,7 @@ public class GameManager
 
     public GameManager(Room room)
     {
+        this.room = room;
         players = new Player[4];
         paiManager = new PaiManager();
         paiManager.Init();
@@ -89,6 +91,13 @@ public class GameManager
             turnNum++;
         }//判断下一次出牌是在第几轮
         int paiIdx = paiManager.FaPai(turn);
+
+        if(paiIdx == -1)
+        {
+            //没牌了，结束游戏
+            Over(-1,false);
+        }
+
         msg.paiId = paiIdx;
         if (paiManager.HasHu(turn))
         {
@@ -108,8 +117,19 @@ public class GameManager
     /// </summary>
     /// <param name="paiIndex"></param>
     /// <param name="id"></param>
-    public void ProcessMsgChuPai(int paiIndex,int id)
+    public void ProcessMsgChuPai(MsgChuPai msg)
     {
+        int paiIndex = msg.paiIndex;//牌在这个玩家的索引
+        int id = msg.id;//出牌的玩家id
+        Broadcast(msg);//对客户端广播出牌协议，对出牌进行同步
+
+        if (paiIndex == -1)
+        {
+            //服务端执行胡的操作，清空数据，写入数据库等
+            Over(msg.id,false);
+            return;
+        }
+
         int paiId = paiManager.ChuPai(paiIndex, id);
 
         queueChiPengGang = paiManager.HasEvent(paiId, id);//检测是否有吃碰杠这件事
@@ -143,6 +163,7 @@ public class GameManager
     /// <param name="msgBase"></param>
     public void ProcessChiPengGang(MsgChiPengGang msg)
     {
+        Broadcast(msg);//对得到的本轮结果进行广播
         //取消操作，就发送下一个吃碰杠协议
         if (msg.result == 0 && queueChiPengGang.Count > 0)
         {
@@ -179,6 +200,126 @@ public class GameManager
         msgFaPai = ProcessMsgFaPai(msgFaPai);
         //广播
         Broadcast(msgFaPai);
+    }
+
+    /// <summary>
+    /// 服务端处理化学系的协议
+    /// 删除指定的牌，添加一个额外的牌，并广播，使得每一个客户端重新开始计时
+    /// </summary>
+    /// <param name="msgBase"></param>
+    public void ProcessChemistry(MsgChemistry msg)
+    {
+        int paiId = paiManager.ChuPai(msg.paiIndex, msg.id);//删除指定的牌
+        Console.WriteLine("删除牌的id为 " + paiId);
+        paiId = paiManager.FaPai(msg.id);
+        Console.WriteLine("重新得到的牌id为 " + paiId);
+        msg.paiId = paiId;
+        doSkillTime[msg.id]++;
+        msg.canSkill = doSkillTime[msg.id] < maxSkillTime[msg.id] ? true : false;
+        Broadcast(msg);
+    }
+
+    /// <summary>
+    /// 服务端处理数学系技能的协议
+    /// 给客户端发送这些牌id的数组
+    /// </summary>
+    /// <param name="msgBase"></param>
+    public void ProcessMath(MsgMath msg)
+    {
+        msg.paiId = paiManager.GetPaiIdRandom(msg.observedPlayerId, turnNum);
+        doSkillTime[msg.observerPlayerId]++;
+        msg.canSkill = doSkillTime[msg.observerPlayerId] < maxSkillTime[msg.observerPlayerId] ? true : false;
+        Broadcast(msg);
+    }
+
+    /// <summary>
+    /// 服务端接收到计算机系协议
+    /// </summary>
+    /// <param name="msgBase"></param>
+    public void ProcessComputerScience(MsgComputerScience msg)
+    {
+        int paiIndex = msg.paiIndex;//牌在这个玩家的索引
+        int id = msg.id;//出牌的玩家id
+        MsgChuPai msgChuPai = new MsgChuPai();
+        msgChuPai.id = msg.id;
+        msgChuPai.paiIndex = msg.paiIndex;
+        Broadcast(msgChuPai);
+        if (paiIndex == -1)
+        {
+            //服务端执行胡的操作，清空数据，写入数据库等
+            Over(msg.id,false);
+            return;
+        }
+
+        int paiId = paiManager.ChuPai(paiIndex, id);
+        MsgFaPai msgFaPai = new MsgFaPai();
+        turn = (turn + 1) % 4;
+
+        msgFaPai = ProcessMsgFaPai(msgFaPai);
+        //广播
+        Broadcast(msgFaPai);
+    }
+
+    /// <summary>
+    /// 服务端执行结束游戏操作
+    /// </summary>
+    /// <param name="winId">如果是-1代表其他原因结束游戏，否则就是赢家/逃跑的id</param>
+    /// <param name="isQuit">代表是否强制退出，如果是强制退出就扣分,其他三个不扣分</param>
+    public void Over(int winId,bool isQuit)
+    {
+
+        if (isQuit)
+        {
+            if (winId == -1)
+            {
+                //没有人扣分，此时可以认为系统出现了bug
+                Console.WriteLine("属于强制退出且检测到无人退出，出现bug");
+        }
+            else
+            {
+                //有人强制退出，扣除他的分
+                players[winId].data.lost++;
+                players[winId].data.coin -= 100;
+            }
+        }
+        else
+        {
+            if (winId == -1)
+            {
+                //没人胡，没有任何玩家扣分，默认全部都胜利
+                for(int i = 0; i < players.Length; i++)
+                {
+                    players[i].data.win++;
+                    players[i].data.coin += 25;
+                }
+            }
+            else
+            {
+                //有人胡，执行胡操作
+                for(int i = 0; i < players.Length; i++)
+                {
+                    if(i == winId)
+                    {
+                        players[i].data.win++;
+                        players[i].data.coin += 60;
+                    }
+                    else
+                    {
+                        players[i].data.lost++;
+                        players[i].data.coin += 10;
+                    }
+                }
+            }
+        }
+
+        for(int i = 0; i < players.Length; i++)
+        {
+            if (!DbManager.UpdatePlayerData(players[i].id, players[i].data))
+            {
+                Console.WriteLine("无法更新成功，出现bug");
+            }
+        }
+        
     }
 
     //广播消息

@@ -9,10 +9,6 @@ public class Player {
 	public Player(ClientState state){
 		this.state = state;
 	}
-	//坐标
-	public int x; 
-	public int y; 
-	public int z;
 	//在哪个房间
 	public int roomId = -1;
     //数据库数据
