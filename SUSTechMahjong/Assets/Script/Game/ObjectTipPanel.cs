@@ -18,7 +18,7 @@ public class ObjectTipPanel : BasePanel
     public override void OnInit()
     {
         skinPath = "ObjectTipPanel";
-        layer = PanelManager.Layer.Tip;
+        layer = PanelManager.Layer.Panel;
     }
 
     /// <summary>

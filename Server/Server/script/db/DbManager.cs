@@ -99,7 +99,7 @@ public class DbManager {
 
 
 	//创建角色
-	public static bool CreatePlayer(string id)
+	public static bool CreatePlayer(string id,Gender gender)
 	{
 		//防sql注入
 		if(!DbManager.IsSafeString(id)){
@@ -107,7 +107,7 @@ public class DbManager {
 			return false;
 		}
 		//序列化
-		PlayerData playerData = new PlayerData();
+		PlayerData playerData = new PlayerData(gender);
 		string data = Js.Serialize(playerData); 
 		//写入数据库
 		string sql = string.Format ("insert into player set id ='{0}' ,data ='{1}';", id, data);

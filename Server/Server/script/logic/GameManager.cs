@@ -63,7 +63,7 @@ public class GameManager
             msg.data[i] = new StartGameData();
             msg.data[i].skillIndex = players[i].data.major;
             msg.data[i].skillCount = maxSkillTime[i];
-            msg.data[i].gender = rd.Next() % 2;//随机生成性别,这个问题以后再说
+            msg.data[i].gender = players[i].data.gender;
             msg.data[i].username = players[i].id;
         }//初始化协议的牌数组
         for (int i = 0; i < 4; i++)
@@ -267,7 +267,7 @@ public class GameManager
     /// <param name="isQuit">代表是否强制退出，如果是强制退出就扣分,其他三个不扣分</param>
     public void Over(int winId,bool isQuit)
     {
-
+        room.status = Room.Status.PREPARE;
         if (isQuit)
         {
             if (winId == -1)

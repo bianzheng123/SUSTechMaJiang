@@ -7,7 +7,7 @@ public partial class MsgHandler {
 		MsgRegister msg = (MsgRegister)msgBase;
 		//注册
 		if(DbManager.Register(msg.id, msg.pw)){
-			DbManager.CreatePlayer(msg.id);
+			DbManager.CreatePlayer(msg.id,(Gender)msg.gender);
 			msg.result = 0;
 		}
 		else{

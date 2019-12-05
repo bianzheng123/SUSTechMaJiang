@@ -24,3 +24,8 @@ public enum MaxSkillTime
     Chemistry = 3,
     ComputerScience = 10
 }
+public enum Gender
+{
+    Male = 0,
+    Female = 1
+}

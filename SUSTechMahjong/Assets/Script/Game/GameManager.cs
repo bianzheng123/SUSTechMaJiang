@@ -61,7 +61,7 @@ public class GameManager : MonoBehaviour
         skillCount = msg.data[msg.id].skillCount;
         gamePanel.RestSkillCount = skillCount;
         //gamePanel中先给Skill进行赋值，才能给RestSkillCount进行赋值
-
+        Debug.Log("你的id是：" + client_id + " ,你的性别是:" + players[client_id].gender);
         //生成牌
         for (int i = 0; i < 4; i++)
         {

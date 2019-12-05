@@ -47,7 +47,8 @@ public class PlayerInfo{
 	public int major = (int)Major.None;		//院系
 	public int win = 0;			//胜利数
 	public int lost = 0;		//失败数
-	public int isOwner = 0;		//是否是房主
+    public int gender = -1;     //性别
+    public int isOwner = 0;		//是否是房主
 }
 
 //获取房间信息

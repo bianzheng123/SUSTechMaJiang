@@ -155,7 +155,7 @@ public abstract class BasePlayer : MonoBehaviour {
                 Audio.PlayCue(Audio.audioPathMale[paiId]);
                 break;
             case Gender.Female:
-                Audio.PlayCue(Audio.audioPathMale[paiId]);
+                Audio.PlayCue(Audio.audioPathFemale[paiId]);
                 break;
         }
         handPai.RemoveAt(paiIndex);
@@ -195,6 +195,7 @@ public abstract class BasePlayer : MonoBehaviour {
             Debug.Log("客户端处理吃出现bug");
         }
         chi.Sort();
+        PlacePai();
     }
 
     /// <summary>
@@ -222,6 +223,7 @@ public abstract class BasePlayer : MonoBehaviour {
             Debug.Log("客户端处理碰出现bug");
         }
         peng.Sort();
+        PlacePai();
     }
 
     /// <summary>
@@ -250,6 +252,7 @@ public abstract class BasePlayer : MonoBehaviour {
             Debug.Log("客户端处理杠出现bug");
         }
         gang.Sort();
+        PlacePai();
     }
 
     /// <summary>
@@ -323,12 +326,6 @@ public abstract class BasePlayer : MonoBehaviour {
         Peng = 1,
         Gang = 2
     }
-}
-
-public enum Gender
-{
-    Male = 0,
-    Female =1
 }
 
 

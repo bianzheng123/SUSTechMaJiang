@@ -13,8 +13,12 @@ public class RoomPanel : BasePanel {
 	//玩家信息物体
 	private GameObject playerObj;
 
-	//初始化
-	public override void OnInit() {
+    //男头像路径
+    private string nan_head_path = "GameLayer/im_defaulthead_1";
+    //女头像路径
+    private string nv_head_path = "GameLayer/im_defaulthead_0";
+    //初始化
+    public override void OnInit() {
 		skinPath = "RoomPanel";
 		layer = PanelManager.Layer.Panel;
 	}
@@ -84,6 +88,7 @@ public class RoomPanel : BasePanel {
 		Text idText = trans.Find("IdText").GetComponent<Text>();
 		Text campText = trans.Find("CampText").GetComponent<Text>();
 		Text scoreText = trans.Find("ScoreText").GetComponent<Text>();
+        Image headImage = trans.Find("HeadImage").GetComponent<Image>();
 		//填充信息
 		idText.text = playerInfo.id;
         campText.text = Gamedata.majors[playerInfo.major];
@@ -91,6 +96,17 @@ public class RoomPanel : BasePanel {
 			campText.text = campText.text+"*";
 		}
 		scoreText.text = playerInfo.win + "胜 " + playerInfo.lost + "负";
+        Gender gender =  (Gender)playerInfo.gender;
+        switch (gender)
+        {
+            case Gender.Male:
+                headImage.sprite = ResManager.LoadUISprite(nan_head_path);
+                break;
+            case Gender.Female:
+                headImage.sprite = ResManager.LoadUISprite(nv_head_path);
+                break;
+        }
+
 	}
 
 	//点击退出按钮

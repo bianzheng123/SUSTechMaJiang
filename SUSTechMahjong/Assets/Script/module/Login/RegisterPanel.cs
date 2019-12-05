@@ -14,6 +14,8 @@ public class RegisterPanel : BasePanel {
 	private Button regBtn;
 	//关闭按钮
 	private Button closeBtn;
+    //展示性别的单选框
+    private Toggle[] genderToggle;
 
 
 	//初始化
@@ -24,8 +26,11 @@ public class RegisterPanel : BasePanel {
 
 	//显示
 	public override void OnShow(params object[] args) {
-		//寻找组件
-		idInput = skin.transform.Find("IdInput").GetComponent<InputField>();
+        //寻找组件
+        genderToggle = new Toggle[2];
+        genderToggle[0] = skin.transform.Find("GenderToggle/Male").GetComponent<Toggle>();
+        genderToggle[1] = skin.transform.Find("GenderToggle/Female").GetComponent<Toggle>();
+        idInput = skin.transform.Find("IdInput").GetComponent<InputField>();
 		pwInput = skin.transform.Find("PwInput").GetComponent<InputField>();
 		repInput = skin.transform.Find("RepInput").GetComponent<InputField>();
 		regBtn = skin.transform.Find("RegisterBtn").GetComponent<Button>();
@@ -57,10 +62,23 @@ public class RegisterPanel : BasePanel {
 			PanelManager.Open<TipPanel>("两次输入的密码不同");
 			return;
 		}
+        if(genderToggle[0].isOn == false && genderToggle[1].isOn == false)
+        {
+            PanelManager.Open<TipPanel>("请选择性别");
+            return;
+        }
 		//发送
 		MsgRegister msgReg = new MsgRegister();
 		msgReg.id = idInput.text;
 		msgReg.pw = pwInput.text;
+        if (genderToggle[0].isOn)
+        {
+            msgReg.gender = (int)Gender.Male;
+        }
+        else if(genderToggle[1].isOn)
+        {
+            msgReg.gender = (int)Gender.Female;
+        }
 		NetManager.Send(msgReg);
 	}
 

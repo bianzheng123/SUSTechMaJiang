@@ -127,6 +127,7 @@ public class Room {
 			playerInfo.win = player.data.win;
 			playerInfo.lost = player.data.lost;
 			playerInfo.isOwner = 0;
+            playerInfo.gender = player.data.gender;
 			if(isOwner(player)){
 				playerInfo.isOwner = 1;
 			}
