@@ -329,7 +329,7 @@ public class GameManager : MonoBehaviour
         if (startTimeCount)
         {
             TimeCount();
-            if (isChuPai && !(client_id == nowTurnid && players[client_id].skill == Major.Math && gamePanel.isDoSkilling == true))//是自己控制的玩家在出牌，而且是数学系的而且已经按下了发动技能的按钮
+            if (isChuPai && !(client_id == nowTurnid && players[client_id].skill == Major.Biology && gamePanel.isDoSkilling == true))//是自己控制的玩家在出牌，而且是数学系的而且已经按下了发动技能的按钮
             {        //发动数学系技能时不可选中自己的牌
                 players[nowTurnid].DaPai();//这里人机只是打牌，不发动任何技能
             }//否则进行吃碰杠的判断

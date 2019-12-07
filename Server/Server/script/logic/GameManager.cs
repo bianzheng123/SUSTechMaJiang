@@ -38,11 +38,11 @@ public class GameManager
                 case Major.None:
                     maxSkillTime[i] = (int)MaxSkillTime.None;
                     break;
-                case Major.Chemistry:
-                    maxSkillTime[i] = (int)MaxSkillTime.Chemistry;
-                    break;
                 case Major.Math:
                     maxSkillTime[i] = (int)MaxSkillTime.Math;
+                    break;
+                case Major.Biology:
+                    maxSkillTime[i] = (int)MaxSkillTime.Biology;
                     break;
                 case Major.ComputerScience:
                     maxSkillTime[i] = (int)MaxSkillTime.ComputerScience;

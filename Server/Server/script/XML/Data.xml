@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shop>
+   <!--记录商城的信息-->
+   <major>
+     <name>生物</name>
+     <priceNoMajor>500</priceNoMajor>
+	 <priceHaveMajor>550</priceHaveMajor>
+   </major>
+   <major>
+     <name>数学</name>
+     <priceNoMajor>500</priceNoMajor>
+	 <priceHaveMajor>550</priceHaveMajor>
+   </major>
+   <major>
+     <name>计算机</name>
+     <priceNoMajor>600</priceNoMajor>
+	 <priceHaveMajor>700</priceHaveMajor>
+   </major>
+ </shop>

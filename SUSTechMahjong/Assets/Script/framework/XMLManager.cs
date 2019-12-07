@@ -16,7 +16,7 @@ public static class XMLManager
     private static float volume;
     public static void Init()
     {
-        volumeControlPath = Application.dataPath + "/Resources/XML/AudioVolume.xml";
+        volumeControlPath = Application.dataPath + "/Resources/XML/Data.xml";
         ParseVolumeControl();
         Audio.SetVolume(volume);
     }

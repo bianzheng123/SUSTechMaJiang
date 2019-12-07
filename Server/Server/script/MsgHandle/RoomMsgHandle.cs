@@ -75,24 +75,6 @@ public partial class MsgHandler {
 		player.Send(msg);
 	}
 
-    //专业选择协议处理
-    public static void MsgChoose(ClientState c, MsgBase msgBase)
-    {
-        MsgChoose msg = (MsgChoose)msgBase;
-        Player player = c.player;
-        if (player == null) return;
-        player.data.major = msg.major;
-        if (DbManager.UpdatePlayerData(msg.id, player.data))
-        {
-            msg.result = 0;
-        }
-        else
-        {
-            msg.result = 1;
-        }
-        NetManager.Send(c, msg);
-    }
-
     //获取房间信息
     public static void MsgGetRoomInfo(ClientState c, MsgBase msgBase){
 		MsgGetRoomInfo msg = (MsgGetRoomInfo)msgBase;

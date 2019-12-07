@@ -10,7 +10,7 @@ public class RoomListPanel : BasePanel {
 	//战绩文本
 	private Text scoreText;
     //院系文本
-    private Text campText;
+    private Text majorText;
     //现在拥有的金币数
     private Text coinText;
 	//创建房间按钮
@@ -22,10 +22,27 @@ public class RoomListPanel : BasePanel {
     private Transform content;
 	//房间物体
 	private GameObject roomObj;
+    //用于储存现在有多少金币
+    private int coin;
+    //用于存储当前用户的系
+    private int major;
 
-    public string Camp
+    public int Major
     {
-        set { campText.text = value; }
+        set
+        {
+            major = value;
+            majorText.text = Gamedata.majors[major];
+        }
+    }
+
+    public int Coin
+    {
+        set
+        {
+            coin = value;
+            coinText.text = value.ToString();
+        }
     }
 
 	//初始化
@@ -39,7 +56,7 @@ public class RoomListPanel : BasePanel {
 		//寻找组件
 		idText = skin.transform.Find("InfoPanel/IdText").GetComponent<Text>();
 		scoreText = skin.transform.Find("InfoPanel/ScoreText").GetComponent<Text>();
-        campText = skin.transform.Find("InfoPanel/CampText").GetComponent<Text>();
+        majorText = skin.transform.Find("InfoPanel/CampText").GetComponent<Text>();
         coinText = skin.transform.Find("InfoPanel/GoldText").GetComponent<Text>();
         createButton = skin.transform.Find("CtrlPanel/CreateButton").GetComponent<Button>();
 		reflashButton = skin.transform.Find("CtrlPanel/RefreshButton").GetComponent<Button>();
@@ -62,6 +79,7 @@ public class RoomListPanel : BasePanel {
 		NetManager.AddMsgListener("MsgGetRoomList", OnMsgGetRoomList);
 		NetManager.AddMsgListener("MsgCreateRoom", OnMsgCreateRoom);
 		NetManager.AddMsgListener("MsgEnterRoom", OnMsgEnterRoom);
+        NetManager.AddMsgListener("MsgVisitShop", OnMsgVisitShop);
 		//发送查询
 		MsgGetAchieve msgGetAchieve = new MsgGetAchieve();
 		NetManager.Send(msgGetAchieve);
@@ -79,6 +97,7 @@ public class RoomListPanel : BasePanel {
 		NetManager.RemoveMsgListener("MsgGetRoomList", OnMsgGetRoomList);
 		NetManager.RemoveMsgListener("MsgCreateRoom", OnMsgCreateRoom);
 		NetManager.RemoveMsgListener("MsgEnterRoom", OnMsgEnterRoom);
+        NetManager.RemoveMsgListener("MsgVisitShop", OnMsgVisitShop);
         Audio.MuteLoop(Audio.bgRoomListPanel);
     }
 
@@ -86,8 +105,10 @@ public class RoomListPanel : BasePanel {
 	public void OnMsgGetAchieve (MsgBase msgBase) {
 		MsgGetAchieve msg = (MsgGetAchieve)msgBase;
 		scoreText.text = msg.win + "胜 " + msg.lost + "负";
-        campText.text = Gamedata.majors[msg.major];
+        majorText.text = Gamedata.majors[msg.major];
         coinText.text = msg.coin.ToString();
+        coin = msg.coin;
+        major = msg.major;
     }
 
 	//收到房间列表协议
@@ -168,9 +189,11 @@ public class RoomListPanel : BasePanel {
 		MsgCreateRoom msg = new MsgCreateRoom();
 		NetManager.Send(msg);
 	}
+    //点击进入商城的按钮
     public void OnChooseClick(){
-        
-        PanelManager.Open<ChoosePanel>();
+
+        MsgVisitShop msg = new MsgVisitShop();
+        NetManager.Send(msg);
     }
     //收到新建房间协议
     public void OnMsgCreateRoom (MsgBase msgBase) {
@@ -186,5 +209,13 @@ public class RoomListPanel : BasePanel {
 			PanelManager.Open<TipPanel>("创建房间失败");
 		}
 	}
+
+    //收到进入房间的请求
+    public void OnMsgVisitShop(MsgBase msgBase)
+    {
+        MsgVisitShop msg = (MsgVisitShop)msgBase;
+        Debug.Log(msg.price);
+        PanelManager.Open<ChoosePanel>(msg.price,coin,major);
+    }
 
 }

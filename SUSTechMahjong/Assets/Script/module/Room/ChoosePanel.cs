@@ -8,13 +8,21 @@ using UnityEngine.UI;
 /// </summary>
 public class ChoosePanel : BasePanel
 {
-    //院系输入框
-    private InputField idInput;
+    //显示价格的按钮
+    private Button[] priceButton;
+    //显示每一个系价格的文本
+    private Text[] priceText;
+    //关闭按钮
+    private Button closeButton;
+    //显示金币的文本
+    private Text coinText;
+    //显示系的文本
+    private Text majorText;
+    //目前拥有的金币数
+    private int coin;
+    //每一个系需要的价格
+    private int[] price;
 
-    //确认按钮
-    private Button chooseBtn;
-
-    private Button closeBtn;
     //初始化
     public override void OnInit()
     {
@@ -26,17 +34,50 @@ public class ChoosePanel : BasePanel
     public override void OnShow(params object[] args)
     {
         //寻找组件
-        idInput = skin.transform.Find("IdInput").GetComponent<InputField>();
+        priceButton = new Button[3];
+        priceButton[0] = skin.transform.Find("Biology/Button").GetComponent<Button>();
+        priceButton[1] = skin.transform.Find("Math/Button").GetComponent<Button>();
+        priceButton[2] = skin.transform.Find("ComputerScience/Button").GetComponent<Button>();
 
-        chooseBtn = skin.transform.Find("ChooseBtn").GetComponent<Button>();
-        closeBtn = skin.transform.Find("CloseBtn").GetComponent<Button>();
+        priceText = new Text[3];
+        priceText[0] = skin.transform.Find("Biology/Button/Text").GetComponent<Text>();
+        priceText[1] = skin.transform.Find("Math/Button/Text").GetComponent<Text>();
+        priceText[2] = skin.transform.Find("ComputerScience/Button/Text").GetComponent<Text>();
+
+        closeButton = skin.transform.Find("Title/Button").GetComponent<Button>();
+        coinText = skin.transform.Find("Title/CoinText").GetComponent<Text>();
+        majorText = skin.transform.Find("Title/MajorText").GetComponent<Text>();
         //监听
-        chooseBtn.onClick.AddListener(OnChooseClick);
-        closeBtn.onClick.AddListener(OnCloseClick);
-        chooseBtn.onClick.AddListener(Audio.ButtonClick);
-        closeBtn.onClick.AddListener(Audio.ButtonClick);
+        priceButton[0].onClick.AddListener(OnBiologyClick);
+        priceButton[1].onClick.AddListener(OnMathClick);
+        priceButton[2].onClick.AddListener(OnComputerScienceClick);
+        closeButton.onClick.AddListener(OnCloseClick);
         //网络协议监听
         NetManager.AddMsgListener("MsgChoose", OnMsgChoose);
+
+        price = (int[])args[0];
+        coin = (int)args[1];
+        int major = (int)args[2];
+
+        switch ((Major)major)//如果已经在该系中，就能将该按钮隐藏
+        {
+            case Major.Biology:
+                priceButton[0].gameObject.SetActive(false);
+                break;
+            case Major.Math:
+                priceButton[1].gameObject.SetActive(false);
+                break;
+            case Major.ComputerScience:
+                priceButton[2].gameObject.SetActive(false);
+                break;
+        }
+
+        for(int i = 0; i < priceText.Length; i++)
+        {
+            priceText[i].text = price[i].ToString();
+        }
+        coinText.text = "金币：" + coin;
+        majorText.text = Gamedata.majors[major];
     }
 
     //关闭
@@ -47,37 +88,44 @@ public class ChoosePanel : BasePanel
 
     }
 
-
-    //当按下确定按钮
-    public void OnChooseClick()
+    public void OnBiologyClick()
     {
-        //输入的数字为空
-        if (idInput.text == "")
-        {
-            PanelManager.Open<TipPanel>("请正确选择院系");
-            return;
-        }
-        int major = 0;
-        try
-        {
-            major = int.Parse(idInput.text);
-        }
-        catch
-        {
-            PanelManager.Open<TipPanel>("请正确输入数字");
-            return;
-        }
-        if(!(0<=major && major <= 3))
-        {
-            PanelManager.Open<TipPanel>("请正确输入数字");
-            return;
-        }
-        //发送
-        MsgChoose MsgChoose = new MsgChoose();
+        BuyItem(Major.Biology);
+    }
 
-        MsgChoose.major = major;
-        MsgChoose.id = GameMain.id;
-        NetManager.Send(MsgChoose);
+    public void OnMathClick()
+    {
+        BuyItem(Major.Math);
+    }
+
+    public void OnComputerScienceClick()
+    {
+        BuyItem(Major.ComputerScience);
+    }
+
+    /// <summary>
+    /// 点击不同的购买按钮，发送choose协议
+    /// </summary>
+    /// <param name="major">想要购买的按钮</param>
+    private void BuyItem(Major major)
+    {
+        //发送
+        MsgChoose msg = new MsgChoose();
+
+        msg.major = (int)major;
+        switch (major)
+        {
+            case Major.Biology:
+                msg.coin = price[0];
+                break;
+            case Major.Math:
+                msg.coin = price[1];
+                break;
+            case Major.ComputerScience:
+                msg.coin = price[2];
+                break;
+        }
+        NetManager.Send(msg);
     }
 
     //收到协议
@@ -87,19 +135,24 @@ public class ChoosePanel : BasePanel
         if (msg.result == 0)
         {
             //提示
-            PanelManager.Open<TipPanel>("选择成功");
+            PanelManager.Open<TipPanel>("购买成功");
             
             if(PanelManager.panels.ContainsKey("RoomListPanel") && PanelManager.panels["RoomListPanel"] != null)
             {
                 RoomListPanel panel = (RoomListPanel)PanelManager.panels["RoomListPanel"];
-                panel.Camp = Gamedata.majors[msg.major];
+                panel.Major = msg.major;
+                panel.Coin = msg.restCoin;
             }
             //关闭界面
             Close();
         }
+        else if(msg.result == 1)
+        {
+            PanelManager.Open<TipPanel>("金币不足，购买失败");
+        }
         else
         {
-            PanelManager.Open<TipPanel>("选择失败");
+            PanelManager.Open<TipPanel>("出现异常");
         }
 
     }

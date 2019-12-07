@@ -60,6 +60,7 @@
     <Compile Include="script\logic\Room.cs" />
     <Compile Include="script\logic\RoomManager.cs" />
     <Compile Include="script\MsgHandle\RoomMsgHandle.cs" />
+    <Compile Include="script\MsgHandle\ShopMsgHandle.cs" />
     <Compile Include="script\MsgHandle\SysMsgHandler.cs" />
     <Compile Include="script\net\ByteArray.cs" />
     <Compile Include="script\net\ClientState.cs" />
@@ -68,7 +69,10 @@
     <Compile Include="script\proto\GameMsg.cs" />
     <Compile Include="script\proto\LoginMsg.cs" />
     <Compile Include="script\proto\RoomMsg.cs" />
+    <Compile Include="script\proto\ShopMsg.cs" />
     <Compile Include="script\proto\SysMsg.cs" />
+    <Compile Include="script\XML\Major.cs" />
+    <Compile Include="script\XML\XMLManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
