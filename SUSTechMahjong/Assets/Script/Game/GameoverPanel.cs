@@ -47,8 +47,8 @@ public class GameoverPanel : BasePanel
 
         int winId = (int)args[0];//代表赢的玩家的id
         int thisId = (int)args[1];//代表该客户端的玩家id
-        
-        ShowResult(winId,thisId);
+        int quitId = (int)args[2];//-1代表没有人退出，否则就是退出的玩家id
+        ShowResult(winId,thisId,quitId);
         EndGame();
     }
 
@@ -80,7 +80,7 @@ public class GameoverPanel : BasePanel
     /// 展示结果，用来根据传递的参数进行画面的显示
     /// </summary>
     /// <param name="result">0代表意外发生或者平局，1代表该角色成功，2代表失败</param>
-    private void ShowResult(int winId,int thisId)
+    private void ShowResult(int winId,int thisId,int quitId)
     {
         GameOver result;
         if (winId == -1)
@@ -115,7 +115,14 @@ public class GameoverPanel : BasePanel
             switch (result)
             {
                 case GameOver.Peace:
-                    results[i].text = "+25";
+                    if(i == quitId)
+                    {
+                        results[i].text = "-1000";
+                    }
+                    else
+                    {
+                        results[i].text = "+25";
+                    }
                     break;
                 case GameOver.Win:
                 case GameOver.Lose:

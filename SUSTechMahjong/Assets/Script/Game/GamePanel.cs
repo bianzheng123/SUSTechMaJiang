@@ -243,6 +243,7 @@ public class GamePanel : BasePanel {
         NetManager.AddMsgListener("MsgChiPengGang",gameManager.OnMsgChiPengGang);
         NetManager.AddMsgListener("MsgChemistry", gameManager.OnMsgChemistry);
         NetManager.AddMsgListener("MsgMath",gameManager.OnMsgMath);
+        NetManager.AddMsgListener("MsgQuit", gameManager.OnMsgQuit);
         //发送查询,发动查询要在处理InitData之后
         if (gameManager.isZhuang)
         {
@@ -270,6 +271,7 @@ public class GamePanel : BasePanel {
         NetManager.RemoveMsgListener("MsgChiPengGang", gameManager.OnMsgChiPengGang);
         NetManager.RemoveMsgListener("MsgChemistry", gameManager.OnMsgChemistry);
         NetManager.RemoveMsgListener("MsgMath", gameManager.OnMsgMath);
+        NetManager.RemoveMsgListener("MsgQuit", gameManager.OnMsgQuit);
         Audio.MuteLoop(Audio.bgGamePanel);
     }
 
@@ -532,7 +534,7 @@ public class GamePanel : BasePanel {
 
     public void OnExitClick()
     {
-        Debug.Log("Exit");
+        PanelManager.Open<QuitTipPanel>();
     }
 
     public void OnSetClick()

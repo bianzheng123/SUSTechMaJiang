@@ -260,6 +260,23 @@ public class GameManager
         Broadcast(msgFaPai);
     }
 
+    public void ProcessMsgQuit(MsgQuit msg)
+    {
+        Over(msg.id,true);
+        for (int i = 0; i < 4; i++)
+        {
+            if(i == msg.id)
+            {
+                msg.isQuit = true;
+            }
+            else
+            {
+                msg.isQuit = false;
+            }
+            players[i].Send(msg);
+        }
+    }
+
     /// <summary>
     /// 服务端执行结束游戏操作
     /// </summary>
@@ -268,6 +285,7 @@ public class GameManager
     public void Over(int winId,bool isQuit)
     {
         room.status = Room.Status.PREPARE;
+        room.gameManager = null;
         if (isQuit)
         {
             if (winId == -1)
@@ -279,7 +297,13 @@ public class GameManager
             {
                 //有人强制退出，扣除他的分
                 players[winId].data.lost++;
-                players[winId].data.coin -= 100;
+                players[winId].data.coin -= 1000;
+                for (int i = 0; i < players.Length; i++)
+                {
+                    if (i == winId) continue;
+                    players[i].data.win++;
+                    players[i].data.coin += 25;
+                }
             }
         }
         else

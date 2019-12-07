@@ -93,7 +93,7 @@ public class GameManager : MonoBehaviour
         if (msg.paiId == -1)
         {
             Debug.Log("没牌了，游戏结束");
-            PanelManager.Open<GameoverPanel>(-1, client_id);
+            PanelManager.Open<GameoverPanel>(-1, client_id,-1);
             PanelManager.Close("GamePanel");
             return;
         }
@@ -167,7 +167,7 @@ public class GameManager : MonoBehaviour
             }
 
             Debug.Log("胡牌成功！");
-            PanelManager.Open<GameoverPanel>(msg.id, client_id);
+            PanelManager.Open<GameoverPanel>(msg.id, client_id,-1);
             PanelManager.Close("GamePanel");
         }
         else
@@ -417,6 +417,32 @@ public class GameManager : MonoBehaviour
             players[i].skill = (Major)msg.data[i].skillIndex;
 
         }
+    }
+
+    public void OnMsgQuit(MsgBase msgBase)
+    {
+        
+        MsgQuit msg = (MsgQuit)msgBase;
+        if (msg.isQuit)
+        {
+            NetManager.Close();
+            Application.Quit();
+        }
+        else
+        {
+            PanelManager.Open<TipPanel>("有人退出，游戏被迫中止！");
+            PanelManager.Open<GameoverPanel>(-1, client_id,msg.id);
+            PanelManager.Close("GamePanel");
+            //直接平局
+        }
+    }
+
+    private void OnApplicationQuit()
+    {
+        MsgQuit msg = new MsgQuit();
+        msg.id = GameManager.GetInstance().client_id;
+        NetManager.Send(msg);
+        NetManager.Close();
     }
 
 }

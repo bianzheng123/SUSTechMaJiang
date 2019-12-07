@@ -105,3 +105,11 @@ public class MsgChat : MsgBase
     public int id;//该客户端的玩家id
 }
 
+public class MsgQuit : MsgBase
+{
+    public MsgQuit() { protoName = "MsgQuit"; }
+    public int id = -1;//代表这个客户端的id
+    //服务端会
+    public bool isQuit = false;//收到取消消息后判断该客户端是否要quit
+}
+

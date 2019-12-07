@@ -94,4 +94,16 @@ public partial class MsgHandler
         if (gameManager == null) return;
         gameManager.ProcessComputerScience(msg);
     }
+
+    public static void MsgQuit(ClientState c,MsgBase msgBase)
+    {
+        MsgQuit msg = (MsgQuit)msgBase;
+        Player player = c.player;
+        if (player == null) return;
+        Room room = RoomManager.GetRoom(player.roomId);
+        if (room == null) return;
+        GameManager gameManager = room.gameManager;
+        if (gameManager == null) return;
+        gameManager.ProcessMsgQuit(msg);
+    }
 }

@@ -72,6 +72,18 @@ public class RoomPanel : BasePanel {
 			return;
 		}
 		for(int i = 0; i < msg.players.Length; i++){
+            string id = msg.players[i].id;
+            if(id == GameMain.id)
+            {
+                if (msg.players[i].isOwner == 1)
+                {
+                    startButton.interactable = true;
+                }
+                else
+                {
+                    startButton.interactable = false;
+                }
+            }
 			GeneratePlayerInfo(msg.players[i]);
 		}
 	}
