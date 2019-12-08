@@ -51,7 +51,11 @@ public class ChoosePanel : BasePanel
         priceButton[0].onClick.AddListener(OnBiologyClick);
         priceButton[1].onClick.AddListener(OnMathClick);
         priceButton[2].onClick.AddListener(OnComputerScienceClick);
+        priceButton[0].onClick.AddListener(Audio.ButtonClick);
+        priceButton[1].onClick.AddListener(Audio.ButtonClick);
+        priceButton[2].onClick.AddListener(Audio.ButtonClick);
         closeButton.onClick.AddListener(OnCloseClick);
+        closeButton.onClick.AddListener(Audio.ButtonClick);
         //网络协议监听
         NetManager.AddMsgListener("MsgChoose", OnMsgChoose);
 

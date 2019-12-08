@@ -56,6 +56,8 @@ public class GamePanel : BasePanel {
     private Toggle[] playerRadio;
     //用于显示其他玩家信息的按钮
     private PlayerPaiInfo[] playerPaiInfo;
+    //用于介绍面板的信息
+    private Button panelDescriptionButton;
     //用于存放聊天信息
     public ChatRoom chatRoom;
 
@@ -542,6 +544,11 @@ public class GamePanel : BasePanel {
         PanelManager.Open<SettingPanel>();
     }
 
+    public void OnPanelDescriptionClick()
+    {
+        PanelManager.Open<TipPanel>("欢迎来到南科大麻将，右上角是退出按钮以及设置按钮\n退出会有大量惩罚，请不要轻易尝试\n点击不同玩家的按钮可以查看他们的丢弃/吃/碰/杠的牌\n祝您玩的愉快");
+    }
+
     //不发动技能时点击确定按钮
     public void OnChuPaiClick()
     {
@@ -689,6 +696,7 @@ public class GamePanel : BasePanel {
     /// </summary>
     public void AddButtonClick()
     {
+        panelDescriptionButton.onClick.AddListener(OnPanelDescriptionClick);
         exitButton.onClick.AddListener(OnExitClick);
         setButton.onClick.AddListener(OnSetClick);
         okButton.onClick.AddListener(OnChuPaiClick);
@@ -721,6 +729,7 @@ public class GamePanel : BasePanel {
         playerPaiInfo[3].peng.onClick.AddListener(OnOtherInfoClick_peng_player4);
         playerPaiInfo[3].gang.onClick.AddListener(OnOtherInfoClick_gang_player4);
 
+        panelDescriptionButton.onClick.AddListener(Audio.ButtonClick);
         exitButton.onClick.AddListener(Audio.ButtonClick);
         setButton.onClick.AddListener(Audio.ButtonClick);
         okButton.onClick.AddListener(Audio.ButtonClick);
@@ -759,6 +768,7 @@ public class GamePanel : BasePanel {
     /// </summary>
     public void GetUIComponent()
     {
+        panelDescriptionButton = skin.transform.Find("PanelDescriptionButton").GetComponent<Button>();
         exitButton = skin.transform.Find("ExitButton").GetComponent<Button>();
         setButton = skin.transform.Find("SetButton").GetComponent<Button>();
         lights = new GameObject[4];

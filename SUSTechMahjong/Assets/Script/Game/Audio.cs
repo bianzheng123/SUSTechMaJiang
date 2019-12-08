@@ -10,10 +10,12 @@ public static class Audio {
     public static string audioGangMale;
     public static string audioHuMale;
     public static string audioPengMale;
+    public static string audioChiMale;
     public static Dictionary<int, string> audioPathFemale;
     public static string audioGangFemale;
     public static string audioHuFemale;
     public static string audioPengFemale;
+    public static string audioChiFemale;
 
     public static string bgGamePanel;
     public static string bgLoginPanel;
@@ -23,6 +25,7 @@ public static class Audio {
     public static string timeup_alarm;
     public static string win;
     public static string ui_click;
+    public static string pingJu;
 
     public static string nowLoopSrc;
 
@@ -42,10 +45,12 @@ public static class Audio {
         timeup_alarm = "Audios/timeup_alarm";
         win = "Audios/win";
         ui_click = "Audios/ui_click";
+        pingJu = "Audios/PingJu";
 
         audioGangMale = "Audios/Mahjong/male/gang";
         audioHuMale = "Audios/Mahjong/male/hu";
         audioPengMale = "Audios/Mahjong/male/peng";
+        audioChiMale = "Audios/Mahjong/male/chi";
         audioPathMale = new Dictionary<int, string>();
         for(int i = 0; i < 3; i++)
         {
@@ -67,6 +72,7 @@ public static class Audio {
         audioGangFemale = "Audios/Mahjong/female/gang";
         audioHuFemale = "Audios/Mahjong/female/hu";
         audioPengFemale = "Audios/Mahjong/female/peng";
+        audioChiFemale = "Audios/Mahjong/female/chi";
         audioPathFemale = new Dictionary<int, string>();
 
         for (int i = 0; i < 3; i++)

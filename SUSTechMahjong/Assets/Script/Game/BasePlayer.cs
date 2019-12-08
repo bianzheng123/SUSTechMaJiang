@@ -170,9 +170,18 @@ public abstract class BasePlayer : MonoBehaviour {
     /// </summary>
     public void OnChi(int paiId)
     {
+        switch (gender)
+        {
+            case Gender.Male:
+                Audio.PlayCue(Audio.audioChiMale);
+                break;
+            case Gender.Female:
+                Audio.PlayCue(Audio.audioChiFemale);
+                break;
+        }
         //无法播放对应的声音，没有音效
         //分为三种可能
-        if(NumOfPai(paiId-1) >= 1 && NumOfPai(paiId - 2) >= 1)
+        if (NumOfPai(paiId-1) >= 1 && NumOfPai(paiId - 2) >= 1)
         {
             AddChiPengGang(paiId-1,enum_ChiPengGang.Chi);
             AddChiPengGang(paiId - 2,enum_ChiPengGang.Chi);

@@ -12,6 +12,8 @@ public class LoginPanel : BasePanel {
 	private Button loginBtn;
 	//注册按钮
 	private Button regBtn;
+    //关于我们按钮
+    private Button aboutUsBtn;
 
 	//初始化
 	public override void OnInit() {
@@ -26,11 +28,14 @@ public class LoginPanel : BasePanel {
 		pwInput = skin.transform.Find("PwInput").GetComponent<InputField>();
 		loginBtn = skin.transform.Find("LoginBtn").GetComponent<Button>();
 		regBtn = skin.transform.Find("RegisterBtn").GetComponent<Button>();
-		//监听
-		loginBtn.onClick.AddListener(OnLoginClick);
+        aboutUsBtn = skin.transform.Find("AboutUsBtn").GetComponent<Button>();
+        //监听
+        loginBtn.onClick.AddListener(OnLoginClick);
 		regBtn.onClick.AddListener(OnRegClick);
+        aboutUsBtn.onClick.AddListener(OnAboutUsClick);
         loginBtn.onClick.AddListener(Audio.ButtonClick);
         regBtn.onClick.AddListener(Audio.ButtonClick);
+        aboutUsBtn.onClick.AddListener(Audio.ButtonClick);
 		//网络协议监听
 		NetManager.AddMsgListener("MsgLogin", OnMsgLogin);
 		//网络事件监听
@@ -70,10 +75,13 @@ public class LoginPanel : BasePanel {
 		PanelManager.Open<RegisterPanel>();
 	}
 		
+    public void OnAboutUsClick()
+    {
+        PanelManager.Open<TipPanel>("制作人：卞证，向昕昊，孙斌贤，林傲，徐天元");
+    }
 
-
-	//当按下登陆按钮
-	public void OnLoginClick() {
+    //当按下登陆按钮
+    public void OnLoginClick() {
 		//用户名密码为空
 		if (idInput.text == "" || pwInput.text == "") {
 			PanelManager.Open<TipPanel>("用户名和密码不能为空");

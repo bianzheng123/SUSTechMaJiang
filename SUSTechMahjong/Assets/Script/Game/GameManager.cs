@@ -28,6 +28,7 @@ public class GameManager : MonoBehaviour
     public int skillCount;//代表当前主机玩家还剩下几次技能可以使用
     public bool canTimeAlarm = false;//代表是否剩下最后三秒，是否可以开始播放倒计时的bgm了
     public bool isZhuang = false;
+    public bool useQuitButton = false;//用来判断是否执行ApplicationQuit中的内容
 
     public PlayerFactory PlayerFactory
     {
@@ -423,6 +424,7 @@ public class GameManager : MonoBehaviour
     {
         
         MsgQuit msg = (MsgQuit)msgBase;
+        useQuitButton = msg.isQuit;
         if (msg.isQuit)
         {
             NetManager.Close();
@@ -439,10 +441,13 @@ public class GameManager : MonoBehaviour
 
     private void OnApplicationQuit()
     {
-        MsgQuit msg = new MsgQuit();
-        msg.id = GameManager.GetInstance().client_id;
-        NetManager.Send(msg);
-        NetManager.Close();
+        if (!useQuitButton)
+        {
+            MsgQuit msg = new MsgQuit();
+            msg.id = client_id;
+            NetManager.Send(msg);
+            NetManager.Close();
+        }
     }
 
 }

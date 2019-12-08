@@ -184,7 +184,7 @@ public class PaiManager
     {
         List<int> cards = playerPai[playerId];
         int len = playerPai[playerId].Count;
-        if (len == 14)//用于测试
+        if (len <= 12)//用于测试
         {
             return true;
         }

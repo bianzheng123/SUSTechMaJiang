@@ -18,6 +18,8 @@ public class RoomListPanel : BasePanel {
 	//刷新列表按钮
 	private Button reflashButton;
     private Button chooseButton;
+    //微信支付按钮
+    private Button pressMeButton;
     //列表容器
     private Transform content;
 	//房间物体
@@ -61,6 +63,7 @@ public class RoomListPanel : BasePanel {
         createButton = skin.transform.Find("CtrlPanel/CreateButton").GetComponent<Button>();
 		reflashButton = skin.transform.Find("CtrlPanel/RefreshButton").GetComponent<Button>();
         chooseButton = skin.transform.Find("CtrlPanel/ChooseBtn").GetComponent<Button>();
+        pressMeButton = skin.transform.Find("CtrlPanel/PressMeBtn").GetComponent<Button>();
         content = skin.transform.Find("ListPanel/Scroll View/Viewport/Content");
 		roomObj = skin.transform.Find("Room").gameObject;
         //不激活房间
@@ -71,9 +74,12 @@ public class RoomListPanel : BasePanel {
 		createButton.onClick.AddListener(OnCreateClick);
 		reflashButton.onClick.AddListener(OnReflashClick);
         chooseButton.onClick.AddListener(OnChooseClick);
+        pressMeButton.onClick.AddListener(OnPressMeClick);
+
         createButton.onClick.AddListener(Audio.ButtonClick);
         reflashButton.onClick.AddListener(Audio.ButtonClick);
         chooseButton.onClick.AddListener(Audio.ButtonClick);
+        pressMeButton.onClick.AddListener(Audio.ButtonClick);
         //协议监听
         NetManager.AddMsgListener("MsgGetAchieve", OnMsgGetAchieve);
 		NetManager.AddMsgListener("MsgGetRoomList", OnMsgGetRoomList);
@@ -157,8 +163,13 @@ public class RoomListPanel : BasePanel {
 		});
 	}
 
-	//点击刷新按钮
-	public void OnReflashClick(){
+    public void OnPressMeClick()
+    {
+        PanelManager.Open<PressMePanel>();
+    }
+
+    //点击刷新按钮
+    public void OnReflashClick(){
 		MsgGetRoomList msg = new MsgGetRoomList();
 		NetManager.Send(msg);
 	}
