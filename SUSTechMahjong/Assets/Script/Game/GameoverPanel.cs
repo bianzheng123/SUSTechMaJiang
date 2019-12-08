@@ -101,7 +101,6 @@ public class GameoverPanel : BasePanel
         switch (result)
         {
             case GameOver.Peace:
-                Debug.Log("播放平局音乐");
                 Audio.PlayCue(Audio.pingJu);
                 break;
             case GameOver.Win:
