@@ -79,6 +79,7 @@ public class GameManager : MonoBehaviour
                 CreatePai(msg.data[i].paiIndex[j], i);
             }
             players[i].PlacePai();
+            gamePanel.HandPaiCount = new int[] { (int)gamePanel.numToDir[i], msg.data[i].paiIndex.Length };
         }
     }
 
@@ -117,13 +118,7 @@ public class GameManager : MonoBehaviour
         CreatePai(msg.paiId, msg.id);
         players[msg.id].SynHandPai();//调整牌的顺序
         players[msg.id].PlacePai();//调整牌的位置
-
-        //string arrString = "";
-        //for (int i = 0; i < paiManager.playerPai[msg.id].Count; i++)
-        //{
-        //    arrString += paiManager.playerPai[msg.id][i] + " ";
-        //}
-        //Debug.Log("player" + msg.id + ": " + arrString);//验证服务端的牌是否进行了同步
+        gamePanel.HandPaiCount = new int[] { (int)gamePanel.numToDir[msg.id], players[msg.id].handPai.Count};
 
         isChuPai = true;
         //开始计时，玩家出牌
@@ -174,6 +169,7 @@ public class GameManager : MonoBehaviour
         else
         {
             players[msg.id].DiscardPai(msg.paiIndex);
+            gamePanel.HandPaiCount = new int[] {(int)gamePanel.numToDir[msg.id], players[msg.id].handPai.Count };
         }
     }
 
@@ -227,6 +223,7 @@ public class GameManager : MonoBehaviour
                     players[msg.id].OnGang(msg.paiId);
                     break;
             }
+            gamePanel.HandPaiCount = new int[] {(int)gamePanel.numToDir[msg.id], players[msg.id].handPai.Count };
         }
     }
 
@@ -253,7 +250,7 @@ public class GameManager : MonoBehaviour
         CreatePai(msg.paiId, msg.id);
         players[msg.id].SynHandPai();//同步牌的顺序
         players[msg.id].PlacePai();//调整牌的位置
-
+        gamePanel.HandPaiCount = new int[] { (int)gamePanel.numToDir[msg.id], players[msg.id].handPai.Count };
         Debug.Log("客户端接收msgchemistry信息");
         isChuPai = true;
         

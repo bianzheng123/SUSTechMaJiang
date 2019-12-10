@@ -60,6 +60,8 @@ public class GamePanel : BasePanel {
     private Button panelDescriptionButton;
     //用于存放聊天信息
     public ChatRoom chatRoom;
+    //用于显示不同玩家手牌个数
+    private Text[] handPaiCount;
 
     struct PlayerPaiInfo
     {
@@ -121,6 +123,14 @@ public class GamePanel : BasePanel {
             turnText.text = "第" + value + "轮";
         }
     }
+
+    /// <summary>
+    /// 第一个值代表指定第几个玩家，第二个值代表牌的数量
+    /// </summary>
+    public int[] HandPaiCount
+    {
+        set { handPaiCount[value[0]].text = "手牌数：" + value[1].ToString(); }
+    } 
 
     public int RestSkillCount
     {
@@ -782,6 +792,12 @@ public class GamePanel : BasePanel {
             //默认下方为player1，然后逆时针为player2,3,4...
             string str = "Toggle/Player" + (i + 2);
             playerRadio[i] = skin.transform.Find(str).GetComponent<Toggle>();
+        }
+        handPaiCount = new Text[4];
+        for(int i = 0; i < 4; i++)
+        {
+            string str = "HandPaiCount/Player" + (i + 1) + "/Text";
+            handPaiCount[i] = skin.transform.Find(str).GetComponent<Text>();
         }
         okButton = skin.transform.Find("OkButton").GetComponent<Button>();
         cancelButton = skin.transform.Find("CancelButton").GetComponent<Button>();

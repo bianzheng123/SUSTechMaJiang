@@ -4,7 +4,7 @@ using System.Collections.Generic;
 public class RoomManager
 {
 	//最大id
-	private static int maxId = 1;
+	private static int maxId = 0;
 	//房间列表
 	public static Dictionary<int, Room> rooms = new Dictionary<int, Room>();
 
