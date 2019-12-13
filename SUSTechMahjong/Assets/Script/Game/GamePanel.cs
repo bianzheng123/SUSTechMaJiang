@@ -62,6 +62,10 @@ public class GamePanel : BasePanel {
     public ChatRoom chatRoom;
     //用于显示不同玩家手牌个数
     private Text[] handPaiCount;
+    //显示不同玩家的状态
+    private Text playerStateText;
+    //显示该客户端的玩家id
+    private Text playerIdText;
 
     struct PlayerPaiInfo
     {
@@ -93,6 +97,38 @@ public class GamePanel : BasePanel {
         }
     }
 
+    public string PlayerStateText
+    {
+        set { playerStateText.text = value; }
+    }
+
+    public int PlayerIdText
+    {
+        set
+        {
+            string text = "你是玩家";
+            switch (value)
+            {
+                case 1:
+                    text += "一";
+                    break;
+                case 2:
+                    text += "二";
+                    break;
+                case 3:
+                    text += "三";
+                    break;
+                case 4:
+                    text += "四";
+                    break;
+                default:
+                    text = "出现bug";
+                    break;
+            }
+            playerIdText.text = text;
+        }
+    }
+
     public Major Skill
     {
         set
@@ -103,11 +139,11 @@ public class GamePanel : BasePanel {
                 case Major.None:
                     skillDisplayText.text = "你是通识通修,不能发送技能";
                     break;
-                case Major.Biology:
-                    skillDisplayText.text = "你是数学系";
+                case Major.Chemistry:
+                    skillDisplayText.text = "你是化学系";
                     break;
                 case Major.Math:
-                    skillDisplayText.text = "你是化学系";
+                    skillDisplayText.text = "你是数学系";
                     break;
                 case Major.ComputerScience:
                     skillDisplayText.text = "你是计算机系";
@@ -294,7 +330,7 @@ public class GamePanel : BasePanel {
     {
         SkillButton = false;
         skillingText.SetActive(false);
-        if(gameManager.players[gameManager.client_id].skill == Major.Biology)
+        if(gameManager.players[gameManager.client_id].skill == Major.Math)
         {
             PlayerRadio = false;
         }
@@ -340,11 +376,11 @@ public class GamePanel : BasePanel {
             case Major.None:
                 PanelManager.Open<TipPanel>("你没有技能");
                 break;
-            case Major.Biology:
-                PanelManager.Open<TipPanel>("数学系：查看场上随机一人的N张牌（N = 14-轮数）（可查看的牌的数量与时间相关，越早使用该技能可以看到的牌数越多）");
+            case Major.Chemistry:
+                PanelManager.Open<TipPanel>("化学系：摧毁一张己方手牌，获得一张新的牌（化学物质）");
                 break;
             case Major.Math:
-                PanelManager.Open<TipPanel>("化学系：摧毁一张己方手牌，获得一张新的牌（化学物质）");
+                PanelManager.Open<TipPanel>("数学系：查看场上随机一人的N张牌（N = 14-轮数）（可查看的牌的数量与时间相关，越早使用该技能可以看到的牌数越多）");
                 break;
             case Major.ComputerScience:
                 PanelManager.Open<TipPanel>("计算机系：任意打出一张牌，这张牌无法触发吃碰杠技能");
@@ -359,15 +395,15 @@ public class GamePanel : BasePanel {
             case Major.None:
                 Debug.Log("技能不可能为空，出现bug");
                 break;
-            case Major.Biology:
+            case Major.Chemistry:
+                okButton.onClick.AddListener(OnChemistryClick);
+                break;
+            case Major.Math:
                 okButton.onClick.AddListener(OnMathClick);
                 cancelButton.onClick.AddListener(OnCancelPlayerClick);
                 PlayerRadio = true;//用来显示单选框
 
                 OnCancelPaiClick();//在发动技能之前已经选中了牌，就要将牌降落下来
-                break;
-            case Major.Math:
-                okButton.onClick.AddListener(OnChemistryClick);
                 break;
             case Major.ComputerScience:
                 okButton.onClick.AddListener(OnComputerScienceClick);
@@ -382,14 +418,14 @@ public class GamePanel : BasePanel {
             case Major.None:
                 Debug.Log("技能不可能为空，出现bug");
                 break;
-            case Major.Biology:
+            case Major.Chemistry:
+                okButton.onClick.RemoveListener(OnChemistryClick);
+                break;
+            case Major.Math:
                 okButton.onClick.RemoveListener(OnMathClick);
                 cancelButton.onClick.RemoveListener(OnCancelPlayerClick);
                 PlayerRadio = false;//隐藏发动数学系技能的单选框
                 //还要添加取消选牌的操作
-                break;
-            case Major.Math:
-                okButton.onClick.RemoveListener(OnChemistryClick);
                 break;
             case Major.ComputerScience:
                 okButton.onClick.RemoveListener(OnComputerScienceClick);
@@ -421,7 +457,7 @@ public class GamePanel : BasePanel {
         if (gameManager.players == null) return;
         CtrlPlayer player = (CtrlPlayer)gameManager.players[gameManager.client_id];
         if (player == null) return;
-        if (player.skill != Major.Biology) return;
+        if (player.skill != Major.Math) return;
         int selectedPlayerIndex = -1;
         for(int i = 0; i < 3; i++)
         {
@@ -456,7 +492,7 @@ public class GamePanel : BasePanel {
         if (gameManager.players == null) return;
         CtrlPlayer player = (CtrlPlayer)gameManager.players[gameManager.client_id];
         if (player == null) return;
-        if (player.skill != Major.Math) return;
+        if (player.skill != Major.Chemistry) return;
         if (player.selectedPaiIndex == -1) return;
 
         DeleteSkillClick();
@@ -778,6 +814,8 @@ public class GamePanel : BasePanel {
     /// </summary>
     public void GetUIComponent()
     {
+        playerIdText = skin.transform.Find("PlayerIdText").GetComponent<Text>();
+        playerStateText = skin.transform.Find("PlayerStateText").GetComponent<Text>();
         panelDescriptionButton = skin.transform.Find("PanelDescriptionButton").GetComponent<Button>();
         exitButton = skin.transform.Find("ExitButton").GetComponent<Button>();
         setButton = skin.transform.Find("SetButton").GetComponent<Button>();

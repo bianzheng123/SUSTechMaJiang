@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 public enum Major
 {
     None = 0,
-    Biology = 1,
+    Chemistry = 1,
     Math = 2,
     ComputerScience = 3
 }
@@ -20,7 +20,7 @@ public enum Major
 public enum MaxSkillTime
 {
     None = 0,
-    Biology = 3,
+    Chemistry = 3,
     Math = 3,
     ComputerScience = 10
 }

@@ -35,12 +35,12 @@ public class ChoosePanel : BasePanel
     {
         //寻找组件
         priceButton = new Button[3];
-        priceButton[0] = skin.transform.Find("Biology/Button").GetComponent<Button>();
+        priceButton[0] = skin.transform.Find("Chemistry/Button").GetComponent<Button>();
         priceButton[1] = skin.transform.Find("Math/Button").GetComponent<Button>();
         priceButton[2] = skin.transform.Find("ComputerScience/Button").GetComponent<Button>();
 
         priceText = new Text[3];
-        priceText[0] = skin.transform.Find("Biology/Button/Text").GetComponent<Text>();
+        priceText[0] = skin.transform.Find("Chemistry/Button/Text").GetComponent<Text>();
         priceText[1] = skin.transform.Find("Math/Button/Text").GetComponent<Text>();
         priceText[2] = skin.transform.Find("ComputerScience/Button/Text").GetComponent<Text>();
 
@@ -48,7 +48,7 @@ public class ChoosePanel : BasePanel
         coinText = skin.transform.Find("Title/CoinText").GetComponent<Text>();
         majorText = skin.transform.Find("Title/MajorText").GetComponent<Text>();
         //监听
-        priceButton[0].onClick.AddListener(OnBiologyClick);
+        priceButton[0].onClick.AddListener(OnChemistryClick);
         priceButton[1].onClick.AddListener(OnMathClick);
         priceButton[2].onClick.AddListener(OnComputerScienceClick);
         priceButton[0].onClick.AddListener(Audio.ButtonClick);
@@ -65,7 +65,7 @@ public class ChoosePanel : BasePanel
 
         switch ((Major)major)//如果已经在该系中，就能将该按钮隐藏
         {
-            case Major.Biology:
+            case Major.Chemistry:
                 priceButton[0].gameObject.SetActive(false);
                 break;
             case Major.Math:
@@ -92,9 +92,9 @@ public class ChoosePanel : BasePanel
 
     }
 
-    public void OnBiologyClick()
+    public void OnChemistryClick()
     {
-        BuyItem(Major.Biology);
+        BuyItem(Major.Chemistry);
     }
 
     public void OnMathClick()
@@ -119,7 +119,7 @@ public class ChoosePanel : BasePanel
         msg.major = (int)major;
         switch (major)
         {
-            case Major.Biology:
+            case Major.Chemistry:
                 msg.coin = price[0];
                 break;
             case Major.Math:

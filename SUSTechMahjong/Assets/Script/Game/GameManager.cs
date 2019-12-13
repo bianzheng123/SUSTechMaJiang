@@ -62,7 +62,7 @@ public class GameManager : MonoBehaviour
         skillCount = msg.data[msg.id].skillCount;
         gamePanel.RestSkillCount = skillCount;
         //gamePanel中先给Skill进行赋值，才能给RestSkillCount进行赋值
-        Debug.Log("你的id是：" + client_id + " ,你的性别是:" + players[client_id].gender);
+        gamePanel.PlayerIdText = client_id + 1;
         //生成牌
         for (int i = 0; i < 4; i++)
         {
@@ -119,6 +119,7 @@ public class GameManager : MonoBehaviour
         players[msg.id].SynHandPai();//调整牌的顺序
         players[msg.id].PlacePai();//调整牌的位置
         gamePanel.HandPaiCount = new int[] { (int)gamePanel.numToDir[msg.id], players[msg.id].handPai.Count};
+        gamePanel.PlayerStateText = "玩家" + (msg.id + 1) + "出牌";
 
         isChuPai = true;
         //开始计时，玩家出牌
@@ -149,6 +150,7 @@ public class GameManager : MonoBehaviour
     {
         MsgChuPai msg = (MsgChuPai)msgBase;
         Debug.Log("PlayerId: " + msg.id);
+        gamePanel.PlayerStateText = "玩家" + msg.id + "出牌";
         if (msg.paiIndex == -1)//胡的情况
         {
             Gender gender = players[msg.id].gender;
@@ -187,7 +189,7 @@ public class GameManager : MonoBehaviour
         {
             StartTimeCount();
             nowTurnid = msg.id;
-
+            
             players[nowTurnid].msgChiPengGang = msg;
             gamePanel.TurnLight(nowTurnid);
             if (nowTurnid == client_id)
@@ -206,6 +208,7 @@ public class GameManager : MonoBehaviour
                     gamePanel.GangButton = true;
                 }
             }
+            gamePanel.PlayerStateText = "玩家" + (msg.id + 1) + "吃碰杠";
         }
         else
         {
@@ -273,7 +276,10 @@ public class GameManager : MonoBehaviour
             gamePanel.ChuPaiButton = true;
         }
 
-        gamePanel.DisplayOtherPai(msg.paiId);
+        if(msg.observerPlayerId == client_id)
+        {
+            gamePanel.DisplayOtherPai(msg.paiId);
+        }
 
         if (msg.canSkill && msg.observerPlayerId == client_id)//如果可以发动技能，就显示发动技能的按钮
         {
@@ -327,9 +333,9 @@ public class GameManager : MonoBehaviour
         if (startTimeCount)
         {
             TimeCount();
-            if (isChuPai && !(client_id == nowTurnid && players[client_id].skill == Major.Biology && gamePanel.isDoSkilling == true))//是自己控制的玩家在出牌，而且是数学系的而且已经按下了发动技能的按钮
+            if (isChuPai && !(client_id == nowTurnid && players[client_id].skill == Major.Math && gamePanel.isDoSkilling == true))//是自己控制的玩家在出牌，而且是数学系的而且已经按下了发动技能的按钮
             {        //发动数学系技能时不可选中自己的牌
-                players[nowTurnid].DaPai();//这里人机只是打牌，不发动任何技能
+                players[nowTurnid].DaPai();
             }//否则进行吃碰杠的判断
         }
 
