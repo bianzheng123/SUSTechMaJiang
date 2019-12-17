@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 public class GamePanel : BasePanel {
     //储存GameManager的引用
@@ -66,21 +67,6 @@ public class GamePanel : BasePanel {
     private Text playerStateText;
     //显示该客户端的玩家id
     private Text playerIdText;
-
-    struct PlayerPaiInfo
-    {
-        public Button discardPai;
-        public Button chi;
-        public Button peng;
-        public Button gang;
-    }
-
-    public struct ChatRoom
-    {
-        public InputField chatInput;
-        public Text chatText;
-        public ScrollRect scrollRect;
-    }
 
     /// <summary>
     /// -1，代表单选框全部不显示
@@ -275,8 +261,6 @@ public class GamePanel : BasePanel {
     {
         //寻找组件
         GetUIComponent();
-        //对按钮添加点击事件
-        AddButtonClick();
         //生成gameManager类
         gameManager = GameManager.GetInstance();
         gameManager.GamePanel = this;
@@ -284,6 +268,9 @@ public class GamePanel : BasePanel {
         //GameManager处理发过来的数据,这个一定要放在生成gameManager类后面
         MsgInitData msgInitData = (MsgInitData)args[0];
         gameManager.OnMsgInitData(msgInitData);
+        //对按钮添加点击事件
+        AddButtonClick();
+
         //网络协议监听
         NetManager.AddMsgListener("MsgFaPai", gameManager.OnMsgFaPai);
         NetManager.AddMsgListener("MsgChat", gameManager.OnMsgChat);
@@ -292,6 +279,7 @@ public class GamePanel : BasePanel {
         NetManager.AddMsgListener("MsgChemistry", gameManager.OnMsgChemistry);
         NetManager.AddMsgListener("MsgMath",gameManager.OnMsgMath);
         NetManager.AddMsgListener("MsgQuit", gameManager.OnMsgQuit);
+        NetManager.AddMsgListener("MsgComputerScience", gameManager.OnMsgComputerScience);
         //发送查询,发动查询要在处理InitData之后
         if (gameManager.isZhuang)
         {
@@ -320,6 +308,7 @@ public class GamePanel : BasePanel {
         NetManager.RemoveMsgListener("MsgChemistry", gameManager.OnMsgChemistry);
         NetManager.RemoveMsgListener("MsgMath", gameManager.OnMsgMath);
         NetManager.RemoveMsgListener("MsgQuit", gameManager.OnMsgQuit);
+        NetManager.RemoveMsgListener("MsgComputerScience", gameManager.OnMsgComputerScience);
         Audio.MuteLoop(Audio.bgGamePanel);
     }
 
@@ -371,21 +360,25 @@ public class GamePanel : BasePanel {
     /// </summary>
     public void OnSkillDescriptionClick()
     {
+        string str = "";
         switch (skill)
         {
             case Major.None:
-                PanelManager.Open<TipPanel>("你没有技能");
+                str = "你没有技能";
                 break;
             case Major.Chemistry:
-                PanelManager.Open<TipPanel>("化学系：摧毁一张己方手牌，获得一张新的牌（化学物质）");
+                str = "化学系：摧毁一张己方手牌，获得一张新的牌（化学物质）";
                 break;
             case Major.Math:
-                PanelManager.Open<TipPanel>("数学系：查看场上随机一人的N张牌（N = 14-轮数）（可查看的牌的数量与时间相关，越早使用该技能可以看到的牌数越多）");
+                str = "数学系：查看场上随机一人的N张牌（N = 14-轮数）（可查看的牌的数量与时间相关，越早使用该技能可以看到的牌数越多）";
                 break;
             case Major.ComputerScience:
-                PanelManager.Open<TipPanel>("计算机系：任意打出一张牌，这张牌无法触发吃碰杠技能");
+                str = "计算机系：任意打出一张牌，这张牌无法触发吃碰杠技能";
                 break;
+            default:
+                throw new Exception("出现了未定义的技能");
         }
+        PanelManager.Open<TipPanel>(str);
     }
 
     public void AddSkillClick()
@@ -393,8 +386,7 @@ public class GamePanel : BasePanel {
         switch (skill)
         {
             case Major.None:
-                Debug.Log("技能不可能为空，出现bug");
-                break;
+                throw new Exception("技能不可能为空，出现bug");
             case Major.Chemistry:
                 okButton.onClick.AddListener(OnChemistryClick);
                 break;
@@ -408,6 +400,8 @@ public class GamePanel : BasePanel {
             case Major.ComputerScience:
                 okButton.onClick.AddListener(OnComputerScienceClick);
                 break;
+            default:
+                throw new Exception("出现了未定义的技能");
         }
     }
 
@@ -430,6 +424,8 @@ public class GamePanel : BasePanel {
             case Major.ComputerScience:
                 okButton.onClick.RemoveListener(OnComputerScienceClick);
                 break;
+            default:
+                throw new Exception("出现了未定义的技能");
         }
     }
 
@@ -617,74 +613,10 @@ public class GamePanel : BasePanel {
         player.selectedPaiIndex = -1;
     }
 
-    public void OnOtherInfoClick_discardPai_player1() { GetPlayerPai(0, Enum_OtherPlayerInfo.DiscardPai); }
-
-    public void OnOtherInfoClick_chi_player1() { GetPlayerPai(0, Enum_OtherPlayerInfo.Chi); }
-
-    public void OnOtherInfoClick_peng_player1() { GetPlayerPai(0, Enum_OtherPlayerInfo.Peng); }
-
-    public void OnOtherInfoClick_gang_player1() { GetPlayerPai(0, Enum_OtherPlayerInfo.Gang); }
-
-    public void OnOtherInfoClick_discardPai_player2() { GetPlayerPai(1,Enum_OtherPlayerInfo.DiscardPai); }
-
-    public void OnOtherInfoClick_chi_player2() { GetPlayerPai(1,Enum_OtherPlayerInfo.Chi); }
-
-    public void OnOtherInfoClick_peng_player2() { GetPlayerPai(1,Enum_OtherPlayerInfo.Peng); }
-
-    public void OnOtherInfoClick_gang_player2() { GetPlayerPai(1,Enum_OtherPlayerInfo.Gang); }
-
-    public void OnOtherInfoClick_discardPai_player3() { GetPlayerPai(2,Enum_OtherPlayerInfo.DiscardPai); }
-
-    public void OnOtherInfoClick_chi_player3() { GetPlayerPai(2,Enum_OtherPlayerInfo.Chi); }
-
-    public void OnOtherInfoClick_peng_player3() { GetPlayerPai(2,Enum_OtherPlayerInfo.Peng); }
-
-    public void OnOtherInfoClick_gang_player3() { GetPlayerPai(2,Enum_OtherPlayerInfo.Gang); }
-
-    public void OnOtherInfoClick_discardPai_player4() { GetPlayerPai(3,Enum_OtherPlayerInfo.DiscardPai); }
-
-    public void OnOtherInfoClick_chi_player4() { GetPlayerPai(3,Enum_OtherPlayerInfo.Chi); }
-
-    public void OnOtherInfoClick_peng_player4() { GetPlayerPai(3,Enum_OtherPlayerInfo.Peng); }
-
-    public void OnOtherInfoClick_gang_player4() { GetPlayerPai(3,Enum_OtherPlayerInfo.Gang); }
-
-    /// <summary>
-    /// 得到其他玩家的棋牌，已经进行完吃碰杠操作的牌
-    /// </summary>
-    /// <param name="relativeId">目前麻将桌上的playerid差,顺时针递增</param>
-    /// <param name="paiType">需要获取的信息是吃碰杠还是弃牌</param>
-    private void GetPlayerPai(int relativeId,Enum_OtherPlayerInfo paiType)
-    {
-        int realId = (gameManager.client_id + relativeId) % 4;
-        int[] pai = null;
-        List<int> list = null;
-        switch (paiType)
-        {
-            case Enum_OtherPlayerInfo.DiscardPai:
-                list = gameManager.players[realId].discardPai;
-                break;
-            case Enum_OtherPlayerInfo.Chi:
-                list = gameManager.players[realId].chi;
-                break;
-            case Enum_OtherPlayerInfo.Peng:
-                list = gameManager.players[realId].peng;
-                break;
-            case Enum_OtherPlayerInfo.Gang:
-                list = gameManager.players[realId].gang;
-                break;
-        }
-        if(list.Count != 0)
-        {
-            pai = list.ToArray();
-        }
-        DisplayOtherPai(pai);
-    }
-
     /// <summary>
     /// 用于发送数学系技能时，显示别人的牌
     /// </summary>
-    public void DisplayOtherPai(int[] pai)
+    public static void DisplayOtherPai(int[] pai)
     {
         if (pai == null)
         {
@@ -755,26 +687,6 @@ public class GamePanel : BasePanel {
         skillButton.onClick.AddListener(OnSkillClick);
         skillDescriptionButton.onClick.AddListener(OnSkillDescriptionClick);
 
-        playerPaiInfo[0].discardPai.onClick.AddListener(OnOtherInfoClick_discardPai_player1);
-        playerPaiInfo[0].chi.onClick.AddListener(OnOtherInfoClick_chi_player1);
-        playerPaiInfo[0].peng.onClick.AddListener(OnOtherInfoClick_peng_player1);
-        playerPaiInfo[0].gang.onClick.AddListener(OnOtherInfoClick_gang_player1);
-
-        playerPaiInfo[1].discardPai.onClick.AddListener(OnOtherInfoClick_discardPai_player2);
-        playerPaiInfo[1].chi.onClick.AddListener(OnOtherInfoClick_chi_player2);
-        playerPaiInfo[1].peng.onClick.AddListener(OnOtherInfoClick_peng_player2);
-        playerPaiInfo[1].gang.onClick.AddListener(OnOtherInfoClick_gang_player2);
-
-        playerPaiInfo[2].discardPai.onClick.AddListener(OnOtherInfoClick_discardPai_player3);
-        playerPaiInfo[2].chi.onClick.AddListener(OnOtherInfoClick_chi_player3);
-        playerPaiInfo[2].peng.onClick.AddListener(OnOtherInfoClick_peng_player3);
-        playerPaiInfo[2].gang.onClick.AddListener(OnOtherInfoClick_gang_player3);
-
-        playerPaiInfo[3].discardPai.onClick.AddListener(OnOtherInfoClick_discardPai_player4);
-        playerPaiInfo[3].chi.onClick.AddListener(OnOtherInfoClick_chi_player4);
-        playerPaiInfo[3].peng.onClick.AddListener(OnOtherInfoClick_peng_player4);
-        playerPaiInfo[3].gang.onClick.AddListener(OnOtherInfoClick_gang_player4);
-
         panelDescriptionButton.onClick.AddListener(Audio.ButtonClick);
         exitButton.onClick.AddListener(Audio.ButtonClick);
         setButton.onClick.AddListener(Audio.ButtonClick);
@@ -788,25 +700,11 @@ public class GamePanel : BasePanel {
         skillButton.onClick.AddListener(Audio.ButtonClick);
         skillDescriptionButton.onClick.AddListener(Audio.ButtonClick);
 
-        playerPaiInfo[0].discardPai.onClick.AddListener(Audio.ButtonClick);
-        playerPaiInfo[0].chi.onClick.AddListener(Audio.ButtonClick);
-        playerPaiInfo[0].peng.onClick.AddListener(Audio.ButtonClick);
-        playerPaiInfo[0].gang.onClick.AddListener(Audio.ButtonClick);
-
-        playerPaiInfo[1].discardPai.onClick.AddListener(Audio.ButtonClick);
-        playerPaiInfo[1].chi.onClick.AddListener(Audio.ButtonClick);
-        playerPaiInfo[1].peng.onClick.AddListener(Audio.ButtonClick);
-        playerPaiInfo[1].gang.onClick.AddListener(Audio.ButtonClick);
-
-        playerPaiInfo[2].discardPai.onClick.AddListener(Audio.ButtonClick);
-        playerPaiInfo[2].chi.onClick.AddListener(Audio.ButtonClick);
-        playerPaiInfo[2].peng.onClick.AddListener(Audio.ButtonClick);
-        playerPaiInfo[2].gang.onClick.AddListener(Audio.ButtonClick);
-
-        playerPaiInfo[3].discardPai.onClick.AddListener(Audio.ButtonClick);
-        playerPaiInfo[3].chi.onClick.AddListener(Audio.ButtonClick);
-        playerPaiInfo[3].peng.onClick.AddListener(Audio.ButtonClick);
-        playerPaiInfo[3].gang.onClick.AddListener(Audio.ButtonClick);
+        int client_id = gameManager.client_id;
+        for(int i = 0; i < playerPaiInfo.Length; i++)
+        {
+            playerPaiInfo[i].AddButtonClick(i,client_id);
+        }
     }
 
     /// <summary>
@@ -854,30 +752,38 @@ public class GamePanel : BasePanel {
         restSkillCount = skin.transform.Find("RestSkillCount").GetComponent<Text>();
         skillingText = skin.transform.Find("SkillingText").gameObject;
         zhuangImage = skin.transform.Find("ZhuangImage").GetComponent<Image>();
-        playerPaiInfo = new PlayerPaiInfo[4];
         //第一个用来显示自己的弃牌，吃碰杠
-        playerPaiInfo[0].discardPai = skin.transform.Find("OtherPlayerInfo/Player1/DiscardPai").GetComponent<Button>();
-        playerPaiInfo[0].chi = skin.transform.Find("OtherPlayerInfo/Player1/Chi").GetComponent<Button>();
-        playerPaiInfo[0].peng = skin.transform.Find("OtherPlayerInfo/Player1/Peng").GetComponent<Button>();
-        playerPaiInfo[0].gang = skin.transform.Find("OtherPlayerInfo/Player1/Gang").GetComponent<Button>();
+        
+        playerPaiInfo = new PlayerPaiInfo[4];
+        
+        Button discardPai = skin.transform.Find("OtherPlayerInfo/Player1/DiscardPai").GetComponent<Button>();
+        Button chi = skin.transform.Find("OtherPlayerInfo/Player1/Chi").GetComponent<Button>();
+        Button peng = skin.transform.Find("OtherPlayerInfo/Player1/Peng").GetComponent<Button>();
+        Button gang = skin.transform.Find("OtherPlayerInfo/Player1/Gang").GetComponent<Button>();
+        playerPaiInfo[0] = new PlayerPaiInfo(discardPai,chi,peng,gang);
 
-        playerPaiInfo[1].discardPai = skin.transform.Find("OtherPlayerInfo/Player2/DiscardPai").GetComponent<Button>();
-        playerPaiInfo[1].chi = skin.transform.Find("OtherPlayerInfo/Player2/Chi").GetComponent<Button>();
-        playerPaiInfo[1].peng = skin.transform.Find("OtherPlayerInfo/Player2/Peng").GetComponent<Button>();
-        playerPaiInfo[1].gang = skin.transform.Find("OtherPlayerInfo/Player2/Gang").GetComponent<Button>();
+        discardPai = skin.transform.Find("OtherPlayerInfo/Player2/DiscardPai").GetComponent<Button>();
+        chi = skin.transform.Find("OtherPlayerInfo/Player2/Chi").GetComponent<Button>();
+        peng = skin.transform.Find("OtherPlayerInfo/Player2/Peng").GetComponent<Button>();
+        gang = skin.transform.Find("OtherPlayerInfo/Player2/Gang").GetComponent<Button>();
+        playerPaiInfo[1] = new PlayerPaiInfo(discardPai, chi, peng, gang);
 
-        playerPaiInfo[2].discardPai = skin.transform.Find("OtherPlayerInfo/Player3/DiscardPai").GetComponent<Button>();
-        playerPaiInfo[2].chi = skin.transform.Find("OtherPlayerInfo/Player3/Chi").GetComponent<Button>();
-        playerPaiInfo[2].peng = skin.transform.Find("OtherPlayerInfo/Player3/Peng").GetComponent<Button>();
-        playerPaiInfo[2].gang = skin.transform.Find("OtherPlayerInfo/Player3/Gang").GetComponent<Button>();
+        discardPai = skin.transform.Find("OtherPlayerInfo/Player3/DiscardPai").GetComponent<Button>();
+        chi = skin.transform.Find("OtherPlayerInfo/Player3/Chi").GetComponent<Button>();
+        peng = skin.transform.Find("OtherPlayerInfo/Player3/Peng").GetComponent<Button>();
+        gang = skin.transform.Find("OtherPlayerInfo/Player3/Gang").GetComponent<Button>();
+        playerPaiInfo[2] = new PlayerPaiInfo(discardPai, chi, peng, gang);
 
-        playerPaiInfo[3].discardPai = skin.transform.Find("OtherPlayerInfo/Player4/DiscardPai").GetComponent<Button>();
-        playerPaiInfo[3].chi = skin.transform.Find("OtherPlayerInfo/Player4/Chi").GetComponent<Button>();
-        playerPaiInfo[3].peng = skin.transform.Find("OtherPlayerInfo/Player4/Peng").GetComponent<Button>();
-        playerPaiInfo[3].gang = skin.transform.Find("OtherPlayerInfo/Player4/Gang").GetComponent<Button>();
-        chatRoom.chatInput = skin.transform.Find("ChatRoom/ChatInputField").GetComponent<InputField>();
-        chatRoom.chatText = skin.transform.Find("ChatRoom/ChatRoomPanel/TextShowPanel/ChatText").GetComponent<Text>();
-        chatRoom.scrollRect = skin.transform.Find("ChatRoom/ChatRoomPanel/TextShowPanel").GetComponent<ScrollRect>();
+        discardPai = skin.transform.Find("OtherPlayerInfo/Player4/DiscardPai").GetComponent<Button>();
+        chi = skin.transform.Find("OtherPlayerInfo/Player4/Chi").GetComponent<Button>();
+        peng = skin.transform.Find("OtherPlayerInfo/Player4/Peng").GetComponent<Button>();
+        gang = skin.transform.Find("OtherPlayerInfo/Player4/Gang").GetComponent<Button>();
+        playerPaiInfo[3] = new PlayerPaiInfo(discardPai, chi, peng, gang);
+
+        InputField chatInput = skin.transform.Find("ChatRoom/ChatInputField").GetComponent<InputField>();
+        Text chatText = skin.transform.Find("ChatRoom/ChatRoomPanel/TextShowPanel/ChatText").GetComponent<Text>();
+        ScrollRect scrollRect = skin.transform.Find("ChatRoom/ChatRoomPanel/TextShowPanel").GetComponent<ScrollRect>();
+        chatRoom = new ChatRoom(chatInput,chatText,scrollRect);
     }
 
     /// <summary>
@@ -909,16 +815,6 @@ public enum Direction
     RIGHT = 1,
     UP = 2,
     LEFT = 3,
-}
-/// <summary>
-/// 用来显示别的玩家的信息
-/// </summary>
-public enum Enum_OtherPlayerInfo
-{
-    DiscardPai,
-    Chi,
-    Peng,
-    Gang
 }
 
 

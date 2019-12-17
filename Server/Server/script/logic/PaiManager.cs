@@ -105,8 +105,17 @@ public class PaiManager
     /// <returns></returns>
     public int ChuPai(int paiIndex, int id)
     {
+        if(!(0 <= id && id <= 3))
+        {
+            Console.WriteLine("发牌时id越界，出现bug！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！");
+        }
+        if(!(0<= paiIndex && paiIndex < playerPai[id].Count))
+        {
+            Console.WriteLine("发牌时牌id越界，出现bug!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        }
         int paiId = playerPai[id][paiIndex];
         playerPai[id].RemoveAt(paiIndex);
+        
         return paiId;
     }
 
@@ -184,7 +193,7 @@ public class PaiManager
     {
         List<int> cards = playerPai[playerId];
         int len = playerPai[playerId].Count;
-        if (len <= 10)//用于测试
+        if (len <= 9)//用于测试
         {
             return true;
         }

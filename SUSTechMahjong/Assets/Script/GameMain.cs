@@ -14,8 +14,6 @@ public class GameMain : MonoBehaviour {
 		//初始化
 		PanelManager.Init();
         Audio.Init();
-        XMLManager.Init();
-        //Audio要在XMLManager之前启动
         Pai.Init();
         Gamedata.Init();
 		//打开登陆面板

@@ -32,10 +32,13 @@ public static class Audio {
     public static AudioSource loop;
     public static AudioSource cue;
 
+    public static float volume;
+
     public static void Init()
     {
         loop = GameObject.Find("Loop").GetComponent<AudioSource>();
         cue = GameObject.Find("Cue").GetComponent<AudioSource>();
+        volume = loop.volume;
 
         bgGamePanel = "Audios/bgGamePanel";
         bgLoginPanel = "Audios/bgLoginPanel";

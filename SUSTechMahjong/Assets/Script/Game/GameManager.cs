@@ -132,14 +132,7 @@ public class GameManager : MonoBehaviour
     /// <param name="msgBase"></param>
     public void OnMsgChat(MsgBase msgBase)
     {
-        MsgChat msg = (MsgChat)msgBase;
-
-        string addText = "\n  " + "<color=red>" + players[msg.id].username + "</color>: " + msg.chatmsg;
-        gamePanel.chatRoom.chatText.text = gamePanel.chatRoom.chatText.text + addText;
-        gamePanel.chatRoom.chatInput.ActivateInputField();
-        Canvas.ForceUpdateCanvases();       //关键代码
-        gamePanel.chatRoom.scrollRect.verticalNormalizedPosition = 0f;  //关键代码
-        Canvas.ForceUpdateCanvases();   //关键代码
+        gamePanel.chatRoom.ProcessMsgChat((MsgChat)msgBase,players);
     }
 
     /// <summary>
@@ -189,7 +182,7 @@ public class GameManager : MonoBehaviour
         {
             StartTimeCount();
             nowTurnid = msg.id;
-            
+            isChuPai = false;
             players[nowTurnid].msgChiPengGang = msg;
             gamePanel.TurnLight(nowTurnid);
             if (nowTurnid == client_id)
@@ -278,7 +271,7 @@ public class GameManager : MonoBehaviour
 
         if(msg.observerPlayerId == client_id)
         {
-            gamePanel.DisplayOtherPai(msg.paiId);
+            GamePanel.DisplayOtherPai(msg.paiId);
         }
 
         if (msg.canSkill && msg.observerPlayerId == client_id)//如果可以发动技能，就显示发动技能的按钮
@@ -287,6 +280,20 @@ public class GameManager : MonoBehaviour
         }
         isChuPai = true;
         StartTimeCount();
+    }
+
+    /// <summary>
+    /// 处理计算机系的协议，就是增加一次使用完毕的技能，并对ui进行更新
+    /// </summary>
+    /// <param name="msgBase"></param>
+    public void OnMsgComputerScience(MsgBase msgBase)
+    {
+        MsgComputerScience msg = (MsgComputerScience)msgBase;
+        if (msg.id == client_id)
+        {
+            skillCount--;
+            gamePanel.RestSkillCount = skillCount;
+        }
     }
 
     public void StartTimeCount()
@@ -339,19 +346,7 @@ public class GameManager : MonoBehaviour
             }//否则进行吃碰杠的判断
         }
 
-
-        //这个应该放在gameManager中，用于发送聊天的输入框
-        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
-        {
-            if (gamePanel.chatRoom.chatInput.text != "")
-            {//发送聊天协议
-                MsgChat msg = new MsgChat();
-                msg.chatmsg = gamePanel.chatRoom.chatInput.text;
-                msg.id = client_id;
-                gamePanel.chatRoom.chatInput.text = "";
-                NetManager.Send(msg);
-            }
-        }
+        gamePanel.chatRoom.Update(client_id);
     }
 
     /// <summary>

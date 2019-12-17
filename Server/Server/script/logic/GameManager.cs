@@ -240,6 +240,10 @@ public class GameManager
     {
         int paiIndex = msg.paiIndex;//牌在这个玩家的索引
         int id = msg.id;//出牌的玩家id
+        doSkillTime[msg.id]++;
+        msg.canSkill = doSkillTime[msg.id] < maxSkillTime[msg.id] ? true : false;
+        Broadcast(msg);
+
         MsgChuPai msgChuPai = new MsgChuPai();
         msgChuPai.id = msg.id;
         msgChuPai.paiIndex = msg.paiIndex;

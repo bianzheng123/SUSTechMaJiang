@@ -68,6 +68,8 @@ public class MsgComputerScience : MsgBase
     //客户端发送
     public int paiIndex;//牌在这个玩家的索引
     public int id;//出牌玩家的id
+    //服务端发回
+    public bool canSkill;//能否继续使用技能
 }
 
 /// <summary>

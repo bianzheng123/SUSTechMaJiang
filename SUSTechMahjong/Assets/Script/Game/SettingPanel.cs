@@ -11,8 +11,6 @@ public class SettingPanel : BasePanel
     private Button cancelButton;
     //控制音量的滑动条
     private Slider volumeControlSlider;
-    //记录上一次保存的音量大小
-    private float volume;
 
     //初始化
     public override void OnInit()
@@ -36,20 +34,18 @@ public class SettingPanel : BasePanel
         cancelButton.onClick.AddListener(OnCancelClick);
         volumeControlSlider.onValueChanged.AddListener((float value)=>AudioControlChanged(value,volumeControlSlider));
 
-        volume = XMLManager.Volume;
-        volumeControlSlider.value = volume;
+        volumeControlSlider.value = Audio.volume;
     }
 
     private void OnSaveClick()
     {
-        volume = volumeControlSlider.value;
-        XMLManager.Volume = volumeControlSlider.value;
+        Audio.volume = volumeControlSlider.value;
         Close();
     }
 
     private void OnCancelClick()
     {
-        Audio.SetVolume(volume);
+        Audio.SetVolume(Audio.volume);
         Close();
     }
 
