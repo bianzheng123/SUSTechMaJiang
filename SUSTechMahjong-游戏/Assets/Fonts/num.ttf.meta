@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: f185730e362abc645a1c05b4c5c6d183
+timeCreated: 1567781764
+licenseType: Free
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: 04b_03b
+  fontNames:
+  - 04b_03b
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
