@@ -16,7 +16,9 @@ https://github.com/xiyoufang/mahjong
 
 # 运行流程
 1.将本项目克隆到本地
+
 2.打开Server/Server/bin/Debug中的Server.exe文件
+
 3.打开    中的Majiang.exe文件
 
 # 前言
