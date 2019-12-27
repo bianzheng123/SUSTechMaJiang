@@ -4,7 +4,7 @@
 
 Server为服务端源码
 
-SUSTechMahjong为客户端源码
+Client为客户端源码
 
 使用Unity 2017.2.0f3开发
 
