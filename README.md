@@ -19,7 +19,7 @@ https://github.com/xiyoufang/mahjong
 
 2.打开Server/Server/bin/Debug中的Server.exe文件
 
-3.打开    中的Majiang.exe文件
+3.运行`麻将客户端游戏\Majiang.exe`
 
 # 前言
 
