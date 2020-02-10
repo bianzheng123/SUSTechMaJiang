@@ -1,6 +1,18 @@
 # SUSTechMaJiang
 
+面向对象设计与分析课程project
+
 作者：向昕昊（Xiang Xinhao）, 卞证（Bian Zheng）, 林傲（Lin Ao）, 徐天元（Xu Tianyuan），孙斌贤（Sun BinXian）
+
+主要制作人：卞证
+
+最终得分
+
+卞证：80
+
+其他人：73
+
+# 说明
 
 Server为服务端源码
 
