@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
 
-class NetManager
+static class NetManager
 {
 	//监听Socket
 	public static Socket listenfd;
