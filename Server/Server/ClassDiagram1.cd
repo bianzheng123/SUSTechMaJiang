@@ -1,0 +1,326 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="MainClass" Collapsed="true">
+    <Position X="28" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>Program.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DbManager" Collapsed="true">
+    <Position X="31.5" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAEAAAAAAIAAAAAAgIAAAAAJBgAAAAQAAIAAAAA=</HashCode>
+      <FileName>script\db\DbManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GameManager" Collapsed="true">
+    <Position X="35" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAhgACAAABCAAAoAAAIAAAAYABFAAAAAIEAAAAAAAEA=</HashCode>
+      <FileName>script\logic\GameManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PaiManager" Collapsed="true">
+    <Position X="33.25" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>UAAAJAkAAAAAAAAAAAAAABABAAAAABQAAABKgEIAAAA=</HashCode>
+      <FileName>script\logic\PaiManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Player" Collapsed="true">
+    <Position X="35" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAgAAAEAAAAAAAAAAAAAEAAAQAAAAAgA=</HashCode>
+      <FileName>script\logic\Player.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PlayerData" Collapsed="true">
+    <Position X="28" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAwAAAAAAAgAAAAAQAAAAAAAAAAAAAIAA=</HashCode>
+      <FileName>script\logic\PlayerData.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PlayerManager" Collapsed="true">
+    <Position X="31.5" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAABEAAAAAAACAAAAAIAgAAAAAAAA=</HashCode>
+      <FileName>script\logic\PlayerManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Room" Collapsed="true">
+    <Position X="33.25" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEwAAAAACICAAAAAABAAAAAAACAAAABAAAgQAAAAAgA=</HashCode>
+      <FileName>script\logic\Room.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RoomManager" Collapsed="true">
+    <Position X="28" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIBAAAAAACAAAIAAAAAACAAAAAAAAAAEAAAAAA=</HashCode>
+      <FileName>script\logic\RoomManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EventHandler" Collapsed="true">
+    <Position X="33.25" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAABAAAIAAAAAAAAAAAAAAAAAAAAAABAA=</HashCode>
+      <FileName>script\MsgHandle\EventHandler.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MsgHandler" Collapsed="true">
+    <Position X="29.75" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgJAQAIABAhCEAAAAKABAAAAADBAAEAAAAAAAAAAAo=</HashCode>
+      <FileName>script\MsgHandle\GameMsgHandle.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ByteArray" Collapsed="true">
+    <Position X="28" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAiAAAAIIAFAEIAIAAgAAICAAgAAAAAAEEQAAA=</HashCode>
+      <FileName>script\net\ByteArray.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ClientState" Collapsed="true">
+    <Position X="29.75" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEBAAEAAAAAgAA=</HashCode>
+      <FileName>script\net\ClientState.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MsgBase" Collapsed="true">
+    <Position X="15.5" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAAAAAAEBAAIAAAAAAAAAAAAAIAAAAAAAAQAAAAAA=</HashCode>
+      <FileName>script\net\MsgBase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NetManager" Collapsed="true">
+    <Position X="31.5" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgEAAgAAAAAAAgBEAAAAAgAAAAAAAACAAAABCEAAg=</HashCode>
+      <FileName>script\net\NetManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MsgInitData" Collapsed="true">
+    <Position X="12.25" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAgA=</HashCode>
+      <FileName>script\proto\GameMsg.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="StartGameData" Collapsed="true">
+    <Position X="29.75" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAABAAAAAAAgAEAAAAAAAAAAAAQAAAACAA=</HashCode>
+      <FileName>script\proto\GameMsg.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MsgFaPai" Collapsed="true">
+    <Position X="7.25" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAACAAAAAAAAAAEAAAAAAAAAEQAAAgA=</HashCode>
+      <FileName>script\proto\GameMsg.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MsgChemistry" Collapsed="true">
+    <Position X="1" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEQAACgA=</HashCode>
+      <FileName>script\proto\GameMsg.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MsgMath" Collapsed="true">
+    <Position X="9.75" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACEQAAAAA=</HashCode>
+      <FileName>script\proto\GameMsg.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MsgComputerScience" Collapsed="true">
+    <Position X="19.75" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAACgA=</HashCode>
+      <FileName>script\proto\GameMsg.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MsgChuPai" Collapsed="true">
+    <Position X="21.25" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACgA=</HashCode>
+      <FileName>script\proto\GameMsg.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MsgChiPengGang" Collapsed="true">
+    <Position X="10" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEBAACAAAAAAAAAAAAAAAAEAAAAgA=</HashCode>
+      <FileName>script\proto\GameMsg.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MsgChat" Collapsed="true">
+    <Position X="0.5" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAgA=</HashCode>
+      <FileName>script\proto\GameMsg.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MsgQuit" Collapsed="true">
+    <Position X="9.5" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAgA=</HashCode>
+      <FileName>script\proto\GameMsg.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MsgRegister" Collapsed="true">
+    <Position X="2.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAABAAAgAAAAAAAgAAAAAAAAAAAAgA=</HashCode>
+      <FileName>script\proto\LoginMsg.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MsgLogin" Collapsed="true">
+    <Position X="11.25" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAABAAAAAAAAAAAgAAAAAAAAAAAAgA=</HashCode>
+      <FileName>script\proto\LoginMsg.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MsgKick" Collapsed="true">
+    <Position X="14.25" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>script\proto\LoginMsg.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MsgGetAchieve" Collapsed="true">
+    <Position X="19.75" Y="10" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAwAAAAAAAAAAAAAQAAAAAAAAAAAAAIAA=</HashCode>
+      <FileName>script\proto\RoomMsg.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RoomInfo" Collapsed="true">
+    <Position X="35" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
+      <FileName>script\proto\RoomMsg.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MsgGetRoomList" Collapsed="true">
+    <Position X="2.75" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>script\proto\RoomMsg.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MsgCreateRoom" Collapsed="true">
+    <Position X="11.75" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>script\proto\RoomMsg.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MsgEnterRoom" Collapsed="true">
+    <Position X="5" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
+      <FileName>script\proto\RoomMsg.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PlayerInfo" Collapsed="true">
+    <Position X="29.75" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAwAAAAAAAgAAAAAAAAAAAAAAAAAAAIgA=</HashCode>
+      <FileName>script\proto\RoomMsg.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MsgGetRoomInfo" Collapsed="true">
+    <Position X="23.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAA=</HashCode>
+      <FileName>script\proto\RoomMsg.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MsgLeaveRoom" Collapsed="true">
+    <Position X="17" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>script\proto\RoomMsg.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MsgStartBattle" Collapsed="true">
+    <Position X="8" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>script\proto\RoomMsg.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MsgVisitShop" Collapsed="true">
+    <Position X="5" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>script\proto\ShopMsg.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MsgChoose" Collapsed="true">
+    <Position X="14" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAABAAAAAAAAAQAAAAAAAAAAAAIIAA=</HashCode>
+      <FileName>script\proto\ShopMsg.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MsgPing" Collapsed="true">
+    <Position X="7.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>script\proto\SysMsg.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MsgPong" Collapsed="true">
+    <Position X="13.75" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>script\proto\SysMsg.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="XMLMajor" Collapsed="true">
+    <Position X="31.5" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAEIAAAEAAAAAAAAAAAEAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>script\XML\Major.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="XMLManager" Collapsed="true">
+    <Position X="33.25" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAgACAAAAAAAAAAA=</HashCode>
+      <FileName>script\XML\XMLManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="Major" Collapsed="true">
+    <Position X="29.75" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAgAAAAAACAAAAAAAAAAQAAEAAAA=</HashCode>
+      <FileName>script\logic\GameData.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="MaxSkillTime" Collapsed="true">
+    <Position X="31.5" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAgAAAAAACAAAAAAAAAAQAAEAAAA=</HashCode>
+      <FileName>script\logic\GameData.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Gender" Collapsed="true">
+    <Position X="28" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAA=</HashCode>
+      <FileName>script\logic\GameData.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Microsoft YaHei UI" Size="9" />
+</ClassDiagram>
